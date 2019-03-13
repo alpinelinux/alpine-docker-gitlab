@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+
+foreground { echo "Starting unicorn.." }
+fdmove -c 2 1
+cd /home/git/gitlab
+su-exec git bundle exec unicorn_rails -E production -c /etc/gitlab/unicorn.rb

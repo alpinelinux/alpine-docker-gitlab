@@ -1,0 +1,8 @@
+[core]
+	autocrlf = input
+[gc]
+	auto = 0
+[repack]
+	writeBitmaps = true
+[receive]
+	advertisePushOptions = true

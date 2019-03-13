@@ -1,0 +1,7 @@
+#!/bin/execlineb -P
+
+if { s6-svwait -t 5000 -u /etc/s6/workhorse }
+foreground { echo "Starting nginx.." }
+
+fdmove -c 2 1
+nginx -g "daemon off;pid /tmp/nginx.pid;"

@@ -1,0 +1,57 @@
+version: '3.5'
+services:
+  gitlab:
+    image: alpine-gitlab
+    container_name: gitlab-alpine
+    volumes:
+      - /srv/docker/compose/gitlab/repositories:/home/git/repositories
+      - /srv/docker/compose/gitlab/config:/etc/gitlab
+      - /srv/docker/compose/gitlab/log:/home/git/gitlab/log
+      - /srv/docker/compose/gitlab/builds:/home/git/gitlab/builds
+      - /srv/docker/compose/gitlab/shared:/home/git/gitlab/shared
+    networks:
+      - alpine-gitlab
+    secrets:
+      - pg_user
+      - pg_admin
+      - root_pass
+    ports:
+      - "2222:22"
+      - "8080:80"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      # allow overwrite of db
+      - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+      # https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
+      - RUBYOPT=--disable-gems
+  postgres:
+    image: postgres:alpine
+    container_name: gitlab-postgres
+    volumes:
+      - /srv/docker/compose/gitlab/postgres:/var/lib/postgresql/data
+    networks:
+      - alpine-gitlab
+    secrets:
+      - pg_admin
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_admin
+  redis:
+    image: redis:alpine
+    container_name: gitlab-redis
+    volumes:
+      - /srv/docker/compose/gitlab/redis:/data
+    networks:
+      - alpine-gitlab
+    entrypoint: redis-server --appendonly yes
+networks:
+  alpine-gitlab:
+    driver: bridge
+secrets:
+  pg_admin:
+    file: secrets/pg_admin.txt
+  pg_user:
+    file: secrets/pg_user.txt
+  root_pass:
+    file: secrets/root_pass.txt
