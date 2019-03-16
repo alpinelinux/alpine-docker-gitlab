@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# set -eu
+set -eu
 
 INITCONF="
 	gitlab.yml.example
@@ -168,6 +168,7 @@ start() {
 	if [ -f "/etc/gitlab/.installed" ]; then
 		echo "Configuration found"
 	else
+		echo "No configuration found. Running setup.."
 		setup
 	fi
 	update_perms
@@ -183,5 +184,5 @@ case $1 in
 	backup) backup ;;
 	verify) verify ;;
 	shell) /bin/sh ;;
-	*) echo "No help yet" ;;
+	*) echo "Command \"$1\" is unknown." ;;
 esac
