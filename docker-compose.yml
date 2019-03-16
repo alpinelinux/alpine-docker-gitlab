@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   gitlab:
-    image: alpine-gitlab
+    image: clandmeter/alpine-docker-gitlab
     container_name: gitlab-alpine
     volumes:
       - /srv/docker/compose/gitlab/repositories:/home/git/repositories
