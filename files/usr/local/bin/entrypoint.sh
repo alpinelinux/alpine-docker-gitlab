@@ -2,6 +2,15 @@
 
 # set -eu
 
+INITCONF="
+	gitlab.yml.example
+	secrets.yml.example
+	unicorn.rb.example
+	initializers/rack_attack.rb.example
+	resque.yml.example
+	database.yml.postgresql
+"
+
 create_db() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	export PGPASSWORD=$(cat /run/secrets/pg_admin 2>/dev/null)
@@ -15,16 +24,7 @@ create_db() {
 
 create_conf() {
 	echo "Setting up configurations..."
-	local config
-	local initial_config="
-		gitlab.yml.example
-		secrets.yml.example
-		unicorn.rb.example
-		initializers/rack_attack.rb.example
-		resque.yml.example
-		database.yml.postgresql
-	"
-	for config in $initial_config; do
+	for config in $INITCONF; do
 		if [ ! -f "/etc/gitlab/${config%.*}" ]; then
 			install -Dm644 /home/git/gitlab/config/$config \
 				/etc/gitlab/${config%.*}
@@ -33,8 +33,6 @@ create_conf() {
 			install -Dm644 /home/git/gitlab/config/$config \
 				/etc/gitlab/${config%.*}.new
 		fi
-		ln -sf /etc/gitlab/${config%.*} \
-			/home/git/gitlab/config/${config%.*}
 	done
 	# gitlab shell
 	if [ ! -f "/etc/gitlab/gitlab-shell/config.yml" ]; then
@@ -49,6 +47,14 @@ create_conf() {
 		install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
 			/etc/gitlab/nginx/gitlab.conf
 	fi
+}
+
+prepare_conf() {
+	echo "Preparing configuration"
+	for config in $INITCONF; do
+		ln -sf /etc/gitlab/${config%.*} \
+			/home/git/gitlab/config/${config%.*}
+	done
 	ln -sf /etc/gitlab/nginx/gitlab.conf \
 		/etc/nginx/conf.d/gitlab.conf
 	rm -f /etc/nginx/conf.d/default.conf
@@ -145,7 +151,6 @@ setup() {
 	gitaly_config
 	create_conf
 	setup_ssh
-	update_perms
 	setup_gitlab
 	verify
 	touch /etc/gitlab/.installed
@@ -160,7 +165,14 @@ backup() {
 }
 
 start() {
-	[ ! -f "/etc/gitlab/.installed" ] && setup
+	if [ -f "/etc/gitlab/.installed" ]; then
+		echo "Configuration found"
+	else
+		setup
+	fi
+	update_perms
+	prepare_conf
+	echo "Starting Gitlab.."
 	s6-svscan /etc/s6
 }
 
