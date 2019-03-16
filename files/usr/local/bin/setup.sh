@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#set -eu
+set -eu
 
 # use docker env
 gitlab_version=11.8.1
@@ -37,8 +37,7 @@ apk add --no-cache --virtual .gitlab-runtime git su-exec ruby ruby-bundler \
 	postgresql-client s6 openssh nginx
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime build-base cmake ruby-dev libxml2-dev \
-	icu-dev openssl-dev postgresql-dev linux-headers re2-dev c-ares-dev nodejs \
-	yarn go 
+	icu-dev openssl-dev postgresql-dev linux-headers re2-dev c-ares-dev yarn go
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /sbin/nologin git
@@ -137,5 +136,14 @@ gemdeps.sh | xargs -rt apk add --no-cache --virtual .gems-runtime
 apk del .gitlab-buildtime
 rm -rf /home/git/src /tmp/*
 chown -R git:git /home/git
+# remove directories we dont need and take up lots of space
+rm -rf /home/git/gitlab/node_modules \
+    /home/git/gitlab/docker \
+    /home/git/gitlab/qa \
+    /root/.bundle \
+    /root/.cache \
+    /var/cache/apk/* \
+    /home/git/gitlab-shell/go \
+    /home/git/gitlab-shell/go_build \
+    /usr/local/share/.cache
 
-return 0
