@@ -147,7 +147,7 @@ rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab-shell/go \
     /home/git/gitlab-shell/go_build \
     /usr/local/share/.cache \
-    $gemdir/cache \
+    $gemdir/cache
 
 find $gemdir/gems -name "*.o" -delete
 find $gemdir/gems -name "*.so" -delete
