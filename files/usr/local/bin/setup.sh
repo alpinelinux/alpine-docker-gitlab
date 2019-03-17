@@ -112,8 +112,9 @@ install ./gitlab-pages /usr/local/bin/gitlab-pages
 ## will also install ruby gems into system like gitlab
 #########
 GITALY_SERVER_VERSION=$(cat "$gitlab_location"/GITALY_SERVER_VERSION)
-get_source gitaly $GITALY_SERVER_VERSION
-cd /home/git/src/gitaly-v$GITALY_SERVER_VERSION
+git clone https://gitlab.com/gitlab-org/gitaly.git -b \
+        v$GITALY_SERVER_VERSION /home/git/src/gitaly
+cd /home/git/src/gitaly
 make install BUNDLE_FLAGS=--system
 mv ruby /home/git/gitaly-ruby
 install -Dm644 config.toml.example "$gitlab_location"/gitaly/config.toml
