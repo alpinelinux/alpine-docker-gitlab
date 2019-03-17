@@ -128,17 +128,21 @@ cd "$gitlab_location"
 yarn install --production --pure-lockfile
 bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
 
-# Cleanup TODO
-# remove build artifacts
-# remove build deps (apply logic to keep runtime deps)
-# update permissions
 
+echo "Build finish, cleaning up..."
+# detect gem library depends and add them to world
 gemdeps.sh | xargs -rt apk add --no-cache --virtual .gems-runtime
+
+# remove all other build time deps
 apk del .gitlab-buildtime
+
+# remove build leftovers
 rm -rf /home/git/src /tmp/*
+
+# update git home permissions
 chown -R git:git /home/git
+
 # remove directories we dont need and take up lots of space
-gemdir="$(ruby -e 'puts Gem.default_dir')"
 rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab/docker \
     /home/git/gitlab/qa \
@@ -147,9 +151,21 @@ rm -rf /home/git/gitlab/node_modules \
     /var/cache/apk/* \
     /home/git/gitlab-shell/go \
     /home/git/gitlab-shell/go_build \
-    /usr/local/share/.cache \
-    $gemdir/cache
+    /usr/local/share/.cache
 
-find $gemdir/gems -name "*.o" -delete
-find $gemdir/gems -name "*.so" -delete
+# cleanup gems
+gemdir="$(ruby -e 'puts Gem.default_dir')"
+rm -rf $gemdir/cache
+find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete \
+	-o -name gem.build_complete -delete
+find $gemdir/gems -name "*.o" -delete -o -name "*.so" -delete
+for cruft in ext test spec example licenses samples src man ports; do
+	rm -rf "$gemdir"/gems/*/$cruft
+done
 
+# strip go bins
+for bin in /usr/local/bin/*; do
+	[ "${bin##*.}" = sh ] && continue
+	tmpfile=$(mktemp -u)
+	install -s $bin $tmpfile && mv $tmpfile $bin
+done
