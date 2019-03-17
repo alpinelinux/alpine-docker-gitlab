@@ -137,6 +137,7 @@ apk del .gitlab-buildtime
 rm -rf /home/git/src /tmp/*
 chown -R git:git /home/git
 # remove directories we dont need and take up lots of space
+gemdir="$(ruby -e 'puts Gem.default_dir')"
 rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab/docker \
     /home/git/gitlab/qa \
@@ -145,5 +146,9 @@ rm -rf /home/git/gitlab/node_modules \
     /var/cache/apk/* \
     /home/git/gitlab-shell/go \
     /home/git/gitlab-shell/go_build \
-    /usr/local/share/.cache
+    /usr/local/share/.cache \
+    $gemdir/cache \
+
+find $gemdir/gems -name "*.o" -delete
+find $gemdir/gems -name "*.so" -delete
 
