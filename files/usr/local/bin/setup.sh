@@ -126,8 +126,15 @@ cd "$gitlab_location"
 yarn install --production --pure-lockfile
 bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
 
-
 echo "Build finish, cleaning up..."
+
+# strip go bins
+for bin in /usr/local/bin/*; do
+	[ "${bin##*.}" = sh ] && continue
+	tmpfile=$(mktemp -u)
+	install -s $bin $tmpfile && mv $tmpfile $bin
+done
+
 # detect gem library depends and add them to world
 gemdeps.sh | xargs -rt apk add --no-cache --virtual .gems-runtime
 
@@ -161,9 +168,3 @@ for cruft in ext test spec example licenses samples src man ports; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
-# strip go bins
-for bin in /usr/local/bin/*; do
-	[ "${bin##*.}" = sh ] && continue
-	tmpfile=$(mktemp -u)
-	install -s $bin $tmpfile && mv $tmpfile $bin
-done
