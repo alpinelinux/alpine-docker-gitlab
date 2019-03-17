@@ -2,8 +2,6 @@
 
 set -eu
 
-# use docker env
-gitlab_version=11.8.1
 gitlab_location=/home/git/gitlab
 
 export BUNDLE_JOBS=$(nproc)
@@ -49,8 +47,8 @@ adduser -D -g "GitLab" -s /sbin/nologin git
 # we use a seperate container for redis
 
 # 8. Install gitlab
-get_source gitlab-ce "$gitlab_version"
-mv /home/git/src/gitlab-ce-v$gitlab_version "$gitlab_location"
+get_source gitlab-ce "$GITLAB_VERSION"
+mv /home/git/src/gitlab-ce-v$GITLAB_VERSION "$gitlab_location"
 
 # https://gitlab.com/gitlab-org/gitlab-ce/issues/47483
 cd "$gitlab_location"

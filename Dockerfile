@@ -1,5 +1,7 @@
 FROM alpine:latest
 
+ENV GITLAB_VERSION 11.8.2
+
 COPY files/ /
 
 RUN  setup.sh
