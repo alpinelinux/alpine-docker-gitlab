@@ -162,7 +162,7 @@ gemdir="$(ruby -e 'puts Gem.default_dir')"
 rm -rf $gemdir/cache
 find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete
 find $gemdir/gems -name "*.o" -delete -o -name "*.so" -delete
-for cruft in ext test spec example licenses samples src man ports doc docs \
+for cruft in ext test spec example licenses samples man ports doc docs \
 	CHANGELOG COPYING; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
