@@ -131,8 +131,7 @@ echo "Build finish, cleaning up..."
 # strip go bins
 for bin in /usr/local/bin/*; do
 	[ "${bin##*.}" = sh ] && continue
-	tmpfile=$(mktemp -u)
-	install -s $bin $tmpfile && mv $tmpfile $bin
+	strip "$bin" || true
 done
 
 # detect gem library depends and add them to world
@@ -161,10 +160,10 @@ rm -rf /home/git/gitlab/node_modules \
 # cleanup gems
 gemdir="$(ruby -e 'puts Gem.default_dir')"
 rm -rf $gemdir/cache
-find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete \
-	-o -name gem.build_complete -delete
+find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete
 find $gemdir/gems -name "*.o" -delete -o -name "*.so" -delete
-for cruft in ext test spec example licenses samples src man ports; do
+for cruft in ext test spec example licenses samples src man ports doc docs \
+	CHANGELOG COPYING; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
