@@ -14,6 +14,9 @@ INITCONF="
 create_db() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	export PGPASSWORD=$(cat /run/secrets/pg_admin 2>/dev/null)
+	echo "Connecting to postgres.."
+	while ! pg_isready -qh postgres; do sleep 1; done
+	echo "Connection succesful, creating database.."
 	if psql -lqt -h postgres -U postgres -d template1 | cut -d \| -f 1 | grep -qw gitlabhq_production; then
 		echo "Database exists already."
 	else
@@ -157,6 +160,7 @@ setup() {
 	redis_conf
 	gitaly_config
 	create_conf
+	prepare_dirs
 	prepare_conf
 	setup_ssh
 	setup_gitlab
@@ -175,12 +179,12 @@ backup() {
 start() {
 	if [ -f "/etc/gitlab/.installed" ]; then
 		echo "Configuration found"
+		prepare_dirs
+		prepare_conf
 	else
 		echo "No configuration found. Running setup.."
 		setup
 	fi
-	prepare_dirs
-	prepare_conf
 	echo "Starting Gitlab.."
 	s6-svscan /etc/s6
 }
