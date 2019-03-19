@@ -14,7 +14,7 @@ INITCONF="
 create_db() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	export PGPASSWORD=$(cat /run/secrets/pg_admin 2>/dev/null)
-	if psql -lqt | cut -d \| -f 1 | grep -qw gitlabhq_production; then
+	if psql -lqt -h postgres -U postgres -d template1 | cut -d \| -f 1 | grep -qw gitlabhq_production; then
 		echo "Database exists already."
 	else
 		psql -h postgres -U postgres -d template1 \
