@@ -157,6 +157,7 @@ setup() {
 	redis_conf
 	gitaly_config
 	create_conf
+	prepare_conf
 	setup_ssh
 	setup_gitlab
 	verify
