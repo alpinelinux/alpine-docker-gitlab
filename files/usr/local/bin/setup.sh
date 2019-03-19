@@ -46,10 +46,15 @@ adduser -D -g "GitLab" -s /sbin/nologin git
 # 7. Redis
 # we use a seperate container for redis
 
-# 8. Install gitlab
+#########
+## gitlab
+#########
 get_source gitlab-ce "$GITLAB_VERSION"
 mv /home/git/src/gitlab-ce-v$GITLAB_VERSION "$gitlab_location"
-
+# redir log directory
+install -do git -g git /var/log/gitlab /var/log/s6
+rm -rf "$gitlab_location"/log
+ln -sf /var/log/gitlab "$gitlab_location"/log
 # https://gitlab.com/gitlab-org/gitlab-ce/issues/47483
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch

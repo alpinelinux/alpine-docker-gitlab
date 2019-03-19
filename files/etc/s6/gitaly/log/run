@@ -2,4 +2,4 @@
 
 s6-setuidgid git
 exec -c
-s6-log -b n20 s1000000 /home/git/gitlab/log/s6/gitaly
+s6-log -b n20 s1000000 /var/log/s6/gitaly

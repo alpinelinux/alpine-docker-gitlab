@@ -14,12 +14,16 @@ INITCONF="
 create_db() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	export PGPASSWORD=$(cat /run/secrets/pg_admin 2>/dev/null)
-	psql -h postgres -U postgres -d template1 \
-		-c "CREATE USER gitlab WITH CREATEDB ENCRYPTED PASSWORD '$pg_user';"
-	psql -h postgres -U postgres -d template1 \
-		-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-	psql -h postgres -U postgres -d template1 \
-		-c "CREATE DATABASE gitlabhq_production OWNER gitlab;"
+	if psql -lqt | cut -d \| -f 1 | grep -qw gitlabhq_production; then
+		echo "Database exists already."
+	else
+		psql -h postgres -U postgres -d template1 \
+			-c "CREATE USER gitlab WITH CREATEDB ENCRYPTED PASSWORD '$pg_user';"
+		psql -h postgres -U postgres -d template1 \
+			-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+		psql -h postgres -U postgres -d template1 \
+			-c "CREATE DATABASE gitlabhq_production OWNER gitlab;"
+	fi
 }
 
 create_conf() {
@@ -120,8 +124,9 @@ setup_gitlab() {
 		GITLAB_ROOT_PASSWORD="$root_pass"
 }
 
-update_perms() {
-	echo "Updating permissions..."
+prepare_dirs() {
+	echo "Updating directories..."
+	# create missing directories
 	install -dm 700 -o git -g git \
 		/home/git/gitlab/public/uploads \
 		/home/git/gitlab/shared/pages \
@@ -129,12 +134,14 @@ update_perms() {
 		/home/git/gitlab/shared/lfs-objects	\
 		/home/git/gitlab/shared/pages \
 		/home/git/gitlab/shared/registry \
-		/home/git/gitlab/log/s6
-	chown -R git:git /etc/gitlab
-	chmod -R u+rwX,go-w /home/git/gitlab/log
-	chmod -R u+rwX /home/git/gitlab/tmp \
-		/home/git/gitlab/builds
-	chmod -R ug+rwX /home/git/gitlab/shared/pages
+		/var/log/s6
+	# correct permissions of mount points
+	chown -R git:git /etc/gitlab \
+		/home/git/repositories \
+		/var/log/gitlab \
+		/home/git/gitlab/builds \
+		/home/git/gitlab/shared
+	# correct permission of tmp directory
 	chmod 1777 /tmp
 }
 
@@ -171,7 +178,7 @@ start() {
 		echo "No configuration found. Running setup.."
 		setup
 	fi
-	update_perms
+	prepare_dirs
 	prepare_conf
 	echo "Starting Gitlab.."
 	s6-svscan /etc/s6

@@ -6,7 +6,7 @@ services:
     volumes:
       - /srv/docker/compose/gitlab/repositories:/home/git/repositories
       - /srv/docker/compose/gitlab/config:/etc/gitlab
-      - /srv/docker/compose/gitlab/log:/home/git/gitlab/log
+      - /srv/docker/compose/gitlab/log:/var/log
       - /srv/docker/compose/gitlab/builds:/home/git/gitlab/builds
       - /srv/docker/compose/gitlab/shared:/home/git/gitlab/shared
     secrets:
