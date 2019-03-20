@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ENV GITLAB_VERSION 11.8.2
+ENV GITLAB_VERSION 11.8.3
 
 COPY files/ /
 
