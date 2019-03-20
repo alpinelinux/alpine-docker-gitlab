@@ -137,7 +137,8 @@ prepare_dirs() {
 		/home/git/gitlab/shared/lfs-objects	\
 		/home/git/gitlab/shared/pages \
 		/home/git/gitlab/shared/registry \
-		/var/log/s6
+		/var/log/s6 \
+		/var/log/gitlab
 	# correct permissions of mount points
 	chown -R git:git /etc/gitlab \
 		/home/git/repositories \
