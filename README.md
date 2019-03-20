@@ -52,3 +52,5 @@ Modify a configuration file and restart the containers.
 
 P.S. every restart the container will copy sample configs to the config
 directory overwriting other sample configs if they already exist.
+
+[![Build Status](https://cloud.drone.io/api/badges/clandmeter/alpine-docker-gitlab/status.svg)](https://cloud.drone.io/clandmeter/alpine-docker-gitlab)
