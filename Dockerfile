@@ -8,7 +8,7 @@ RUN  setup.sh
 
 VOLUME [ "/home/git/repositories", "/etc/gitlab", "/var/log", "/home/git/gitlab/builds", "/home/git/gitlab/shared" ]
 
-EXPOSE 22/tcp 8080/tcp
+EXPOSE 22 80
 
 ENTRYPOINT [ "entrypoint.sh" ]
 
