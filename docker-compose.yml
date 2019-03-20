@@ -14,7 +14,7 @@ services:
       - pg_admin
       - root_pass
     ports:
-      - "22:22"
+      - "2222:22"
       - "80:80"
     depends_on:
       - postgres
