@@ -139,6 +139,7 @@ prepare_dirs() {
 		/home/git/gitlab/shared/registry \
 		/var/log/s6 \
 		/var/log/gitlab
+	mkdir -p /var/log/nginx
 	# correct permissions of mount points
 	chown -R git:git /etc/gitlab \
 		/home/git/repositories \
