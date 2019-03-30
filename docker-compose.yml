@@ -44,7 +44,7 @@ services:
     container_name: gitlab-nginx
     volumes:
       - gitlab-public:/var/www/gitlab/public:ro
-      - /srv/docker/compose/gitlab/config/nginx/gitlab.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/docker/compose/gitlab/config/nginx:/etc/nginx/conf.d:ro
     depends_on:
       - gitlab
     ports:
