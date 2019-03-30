@@ -47,7 +47,7 @@ create_conf() {
 			/etc/gitlab/gitlab-shell/config.yml
 	fi
 	# nginx
-	if [ -f "/etc/gitlab/nginx/gitlab" ]; then
+	if [ -f "/etc/gitlab/nginx/gitlab.conf" ]; then
 		install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
 			/etc/gitlab/nginx/gitlab.conf.new
 	else
