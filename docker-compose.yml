@@ -50,7 +50,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command: [ "nginx", "-g", "daemon off;", "worker_processes auto;" ]
+    command: [ "nginx", "-g", "daemon off;" ]
 secrets:
   pg_admin:
     file: secrets/pg_admin.txt
