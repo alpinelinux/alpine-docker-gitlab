@@ -50,9 +50,16 @@ create_conf() {
 
 prepare_conf() {
 	echo "Preparing configuration"
+	local config keytype
 	for config in $INITCONF; do
 		ln -sf /etc/gitlab/${config%.*} \
 			/home/git/gitlab/config/${config%.*}
+	done
+	for keytype in ecdsa ed25519 rsa; do
+		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key \
+			/etc/ssh/ssh_host_${keytype}_key
+		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key.pub \
+			/etc/ssh/ssh_host_${keytype}_key.pub
 	done
 }
 
@@ -150,10 +157,6 @@ setup_ssh() {
 			ssh-keygen -q -N '' -t $keytype -f \
 				/etc/gitlab/ssh/ssh_host_${keytype}_key
 		fi
-		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key \
-			/etc/ssh/ssh_host_${keytype}_key
-		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key.pub \
-			/etc/ssh/ssh_host_${keytype}_key.pub
 	done
 }
 
