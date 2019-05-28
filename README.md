@@ -20,12 +20,10 @@ directory.
 - PostgreSQL user (pg_user)
 - Gitlab root user (root_pass)
 
-Example of how to generate secrets
+Generate secrets used by gitlab and related services
 
 ```bash
-for sname in pg_admin pg_user root_pass; do
-	head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16 > secrets/$sname.txt
-done
+./contrib/mksecrets.sh
 ```
 
 After which you need to create and bring up the containers
