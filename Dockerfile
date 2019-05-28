@@ -2,7 +2,7 @@ FROM alpine:latest
 
 ENV GITLAB_VERSION 11.9.1
 
-COPY files/ /
+COPY overlay/ /
 
 RUN  setup.sh
 
