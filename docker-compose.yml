@@ -53,10 +53,10 @@ services:
     command: [ "nginx", "-g", "daemon off;" ]
 secrets:
   pg_admin:
-    file: secrets/pg_admin.txt
+    file: /srv/docker/compose/gitlab/secrets/pg_admin.txt
   pg_user:
-    file: secrets/pg_user.txt
+    file: /srv/docker/compose/gitlab/secrets/pg_user.txt
   root_pass:
-    file: secrets/root_pass.txt
+    file: /srv/docker/compose/gitlab/secrets/root_pass.txt
 volumes:
   gitlab-public:
