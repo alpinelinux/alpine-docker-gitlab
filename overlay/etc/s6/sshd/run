@@ -1,5 +1,5 @@
-#!/bin/execlineb -P
+#!/bin/sh
 
-if { echo "Starting sshd.." }
-fdmove -c 2 1
+echo "Starting sshd.."
+exec 2>&1
 /usr/sbin/sshd -D -f /etc/ssh/sshd_config -e

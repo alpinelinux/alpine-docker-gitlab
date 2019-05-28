@@ -1,5 +1,5 @@
-#!/bin/execlineb -P
+#!/bin/sh
 
-if { echo "Starting gitaly.." }
-fdmove -c 2 1
+echo "Starting gitaly.."
+exec 2>&1
 su-exec git gitaly /etc/gitlab/gitaly/config.toml

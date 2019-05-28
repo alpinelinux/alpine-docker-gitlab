@@ -1,7 +1,7 @@
-#!/bin/execlineb -P
+#!/bin/sh
 
-if { s6-svwait -t 5000 -u /etc/s6/gitaly }
-if { echo "Starting sidekiq.." }
-fdmove -c 2 1
+s6-svwait -t 5000 -u /etc/s6/gitaly
+echo "Starting sidekiq.."
+exec 2>&1
 cd /home/git/gitlab
 su-exec git bundle exec sidekiq -e production -C /home/git/gitlab/config/sidekiq_queues.yml
