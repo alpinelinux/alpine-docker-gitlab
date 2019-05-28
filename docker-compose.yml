@@ -15,7 +15,7 @@ services:
       - pg_admin
       - root_pass
     ports:
-      - "2222:22"
+      - "22"
     depends_on:
       - postgres
       - redis
@@ -48,8 +48,8 @@ services:
     depends_on:
       - gitlab
     ports:
-      - "80:80"
-      - "443:443"
+      - "80"
+      - "443"
     command: [ "nginx", "-g", "daemon off;" ]
 secrets:
   pg_admin:
