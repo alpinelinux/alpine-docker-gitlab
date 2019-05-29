@@ -38,7 +38,8 @@ apk add --no-cache --virtual .gitlab-buildtime build-base cmake ruby-dev libxml2
 	icu-dev openssl-dev postgresql-dev linux-headers re2-dev c-ares-dev yarn go
 
 # 5 setup system user
-adduser -D -g "GitLab" -s /sbin/nologin git
+adduser -D -g "GitLab" -s /bin/sh git
+passwd -u git
 
 # 6 Database
 # we use a seperate container for database
