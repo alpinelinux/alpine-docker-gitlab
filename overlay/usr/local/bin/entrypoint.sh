@@ -45,6 +45,8 @@ create_conf() {
 	if [ ! -f "/etc/gitlab/gitlab-shell/config.yml" ]; then
 		install -Dm644 /home/git/gitlab-shell/config.yml.example \
 			/etc/gitlab/gitlab-shell/config.yml
+		sed -i 's!# log_file.*!log_file: "/var/log/gitlab/gitlab-shell.log"!' \
+			/etc/gitlab/gitlab-shell/config.yml
 	fi
 }
 
