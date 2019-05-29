@@ -36,7 +36,7 @@ containers and start them again in the background.
 
 ## Access the application
 
-Visit your Gitlab instance at http://dockerhost:8080
+Visit your Gitlab instance at http://dockerhost
 
 ## Configuration
 
