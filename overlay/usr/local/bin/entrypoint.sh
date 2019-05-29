@@ -65,6 +65,15 @@ prepare_conf() {
 	done
 }
 
+rebuild_conf() {
+	if [ ! -f "/home/git/.ssh/authorized_keys" ]; then
+		echo "Rebuild gitlab-shell configuration files.."
+		cd /home/git/gitlab
+		force=yes su-exec git \
+			bundle exec rake gitlab:shell:setup RAILS_ENV=production
+	fi
+}
+
 postgres_conf() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	cat <<- EOF > /etc/gitlab/database.yml
@@ -228,6 +237,7 @@ start() {
 		echo "Configuration found"
 		prepare_dirs
 		prepare_conf
+		rebuild_conf
 	else
 		echo "No configuration found. Running setup.."
 		setup
