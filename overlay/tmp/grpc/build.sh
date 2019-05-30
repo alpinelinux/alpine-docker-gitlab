@@ -1,6 +1,6 @@
 #!/bin/sh
 
-grpc_version=1.15.0
+grpc_version=1.19.0
 
 wget -O- https://github.com/grpc/grpc/archive/v$grpc_version.tar.gz |
 tar zx -C /tmp/grpc
@@ -10,6 +10,9 @@ cd /tmp/grpc/grpc-$grpc_version
 for patch in ../*.patch; do
     patch -p1 -i "$patch"
 done
+
+# Remove Werror from makefile
+sed -i -e 's/-Werror//g' Makefile
 
 # Remove some bundled dependencies from the gem's files list.
 sed -i -e '/etc\/roots.pem/d' \

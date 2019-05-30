@@ -165,11 +165,17 @@ rm -rf /home/git/gitlab/node_modules \
 
 # cleanup gems
 gemdir="$(ruby -e 'puts Gem.default_dir')"
-rm -rf $gemdir/cache
+rm -rf "$gemdir"/cache
 find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete
-find $gemdir/gems -name "*.o" -delete -o -name "*.so" -delete
-for cruft in ext test spec example licenses samples man ports doc docs \
-	CHANGELOG COPYING; do
+find "$gemdir"/gems -name "*.o" -delete -o \( -iname "*.so" ! -iname "libsass.so" \) -delete
+for cruft in test spec example licenses samples man ports doc docs CHANGELOG COPYING; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
+# need to keep libsass
+for dir in "$gemdir"/gems/*/ext; do
+	case $dir in
+		*sassc*) continue ;;
+		*) rm -rf "$dir" ;;
+	esac
+done
