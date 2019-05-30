@@ -225,11 +225,17 @@ setup() {
 }
 
 upgrade() {
-	echo "Hold on, no upgrade yet..."
+	echo "Migrating database.."
+	su-exec git bundle exec rake db:migrate RAILS_ENV=production
+	echo "Clearing caches.."
+	su-exec git bundle exec rake cache:clear RAILS_ENV=production
+	echo "Checking gitlab install.."
+	su-exec git bundle exec rake gitlab:check RAILS_ENV=production
 }
 
 backup() {
-	echo "Hold on, no backups yet..."
+	echo "Creating GitLab backup.."
+	su-exec git bundle exec rake gitlab:backup:create RAILS_ENV=production
 }
 
 start() {
