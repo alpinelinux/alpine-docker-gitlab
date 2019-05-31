@@ -225,6 +225,7 @@ setup() {
 }
 
 upgrade() {
+	cd /home/git/gitlab
 	echo "Migrating database.."
 	su-exec git bundle exec rake db:migrate RAILS_ENV=production
 	echo "Clearing caches.."
@@ -234,6 +235,7 @@ upgrade() {
 }
 
 backup() {
+	cd /home/git/gitlab
 	echo "Creating GitLab backup.."
 	su-exec git bundle exec rake gitlab:backup:create RAILS_ENV=production
 }
