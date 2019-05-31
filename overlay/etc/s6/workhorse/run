@@ -3,6 +3,7 @@
 s6-svwait -t 5000 -u /etc/s6/gitaly /etc/s6/sidekiq
 echo "Starting workhorse.."
 exec 2>&1
+cd /home/git/gitlab
 su-exec git gitlab-workhorse -authBackend http://127.0.0.1:8080 \
 	-authSocket /home/git/gitlab/tmp/sockets/gitlab.socket \
 	-documentRoot /home/git/gitlab/public \
