@@ -32,7 +32,7 @@ create_db() {
 create_conf() {
 	echo "Setting up configurations..."
 	for config in $INITCONF; do
-		if [ ! -f "/etc/gitlab/${config%.*}" ]; then
+		if [ ! -f "/etc/gitlab/gitlab/${config%.*}" ]; then
 			install -Dm644 /home/git/gitlab/config/$config \
 				/etc/gitlab/gitlab/${config%.*}
 		else
