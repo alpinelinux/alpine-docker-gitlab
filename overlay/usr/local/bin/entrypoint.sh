@@ -209,6 +209,7 @@ verify() {
 }
 
 setup() {
+	mkdir -p /etc/gitlab/gitlab
 	create_db
 	postgres_conf
 	redis_conf
