@@ -34,11 +34,11 @@ create_conf() {
 	for config in $INITCONF; do
 		if [ ! -f "/etc/gitlab/${config%.*}" ]; then
 			install -Dm644 /home/git/gitlab/config/$config \
-				/etc/gitlab/${config%.*}
+				/etc/gitlab/gitlab/${config%.*}
 		else
 			echo "Installing new config ${config%.*}.new"
 			install -Dm644 /home/git/gitlab/config/$config \
-				/etc/gitlab/${config%.*}.new
+				/etc/gitlab/gitlab/${config%.*}.new
 		fi
 	done
 	# gitlab shell
@@ -50,19 +50,18 @@ create_conf() {
 	fi
 }
 
+link_config() {
+	local src=$1 dst=$2 file=
+	for file in $(find "$src" -type f -not -name ".*"); do
+		mkdir -p $(dirname "$dst/${file#*$src/}")
+		ln -sf "$file" "$dst/${file#*$src/}"
+	done
+}
+
 prepare_conf() {
 	echo "Preparing configuration"
-	local config keytype
-	for config in $INITCONF; do
-		ln -sf /etc/gitlab/${config%.*} \
-			/home/git/gitlab/config/${config%.*}
-	done
-	for keytype in ecdsa ed25519 rsa; do
-		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key \
-			/etc/ssh/ssh_host_${keytype}_key
-		ln -sf /etc/gitlab/ssh/ssh_host_${keytype}_key.pub \
-			/etc/ssh/ssh_host_${keytype}_key.pub
-	done
+	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
+	link_config "/etc/gitlab/ssh" "/etc/ssh"
 }
 
 rebuild_conf() {
@@ -76,7 +75,7 @@ rebuild_conf() {
 
 postgres_conf() {
 	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
-	cat <<- EOF > /etc/gitlab/database.yml
+	cat <<- EOF > /etc/gitlab/gitlab/database.yml
 	production:
 	  adapter: postgresql
 	  encoding: unicode
@@ -89,7 +88,7 @@ postgres_conf() {
 }
 
 redis_conf() {
-	cat <<- EOF > /etc/gitlab/resque.yml
+	cat <<- EOF > /etc/gitlab/gitlab/resque.yml
 	production:
 	  url: redis://redis:6379
 	EOF
@@ -216,9 +215,9 @@ setup() {
 	gitaly_config
 	nginx_config
 	create_conf
+	setup_ssh
 	prepare_dirs
 	prepare_conf
-	setup_ssh
 	setup_gitlab
 	verify
 	touch /etc/gitlab/.installed
