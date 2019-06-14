@@ -9,13 +9,14 @@ services:
       - /srv/docker/compose/gitlab/log:/var/log
       - /srv/docker/compose/gitlab/builds:/home/git/gitlab/builds
       - /srv/docker/compose/gitlab/shared:/home/git/gitlab/shared
-      - gitlab-public:/home/git/gitlab/public
+      - /srv/docker/compose/gitlab/uploads:/home/git/gitlab/public/uploads
     secrets:
       - pg_user
       - pg_admin
       - root_pass
     ports:
       - "22"
+      - "80"
     depends_on:
       - postgres
       - redis
@@ -39,17 +40,6 @@ services:
     volumes:
       - /srv/docker/compose/gitlab/redis:/data
     entrypoint: redis-server --appendonly yes
-  nginx:
-    image: nginx:alpine
-    container_name: gitlab-nginx
-    volumes:
-      - gitlab-public:/var/www/gitlab/public:ro
-      - /srv/docker/compose/gitlab/config/nginx:/etc/nginx/conf.d:ro
-    depends_on:
-      - gitlab
-    ports:
-      - "80"
-    command: [ "nginx", "-g", "daemon off;" ]
 secrets:
   pg_admin:
     file: /srv/docker/compose/gitlab/secrets/pg_admin.txt
@@ -57,5 +47,3 @@ secrets:
     file: /srv/docker/compose/gitlab/secrets/pg_user.txt
   root_pass:
     file: /srv/docker/compose/gitlab/secrets/root_pass.txt
-volumes:
-  gitlab-public:

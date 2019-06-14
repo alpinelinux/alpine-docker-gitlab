@@ -59,9 +59,10 @@ link_config() {
 }
 
 prepare_conf() {
-	echo "Preparing configuration"
+	echo "Preparing configuration.."
 	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
 	link_config "/etc/gitlab/ssh" "/etc/ssh"
+	link_config "/etc/gitlab/nginx" "/etc/nginx"
 }
 
 rebuild_conf() {
@@ -110,11 +111,11 @@ gitaly_config() {
 }
 
 nginx_config() {
-	mkdir -p /etc/gitlab/nginx
-	cat <<- EOF > /etc/gitlab/nginx/gitlab.conf
+	mkdir -p /etc/gitlab/nginx/conf.d
+	cat <<- EOF > /etc/gitlab/nginx/conf.d/default.conf
 
 	upstream gitlab-workhorse {
-	  server gitlab:8181 fail_timeout=0;
+	  server localhost:8181 fail_timeout=0;
 	}
 
 	map \$http_upgrade \$connection_upgrade_gitlab {
@@ -135,7 +136,7 @@ nginx_config() {
 
 	    proxy_set_header    Host                \$http_host;
 	    proxy_set_header    X-Real-IP           \$remote_addr;
-	    proxy_set_header    X-Forwarded-Ssl      on;
+	    proxy_set_header    X-Forwarded-Ssl     on;
 	    proxy_set_header    X-Forwarded-For     \$proxy_add_x_forwarded_for;
 	    proxy_set_header    X-Forwarded-Proto   \$scheme;
 	    proxy_set_header    Upgrade             \$http_upgrade;
