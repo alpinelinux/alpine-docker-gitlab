@@ -60,6 +60,11 @@ prepare_conf() {
 	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
 	link_config "/etc/gitlab/ssh" "/etc/ssh"
 	link_config "/etc/gitlab/nginx" "/etc/nginx"
+	if [ ! -f /etc/gitlab/logrotate/gitlab.conf ]; then
+		mkdir -p /etc/gitlab/logrotate
+		head -n12 /home/git/gitlab/lib/support/logrotate/gitlab \
+			> /etc/gitlab/logrotate/gitlab.conf
+	fi
 }
 
 rebuild_conf() {
@@ -239,6 +244,11 @@ backup() {
 	su-exec git bundle exec rake gitlab:backup:create RAILS_ENV=production
 }
 
+logrotate() {
+	echo "Rotating log files.."
+	/usr/sbin/logrotate /etc/gitlab/logrotate/gitlab.conf
+}
+
 start() {
 	if [ -f "/etc/gitlab/.installed" ]; then
 		echo "Configuration found"
@@ -259,6 +269,7 @@ case $1 in
 	upgrade) upgrade ;;
 	backup) backup ;;
 	verify) verify ;;
+	logrotate) logrotate ;;
 	shell) /bin/sh ;;
 	*) echo "Command \"$1\" is unknown." ;;
 esac

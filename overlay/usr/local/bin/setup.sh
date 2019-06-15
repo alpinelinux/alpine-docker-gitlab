@@ -32,7 +32,7 @@ apk -U upgrade --no-cache -a
 # add runtime dependencies
 apk add --no-cache --virtual .gitlab-runtime git su-exec ruby ruby-bundler \
 	ruby-bigdecimal ruby-io-console ruby-webrick tzdata ruby-irb ruby-json \
-	nodejs postgresql-client s6 openssh rsync nginx gnupg
+	nodejs postgresql-client s6 openssh rsync nginx gnupg logrotate
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime build-base cmake ruby-dev libxml2-dev \
 	icu-dev openssl-dev postgresql-dev linux-headers re2-dev c-ares-dev yarn go
