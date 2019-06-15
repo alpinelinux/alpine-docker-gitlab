@@ -7,8 +7,6 @@ INITCONF="
 	secrets.yml.example
 	unicorn.rb.example
 	initializers/rack_attack.rb.example
-	resque.yml.example
-	database.yml.postgresql
 "
 
 create_db() {
@@ -29,25 +27,24 @@ create_db() {
 	fi
 }
 
-create_conf() {
-	echo "Setting up configurations..."
+create_init_conf() {
+	echo "Setting up configurations.."
 	for config in $INITCONF; do
-		if [ ! -f "/etc/gitlab/gitlab/${config%.*}" ]; then
-			install -Dm644 /home/git/gitlab/config/$config \
-				/etc/gitlab/gitlab/${config%.*}
-		else
-			echo "Installing new config ${config%.*}.new"
-			install -Dm644 /home/git/gitlab/config/$config \
-				/etc/gitlab/gitlab/${config%.*}.new
-		fi
+		install -Dm644 /home/git/gitlab/config/$config \
+			/etc/gitlab/gitlab/${config%.*}
 	done
-	# gitlab shell
-	if [ ! -f "/etc/gitlab/gitlab-shell/config.yml" ]; then
-		install -Dm644 /home/git/gitlab-shell/config.yml.example \
-			/etc/gitlab/gitlab-shell/config.yml
-		sed -i 's!# log_file.*!log_file: "/var/log/gitlab/gitlab-shell.log"!' \
-			/etc/gitlab/gitlab-shell/config.yml
-	fi
+
+	# make unicorn log to stdout/err
+	sed -i -e 's/^stderr_path/# stderr_path/' \
+		-e 's/^stdout_path/# stdout_path/' /etc/gitlab/gitlab/unicorn.rb
+
+	# gitlab-shell
+	install -Dm644 /home/git/gitlab-shell/config.yml.example \
+		/etc/gitlab/gitlab-shell/config.yml
+
+	# gitlab-shell should log to logdir
+	sed -i 's!# log_file.*!log_file: "/var/log/gitlab/gitlab-shell.log"!' \
+		/etc/gitlab/gitlab-shell/config.yml
 }
 
 link_config() {
@@ -217,7 +214,7 @@ setup() {
 	redis_conf
 	gitaly_config
 	nginx_config
-	create_conf
+	create_init_conf
 	setup_ssh
 	prepare_dirs
 	prepare_conf
