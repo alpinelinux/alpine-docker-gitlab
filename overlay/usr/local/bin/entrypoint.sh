@@ -127,6 +127,7 @@ nginx_config() {
 	  listen 0.0.0.0:80 default_server;
 	  listen [::]:80 default_server;
 	  server_tokens off;
+	  access_log /dev/stdout;
 
 	  location / {
 	    proxy_read_timeout      300;
