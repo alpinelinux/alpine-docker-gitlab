@@ -1,6 +1,6 @@
-FROM alpine:latest
+FROM ruby:2.6-alpine
 
-ENV GITLAB_VERSION 11.11.0
+ENV GITLAB_VERSION 12.0.3
 
 COPY overlay/ /
 

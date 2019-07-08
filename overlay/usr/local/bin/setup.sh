@@ -30,15 +30,32 @@ get_source() {
 # upgrade system
 apk -U upgrade --no-cache -a
 # add runtime dependencies
-apk add --no-cache --virtual .gitlab-runtime git su-exec ruby ruby-etc \
-	ruby-bigdecimal ruby-io-console ruby-webrick tzdata ruby-irb ruby-json \
-	nodejs postgresql-client s6 openssh rsync nginx gnupg logrotate
-# add buildtime dependencies
-apk add --no-cache --virtual .gitlab-buildtime build-base cmake ruby-dev libxml2-dev \
-	icu-dev openssl-dev postgresql-dev linux-headers re2-dev c-ares-dev yarn go
+apk add --no-cache --virtual .gitlab-runtime \
+	git \
+	su-exec \
+	nodejs \
+	postgresql-client \
+	s6 \
+	openssh \
+	rsync \
+	nginx \
+	gnupg \
+	logrotate \
+	tzdata
 
-# install needed bundler
-gem install bundler -v "~>1.17.0" --no-rdoc --no-ri
+# add buildtime dependencies
+apk add --no-cache --virtual .gitlab-buildtime \
+	build-base \
+	cmake \
+	libxml2-dev \
+	icu-dev \
+	openssl-dev \
+	postgresql-dev \
+	linux-headers \
+	re2-dev \
+	c-ares-dev \
+	yarn \
+	go
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /bin/sh git
@@ -84,7 +101,7 @@ sh /tmp/grpc/build.sh
 
 # install gems to system so they are shared with gitaly
 cd "$gitlab_location"
-bundle install --system --without development test mysql aws kerberos
+bundle install --without development test mysql aws kerberos
 
 ###############
 ## gitlab-shell
@@ -126,6 +143,9 @@ make install BUNDLE_FLAGS=--system
 mv ruby /home/git/gitaly-ruby
 install -Dm644 config.toml.example "$gitlab_location"/gitaly/config.toml
 
+# https://gitlab.com/gitlab-org/gitlab-ce/issues/50937
+export NODE_OPTIONS="--max_old_space_size=4096"
+
 # compile gettext
 cd "$gitlab_location"
 bundle exec rake gettext:compile RAILS_ENV=production
@@ -161,13 +181,14 @@ rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab/qa \
     /root/.bundle \
     /root/.cache \
+    /root/go \
     /var/cache/apk/* \
     /home/git/gitlab-shell/go \
     /home/git/gitlab-shell/go_build \
     /usr/local/share/.cache
 
 # cleanup gems
-gemdir="$(ruby -e 'puts Gem.default_dir')"
+gemdir=/usr/local/bundle
 rm -rf "$gemdir"/cache
 find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete
 find "$gemdir"/gems -name "*.o" -delete -o \( -iname "*.so" ! -iname "libsass.so" \) -delete

@@ -32,5 +32,5 @@ export CPPFLAGS="$CPPFLAGS \
         -Wno-error=maybe-uninitialized"
 
 gem build grpc.gemspec
-gem install --ignore-dependencies --verbose --no-rdoc --no-ri grpc-$grpc_version.gem
+gem install --ignore-dependencies --verbose grpc-$grpc_version.gem
 
