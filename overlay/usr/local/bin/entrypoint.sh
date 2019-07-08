@@ -225,7 +225,6 @@ setup() {
 	prepare_conf
 	setup_gitlab
 	verify
-	touch /etc/gitlab/.installed
 }
 
 upgrade() {
@@ -236,6 +235,14 @@ upgrade() {
 	su-exec git bundle exec rake cache:clear RAILS_ENV=production
 	echo "Checking gitlab install.."
 	su-exec git bundle exec rake gitlab:check RAILS_ENV=production
+}
+
+upgrade_check() {
+	local current_version=$(cat /etc/gitlab/.version)
+	if [ "$current_version" != "$GITLAB_VERSION" ]; then
+		echo "GitLab version change detected.."
+		upgrade
+	fi
 }
 
 backup() {
@@ -250,15 +257,17 @@ logrotate() {
 }
 
 start() {
-	if [ -f "/etc/gitlab/.installed" ]; then
+	if [ -f "/etc/gitlab/.version" ]; then
 		echo "Configuration found"
 		prepare_dirs
 		prepare_conf
 		rebuild_conf
+		upgrade_check
 	else
 		echo "No configuration found. Running setup.."
 		setup
 	fi
+	echo "$GITLAB_VERSION" > /etc/gitlab/.version
 	echo "Starting Gitlab.."
 	s6-svscan /etc/s6
 }
