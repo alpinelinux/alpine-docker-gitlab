@@ -113,6 +113,8 @@ cd /home/git/gitlab-shell
 install -Dm644 config.yml.example "$gitlab_location"/gitlab-shell/config.yml
 ln -sf "$gitlab_location"/gitlab-shell/config.yml config.yml
 ./bin/compile && ./bin/install
+# gitlab-shell will not set PATH
+ln -s /usr/local/bin/ruby /usr/bin/ruby
 
 ###################
 ## gitlab-workhorse
