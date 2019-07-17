@@ -63,7 +63,7 @@ prepare_conf() {
 	if [ ! -f /etc/gitlab/logrotate/gitlab.conf ]; then
 		mkdir -p /etc/gitlab/logrotate
 		head -n12 /home/git/gitlab/lib/support/logrotate/gitlab \
-			> /etc/gitlab/logrotate/gitlab.conf
+			> /etc/logrotate.d/gitlab
 	fi
 }
 
@@ -253,7 +253,7 @@ backup() {
 
 logrotate() {
 	echo "Rotating log files.."
-	/usr/sbin/logrotate /etc/gitlab/logrotate/gitlab.conf
+	/usr/sbin/logrotate /etc/logrotate.d/gitlab
 }
 
 start() {
