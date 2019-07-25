@@ -1,11 +1,9 @@
 #!/bin/sh
 
-grpc_version=1.19.0
-
-wget -O- https://github.com/grpc/grpc/archive/v$grpc_version.tar.gz |
+wget -O- https://github.com/grpc/grpc/archive/v"$GRPC_VERSION".tar.gz |
 tar zx -C /tmp/grpc
 
-cd /tmp/grpc/grpc-$grpc_version
+cd /tmp/grpc/grpc-"$GRPC_VERSION"
 
 for patch in ../*.patch; do
     patch -p1 -i "$patch"
@@ -32,5 +30,5 @@ export CPPFLAGS="$CPPFLAGS \
         -Wno-error=maybe-uninitialized"
 
 gem build grpc.gemspec
-gem install --ignore-dependencies --verbose grpc-$grpc_version.gem
+gem install --ignore-dependencies --verbose grpc-"$GRPC_VERSION".gem
 
