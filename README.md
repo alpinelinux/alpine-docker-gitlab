@@ -1,15 +1,15 @@
 # Alpine Gitlab Docker
 
-Alpine Linux based docker image and tools for Gitlab.
+[![Build Status](https://cloud.drone.io/api/badges/alpinelinux/alpine-docker-gitlab/status.svg)](https://cloud.drone.io/alpinelinux/alpine-docker-gitlab)
 
-**NOTE**: ***This is a work in progress.***
+Alpine Linux based docker image and tools for Gitlab.
 
 ## Why another Gitlab docker image?
 
  - Completely based on Alpine Linux (no static binaries)
  - Use separate docker images for services (where possible)
  - Optimized for size
- - Bundle all services with docker compose
+ - Bundle services with docker compose
 
 ## Setup
 
@@ -23,7 +23,7 @@ directory.
 Generate secrets used by gitlab and related services
 
 ```bash
-./contrib/mksecrets.sh
+sudo /contrib/mksecrets.sh
 ```
 
 After which you need to create and bring up the containers
@@ -51,4 +51,3 @@ Modify a configuration file and restart the containers.
 P.S. every restart the container will copy sample configs to the config
 directory overwriting other sample configs if they already exist.
 
-[![Build Status](https://cloud.drone.io/api/badges/clandmeter/alpine-docker-gitlab/status.svg)](https://cloud.drone.io/clandmeter/alpine-docker-gitlab)

@@ -14,5 +14,5 @@ steps:
         from_secret: docker_user
       password:
         from_secret: docker_pass
-      repo: clandmeter/alpine-docker-gitlab
+      repo: alpinelinux/alpine-docker-gitlab
 ...

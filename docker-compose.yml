@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   gitlab:
-    image: clandmeter/alpine-docker-gitlab
+    image: alpinelinux/alpine-docker-gitlab
     container_name: gitlab-alpine
     volumes:
       - /srv/docker/compose/gitlab/repositories:/home/git/repositories
@@ -21,8 +21,6 @@ services:
       - postgres
       - redis
     environment:
-      # allow overwrite of db
-      - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
       # https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
       - RUBYOPT=--disable-gems
   postgres:
