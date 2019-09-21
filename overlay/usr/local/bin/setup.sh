@@ -71,13 +71,13 @@ passwd -u git
 #########
 ## gitlab
 #########
-get_source gitlab-ce "$GITLAB_VERSION"
-mv /home/git/src/gitlab-ce-v$GITLAB_VERSION "$gitlab_location"
+get_source gitlab-foss "$GITLAB_VERSION"
+mv /home/git/src/gitlab-foss-v$GITLAB_VERSION "$gitlab_location"
 # redir log directory
 install -do git -g git /var/log/gitlab /var/log/s6
 rm -rf "$gitlab_location"/log
 ln -sf /var/log/gitlab "$gitlab_location"/log
-# https://gitlab.com/gitlab-org/gitlab-ce/issues/47483
+# https://gitlab.com/gitlab-org/gitlab-foss/issues/47483
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 
@@ -146,7 +146,7 @@ make install BUNDLE_FLAGS=--system
 mv ruby /home/git/gitaly-ruby
 install -Dm644 config.toml.example "$gitlab_location"/gitaly/config.toml
 
-# https://gitlab.com/gitlab-org/gitlab-ce/issues/50937
+# https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
 export NODE_OPTIONS="--max_old_space_size=4096"
 
 # compile gettext
