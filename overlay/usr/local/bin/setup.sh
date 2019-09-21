@@ -41,7 +41,8 @@ apk add --no-cache --virtual .gitlab-runtime \
 	nginx \
 	gnupg \
 	logrotate \
-	tzdata
+	tzdata \
+	graphicsmagick
 
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime \
