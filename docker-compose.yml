@@ -2,6 +2,7 @@ version: '3.5'
 services:
   gitlab:
     image: alpinelinux/alpine-docker-gitlab
+    build: gitlab
     container_name: gitlab-alpine
     volumes:
       - /srv/docker/compose/gitlab/repositories:/home/git/repositories
