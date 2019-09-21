@@ -81,12 +81,14 @@ ln -sf /var/log/gitlab "$gitlab_location"/log
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
+patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
 
 # needed configs by setup process
 initial_config="
 	gitlab.yml.example
 	secrets.yml.example
 	unicorn.rb.example
+	puma.rb.example
 	initializers/rack_attack.rb.example
 	resque.yml.example
 	database.yml.postgresql

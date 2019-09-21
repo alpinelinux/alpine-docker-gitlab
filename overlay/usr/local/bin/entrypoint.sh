@@ -6,6 +6,7 @@ INITCONF="
 	gitlab.yml.example
 	secrets.yml.example
 	unicorn.rb.example
+	puma.rb.example
 	initializers/rack_attack.rb.example
 "
 
@@ -44,6 +45,18 @@ link_config() {
 		mkdir -p $(dirname "$dst/${file#*$src/}")
 		ln -sf "$file" "$dst/${file#*$src/}"
 	done
+}
+
+enable_services() {
+	local web=unicorn
+	case ${USE_PUMA:-false} in
+		[Yy]|[Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|1) web=puma;;
+	esac
+	rm -rf /run/s6 && mkdir -p /run/s6
+	for srv in gitaly nginx sidekiq sshd workhorse; do
+		ln -sf /etc/s6/$srv /run/s6/$srv
+	done
+	ln -sf /etc/s6/$web /run/s6/web
 }
 
 prepare_conf() {
@@ -254,13 +267,14 @@ start() {
 		prepare_conf
 		rebuild_conf
 		upgrade_check
+		enable_services
 	else
 		echo "No configuration found. Running setup.."
 		setup
 	fi
 	echo "$GITLAB_VERSION" > /etc/gitlab/.version
 	echo "Starting Gitlab.."
-	s6-svscan /etc/s6
+	s6-svscan /run/s6
 }
 
 case $1 in

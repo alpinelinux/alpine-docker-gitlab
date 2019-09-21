@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Starting puma.."
+exec 2>&1
+cd /home/git/gitlab
+rm -f /home/git/gitlab/tmp/pids/puma.pid
+su-exec git bundle exec puma --environment production \
+	--config /home/git/gitlab/config/puma.rb
