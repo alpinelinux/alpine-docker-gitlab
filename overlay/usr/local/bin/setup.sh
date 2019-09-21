@@ -80,6 +80,7 @@ ln -sf /var/log/gitlab "$gitlab_location"/log
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/47483
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
+patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
 
 # needed configs by setup process
 initial_config="
@@ -111,6 +112,7 @@ GITLAB_SHELL_VERSION=$(cat "$gitlab_location"/GITLAB_SHELL_VERSION)
 get_source gitlab-shell $GITLAB_SHELL_VERSION
 mv /home/git/src/gitlab-shell-v$GITLAB_SHELL_VERSION /home/git/gitlab-shell
 cd /home/git/gitlab-shell
+patch -p0 -i /tmp/gitlab-shell/gitlab-shell-logfile.patch
 install -Dm644 config.yml.example "$gitlab_location"/gitlab-shell/config.yml
 ln -sf "$gitlab_location"/gitlab-shell/config.yml config.yml
 ./bin/compile && ./bin/install

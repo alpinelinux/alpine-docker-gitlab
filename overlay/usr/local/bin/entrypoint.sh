@@ -33,17 +33,8 @@ create_init_conf() {
 		install -Dm644 /home/git/gitlab/config/$config \
 			/etc/gitlab/gitlab/${config%.*}
 	done
-
-	# make unicorn log to stdout/err
-	sed -i -e 's/^stderr_path/# stderr_path/' \
-		-e 's/^stdout_path/# stdout_path/' /etc/gitlab/gitlab/unicorn.rb
-
 	# gitlab-shell
 	install -Dm644 /home/git/gitlab-shell/config.yml.example \
-		/etc/gitlab/gitlab-shell/config.yml
-
-	# gitlab-shell should log to logdir
-	sed -i 's!# log_file.*!log_file: "/var/log/gitlab/gitlab-shell.log"!' \
 		/etc/gitlab/gitlab-shell/config.yml
 }
 
