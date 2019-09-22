@@ -136,6 +136,9 @@ nginx_config() {
 	  access_log /dev/stdout;
 
 	  location / {
+	    client_max_body_size 0;
+	    gzip off;
+
 	    proxy_read_timeout      300;
 	    proxy_connect_timeout   300;
 	    proxy_redirect          off;
