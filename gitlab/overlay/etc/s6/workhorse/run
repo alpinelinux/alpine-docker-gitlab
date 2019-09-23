@@ -4,7 +4,7 @@ s6-svwait -t 5000 -u /run/s6/gitaly /run/s6/sidekiq
 echo "Starting workhorse.."
 exec 2>&1
 cd /home/git/gitlab
-su-exec git gitlab-workhorse -authBackend http://127.0.0.1:8080 \
+su-exec git gitlab-workhorse \
 	-authSocket /home/git/gitlab/tmp/sockets/gitlab.socket \
 	-documentRoot /home/git/gitlab/public \
 	-listenAddr 0.0.0.0:8181
