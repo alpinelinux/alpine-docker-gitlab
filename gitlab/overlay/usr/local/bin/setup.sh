@@ -86,21 +86,9 @@ patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
 
-# needed configs by setup process
-initial_config="
-	gitlab.yml.example
-	secrets.yml.example
-	unicorn.rb.example
-	puma.rb.example
-	initializers/rack_attack.rb.example
-	resque.yml.example
-	database.yml.postgresql
-	"
-for config in $initial_config; do
-	if [ ! -f "$gitlab_location/config/${config%.*}" ]; then
-		ln -sf "$gitlab_location"/config/$config \
-			"$gitlab_location"/config/${config%.*}
-	fi
+# temporary symlink the example configs to make setup happy
+for config in gitlab.yml.example database.yml.postgresql; do
+	ln -sf $config "$gitlab_location"/config/${config%.*}
 done
 
 # gprc is a nightmare so we build and install our own
