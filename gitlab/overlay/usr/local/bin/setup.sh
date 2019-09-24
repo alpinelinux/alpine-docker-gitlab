@@ -85,6 +85,7 @@ cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
+patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 
 # temporary symlink the example configs to make setup happy
 for config in gitlab.yml.example database.yml.postgresql; do
@@ -105,9 +106,11 @@ GITLAB_SHELL_VERSION=$(cat "$gitlab_location"/GITLAB_SHELL_VERSION)
 get_source gitlab-shell $GITLAB_SHELL_VERSION
 mv /home/git/src/gitlab-shell-v$GITLAB_SHELL_VERSION /home/git/gitlab-shell
 cd /home/git/gitlab-shell
+# needed for setup
+ln -sf config.yml.example config.yml
 patch -p0 -i /tmp/gitlab-shell/gitlab-shell-changes.patch
-install -Dm644 config.yml.example "$gitlab_location"/gitlab-shell/config.yml
-ln -sf "$gitlab_location"/gitlab-shell/config.yml config.yml
+install -Dm644 config.yml.example \
+	"$gitlab_location"/config/gitlab-shell/config.yml.example
 ./bin/compile && ./bin/install
 # gitlab-shell will not set PATH
 ln -s /usr/local/bin/ruby /usr/bin/ruby
@@ -137,9 +140,11 @@ GITALY_SERVER_VERSION=$(cat "$gitlab_location"/GITALY_SERVER_VERSION)
 git clone https://gitlab.com/gitlab-org/gitaly.git -b \
         v$GITALY_SERVER_VERSION /home/git/src/gitaly
 cd /home/git/src/gitaly
+patch -p0 -i /tmp/gitaly/gitaly-set-defaults.patch
 make install BUNDLE_FLAGS=--system
 mv ruby /home/git/gitaly-ruby
-install -Dm644 config.toml.example "$gitlab_location"/gitaly/config.toml
+install -Dm644 config.toml.example \
+	"$gitlab_location"/config/gitaly/config.toml.example
 
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
 export NODE_OPTIONS="--max_old_space_size=4096"

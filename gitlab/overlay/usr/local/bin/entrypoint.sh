@@ -2,12 +2,15 @@
 
 set -eu
 
-INITCONF="
-	gitlab.yml.example
-	secrets.yml.example
-	unicorn.rb.example
-	puma.rb.example
-	initializers/rack_attack.rb.example
+# base config files found in gitlab/config dir
+BASECONF="
+	gitlab/gitlab.yml.example
+	gitlab/secrets.yml.example
+	gitlab/unicorn.rb.example
+	gitlab/puma.rb.example
+	gitlab/initializers/rack_attack.rb.example
+	gitaly/config.toml.example
+	gitlab-shell/config.yml.example
 "
 
 create_db() {
@@ -28,15 +31,22 @@ create_db() {
 	fi
 }
 
-create_init_conf() {
-	echo "Setting up configurations.."
-	for config in $INITCONF; do
-		install -Dm644 /home/git/gitlab/config/$config \
-			/etc/gitlab/gitlab/${config%.*}
+# install config if not yet exist
+install_conf() {
+	local config
+	for config in $BASECONF; do
+		if [ ! -f "/etc/gitlab/${config%.*}" ]; then
+			echo "Installing missing config: ${config%.*}"
+			local dest=${config%.*}
+			case $config in gitlab/*) config=${config#*/};; esac
+			install -Dm644 /home/git/gitlab/config/$config \
+				/etc/gitlab/$dest
+		fi
 	done
-	# gitlab-shell
-	install -Dm644 /home/git/gitlab-shell/config.yml.example \
-		/etc/gitlab/gitlab-shell/config.yml
+	if [ ! -f "/etc/gitlab/logrotate/gitlab" ]; then
+		install -Dm644 /home/git/gitlab/lib/support/logrotate/gitlab \
+			/etc/gitlab/logrotate/gitlab
+	fi
 }
 
 link_config() {
@@ -64,11 +74,8 @@ prepare_conf() {
 	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
 	link_config "/etc/gitlab/ssh" "/etc/ssh"
 	link_config "/etc/gitlab/nginx" "/etc/nginx"
-	if [ ! -f /etc/gitlab/logrotate/gitlab.conf ]; then
-		mkdir -p /etc/gitlab/logrotate
-		head -n12 /home/git/gitlab/lib/support/logrotate/gitlab \
-			> /etc/logrotate.d/gitlab
-	fi
+	link_config "/etc/gitlab/gitlab-shell" "/home/git/gitlab-shell"
+	link_config "/etc/gitlab/logrotate/" "/etc/logrotate.d"
 }
 
 rebuild_conf() {
@@ -98,21 +105,6 @@ redis_conf() {
 	cat <<- EOF > /etc/gitlab/gitlab/resque.yml
 	production:
 	  url: redis://redis:6379
-	EOF
-}
-
-gitaly_config() {
-	mkdir -p /etc/gitlab/gitaly
-	cat <<- EOF > /etc/gitlab/gitaly/config.toml
-	socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
-	bin_dir = "/usr/local/bin"
-	[[storage]]
-	name = "default"
-	path = "/home/git/repositories"
-	[gitaly-ruby]
-	dir = "/home/git/gitaly-ruby"
-	[gitlab-shell]
-	dir = "/home/git/gitlab-shell"
 	EOF
 }
 
@@ -224,9 +216,8 @@ setup() {
 	create_db
 	postgres_conf
 	redis_conf
-	gitaly_config
 	nginx_config
-	create_init_conf
+	install_conf
 	setup_ssh
 	prepare_dirs
 	prepare_conf
@@ -267,16 +258,17 @@ start() {
 	if [ -f "/etc/gitlab/.version" ]; then
 		echo "Configuration found"
 		prepare_dirs
+		install_conf
 		prepare_conf
 		rebuild_conf
 		upgrade_check
-		enable_services
 	else
 		echo "No configuration found. Running setup.."
 		setup
 	fi
 	echo "$GITLAB_VERSION" > /etc/gitlab/.version
 	echo "Starting Gitlab.."
+	enable_services
 	s6-svscan /run/s6
 }
 
