@@ -272,7 +272,22 @@ start() {
 	s6-svscan /run/s6
 }
 
-case $1 in
+usage() {
+    cat <<- EOF
+	Usage: ${0##*/} [OPTION]
+	Functions to operate on GitLab instance
+	  start      start GitLab
+	  setup      setup GitLab (used by docker build use with care)
+	  upgrade    upgrade GitLab
+	  backup     backup GitLab (excluding secrets.yml, gitlab.yml)
+	  verify     verify Gitlab installation
+	  logrotate  rotate logfiles
+	  shell      enter interactive shell
+	  usage      this help message
+    EOF
+}
+
+case "${1:-usage}" in
 	start) start ;;
 	setup) setup ;;
 	upgrade) upgrade ;;
@@ -280,5 +295,8 @@ case $1 in
 	verify) verify ;;
 	logrotate) logrotate ;;
 	shell) /bin/sh ;;
-	*) echo "Command \"$1\" is unknown." ;;
+	usage) usage ;;
+	*) echo "Command \"$1\" is unknown."
+		usage
+		exit 1 ;;
 esac
