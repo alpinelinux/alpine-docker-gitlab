@@ -1,0 +1,17 @@
+--- ./lib/support/logrotate/gitlab
++++ ./lib/support/logrotate/gitlab
+@@ -8,13 +8,5 @@
+     compress
+     notifempty
+     copytruncate
+-}
+-
+-/home/git/gitlab-shell/gitlab-shell.log {
+-    daily
+-    missingok
+-    rotate 90
+-    compress
+-    notifempty
+-    copytruncate
++    maxsize 100M
+ }
