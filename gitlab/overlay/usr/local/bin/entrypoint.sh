@@ -47,6 +47,10 @@ install_conf() {
 		install -Dm644 /home/git/gitlab/lib/support/logrotate/gitlab \
 			/etc/gitlab/logrotate/gitlab
 	fi
+	if [ ! -f "/etc/gitlab/nginx/conf.d/default.conf" ]; then
+		install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
+			/etc/gitlab/nginx/conf.d/default.conf
+	fi
 }
 
 link_config() {
@@ -108,60 +112,6 @@ redis_conf() {
 	EOF
 }
 
-nginx_config() {
-	mkdir -p /etc/gitlab/nginx/conf.d
-	cat <<- EOF > /etc/gitlab/nginx/conf.d/default.conf
-
-	upstream gitlab-workhorse {
-	  server localhost:8181 fail_timeout=0;
-	}
-
-	map \$http_upgrade \$connection_upgrade_gitlab {
-	    default upgrade;
-	    ''      close;
-	}
-
-	server {
-	  listen 0.0.0.0:80 default_server;
-	  listen [::]:80 default_server;
-	  server_tokens off;
-	  access_log /dev/stdout;
-
-	  location / {
-	    client_max_body_size 0;
-	    gzip off;
-
-	    proxy_read_timeout      300;
-	    proxy_connect_timeout   300;
-	    proxy_redirect          off;
-	    proxy_http_version      1.1;
-
-	    proxy_set_header    Host                \$http_host;
-	    proxy_set_header    X-Real-IP           \$remote_addr;
-	    proxy_set_header    X-Forwarded-Ssl     on;
-	    proxy_set_header    X-Forwarded-For     \$proxy_add_x_forwarded_for;
-	    proxy_set_header    X-Forwarded-Proto   \$scheme;
-	    proxy_set_header    Upgrade             \$http_upgrade;
-	    proxy_set_header    Connection          \$connection_upgrade_gitlab;
-
-	    proxy_pass  http://gitlab-workhorse;
-	  }
-
-	  error_page 404 /404.html;
-	  error_page 422 /422.html;
-	  error_page 500 /500.html;
-	  error_page 502 /502.html;
-	  error_page 503 /503.html;
-
-	  location ~ ^/(404|422|500|502|503)\.html$ {
-	    root /var/www/gitlab/public;
-	    internal;
-	  }
-
-	}
-	EOF
-}
-
 setup_ssh() {
 	echo "Creating ssh keys..."
 	local keytype
@@ -216,7 +166,6 @@ setup() {
 	create_db
 	postgres_conf
 	redis_conf
-	nginx_config
 	install_conf
 	setup_ssh
 	prepare_dirs

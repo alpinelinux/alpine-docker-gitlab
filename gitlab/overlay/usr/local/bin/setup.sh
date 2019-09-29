@@ -86,6 +86,7 @@ patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
 patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
+patch -p0 -i /tmp/nginx/nginx-config.patch
 
 # temporary symlink the example configs to make setup happy
 for config in gitlab.yml.example database.yml.postgresql; do
