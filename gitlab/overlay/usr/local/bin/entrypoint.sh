@@ -8,6 +8,7 @@ BASECONF="
 	gitlab/secrets.yml.example
 	gitlab/unicorn.rb.example
 	gitlab/puma.rb.example
+	gitlab/resque.yml.example
 	gitlab/initializers/rack_attack.rb.example
 	gitaly/config.toml.example
 	gitlab-shell/config.yml.example
@@ -105,13 +106,6 @@ postgres_conf() {
 	EOF
 }
 
-redis_conf() {
-	cat <<- EOF > /etc/gitlab/gitlab/resque.yml
-	production:
-	  url: redis://redis:6379
-	EOF
-}
-
 setup_ssh() {
 	echo "Creating ssh keys..."
 	local keytype
@@ -165,7 +159,6 @@ setup() {
 	mkdir -p /etc/gitlab/gitlab
 	create_db
 	postgres_conf
-	redis_conf
 	install_conf
 	setup_ssh
 	prepare_dirs
