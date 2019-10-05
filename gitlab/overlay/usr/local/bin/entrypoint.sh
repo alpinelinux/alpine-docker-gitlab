@@ -226,7 +226,7 @@ usage() {
 	  logrotate  rotate logfiles
 	  shell      enter interactive shell
 	  usage      this help message
-    EOF
+	EOF
 }
 
 case "${1:-usage}" in
