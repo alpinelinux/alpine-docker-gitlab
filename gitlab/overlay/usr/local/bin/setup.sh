@@ -42,7 +42,10 @@ apk add --no-cache --virtual .gitlab-runtime \
 	gnupg \
 	logrotate \
 	tzdata \
-	graphicsmagick
+	graphicsmagick \
+	lua5.3 \
+	lua-mqtt-publish \
+	lua-cjson
 
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime \

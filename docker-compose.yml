@@ -11,6 +11,7 @@ services:
       - /srv/docker/compose/gitlab/builds:/home/git/gitlab/builds
       - /srv/docker/compose/gitlab/shared:/home/git/gitlab/shared
       - /srv/docker/compose/gitlab/uploads:/home/git/gitlab/public/uploads
+      - /srv/docker/compose/gitlab/plugins:/home/git/gitlab/plugins
     secrets:
       - pg_user
       - pg_admin
