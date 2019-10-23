@@ -99,6 +99,11 @@ redis_conf() {
 	production:
 	  url: redis://redis:6379
 	EOF
+
+	cat <<- EOF >/etc/gitlab/workhorse/config.toml
+	[redis]
+	URL = "tcp://redis:6378"
+	EOF
 }
 
 gitaly_config() {
@@ -221,6 +226,7 @@ verify() {
 
 setup() {
 	mkdir -p /etc/gitlab/gitlab
+	mkdir -p /etc/gitlab/workhorse
 	create_db
 	postgres_conf
 	redis_conf
