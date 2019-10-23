@@ -7,4 +7,6 @@ cd /home/git/gitlab
 su-exec git gitlab-workhorse -authBackend http://127.0.0.1:8080 \
 	-authSocket /home/git/gitlab/tmp/sockets/gitlab.socket \
 	-documentRoot /home/git/gitlab/public \
+	-apiCiLongPollingDuration \
+	-config /etc/gitlab/workhorse/config.toml \
 	-listenAddr 0.0.0.0:8181
