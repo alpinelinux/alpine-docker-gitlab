@@ -11,10 +11,9 @@ export MAKEFLAGS=-j$(nproc)
 get_source() {
 	local project=$1
 	local version=$2
-	local url=https://gitlab.com/gitlab-org/$project/-/archive/v$version/$project-v$version.tar.gz
-	mkdir -p /home/git/src
-	echo "Downloading: $1..."
-	wget -O- "$url" | tar zx -C /home/git/src
+	local destination=$3
+	git -c advice.detachedHead=false clone --branch "v$version" --depth=1 \
+		https://gitlab.com/gitlab-org/$project.git "$destination"
 }
 
 ####################################################################
@@ -74,8 +73,7 @@ passwd -u git
 #########
 ## gitlab
 #########
-get_source gitlab-foss "$GITLAB_VERSION"
-mv /home/git/src/gitlab-foss-v$GITLAB_VERSION "$gitlab_location"
+get_source gitlab-foss "$GITLAB_VERSION" "/home/git/gitlab"
 # redir log directory
 install -do git -g git /var/log/gitlab /var/log/s6
 rm -rf "$gitlab_location"/log
@@ -105,8 +103,7 @@ bundle install --without development test mysql aws kerberos
 ## gitlab-shell
 ###############
 GITLAB_SHELL_VERSION=$(cat "$gitlab_location"/GITLAB_SHELL_VERSION)
-get_source gitlab-shell $GITLAB_SHELL_VERSION
-mv /home/git/src/gitlab-shell-v$GITLAB_SHELL_VERSION /home/git/gitlab-shell
+get_source gitlab-shell $GITLAB_SHELL_VERSION "/home/git/gitlab-shell"
 cd /home/git/gitlab-shell
 # needed for setup
 ln -sf config.yml.example config.yml
@@ -121,16 +118,16 @@ ln -s /usr/local/bin/ruby /usr/bin/ruby
 ## gitlab-workhorse
 ###################
 GITLAB_WORKHORSE_VERSION=$(cat "$gitlab_location"/GITLAB_WORKHORSE_VERSION)
-get_source gitlab-workhorse $GITLAB_WORKHORSE_VERSION
-cd /home/git/src/gitlab-workhorse-v$GITLAB_WORKHORSE_VERSION
+get_source gitlab-workhorse $GITLAB_WORKHORSE_VERSION "/home/git/src/gitlab-workhorse"
+cd /home/git/src/gitlab-workhorse
 make && make install
 
 ###############
 ## gitlab-pages
 ###############
 GITLAB_PAGES_VERSION=$(cat "$gitlab_location"/GITLAB_PAGES_VERSION)
-get_source gitlab-pages $GITLAB_PAGES_VERSION
-cd /home/git/src/gitlab-pages-v$GITLAB_PAGES_VERSION
+get_source gitlab-pages $GITLAB_PAGES_VERSION "/home/git/src/gitlab-pages"
+cd /home/git/src/gitlab-pages
 make
 install ./gitlab-pages /usr/local/bin/gitlab-pages
 
