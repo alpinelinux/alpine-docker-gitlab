@@ -75,7 +75,6 @@ prepare_conf() {
 	link_config "/etc/gitlab/ssh" "/etc/ssh"
 	link_config "/etc/gitlab/nginx" "/etc/nginx"
 	link_config "/etc/gitlab/gitlab-shell" "/home/git/gitlab-shell"
-	link_config "/etc/gitlab/logrotate/" "/etc/logrotate.d"
 }
 
 rebuild_conf() {
@@ -137,6 +136,8 @@ prepare_dirs() {
 		/var/log/gitlab \
 		/home/git/gitlab/builds \
 		/home/git/gitlab/shared
+	# logrotate need to be owned by root
+	chown root:root /etc/gitlab/logrotate/gitlab
 	# correct permission of tmp directory
 	chmod 1777 /tmp
 }
@@ -185,7 +186,7 @@ backup() {
 
 logrotate() {
 	echo "Rotating log files.."
-	/usr/sbin/logrotate /etc/logrotate.d/gitlab
+	/usr/sbin/logrotate /etc/gitlab/logrotate/gitlab
 }
 
 start() {
