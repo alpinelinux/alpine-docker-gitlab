@@ -55,11 +55,13 @@ Modify a configuration file and restart the containers.
 
 The entrypoint command has some additional function. To show them run:
 
-```bash```
+```bash
 docker-compose exec gitlab entrypoint.sh help
+```
 
 ### Backups
 
-To exclude some items from the backup you can use `$GITLAB_BACKUP_SKIP` see:
+To exclude some items from the backup you can set the environment variable
+`$GITLAB_BACKUP_SKIP` which will set `SKIP=` see:
 https://docs.gitlab.com/ee/raketasks/backup_restore.html
 
