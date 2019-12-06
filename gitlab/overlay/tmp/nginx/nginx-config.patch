@@ -10,7 +10,7 @@
  }
  
  map $http_upgrade $connection_upgrade_gitlab {
-@@ -68,21 +69,27 @@ server {
+@@ -68,21 +69,26 @@ server {
    ## the ip address of the server (http://x.x.x.x/)n 0.0.0.0:80 default_server;
    listen 0.0.0.0:80 default_server;
    listen [::]:80 default_server;
@@ -25,14 +25,14 @@
    ## Real IP Module Config
    ## http://nginx.org/en/docs/http/ngx_http_realip_module.html
 -  real_ip_header X-Real-IP; ## X-Real-IP or X-Forwarded-For or proxy_protocol
+-  real_ip_recursive off;    ## If you enable 'on'
 +  real_ip_header X-Forwarded-For; ## X-Real-IP or X-Forwarded-For or proxy_protocol
-   real_ip_recursive off;    ## If you enable 'on'
++  real_ip_recursive on;    ## If you enable 'on'
    ## If you have a trusted IP address, uncomment it and set it
    # set_real_ip_from YOUR_TRUSTED_ADDRESS; ## Replace this with something like 192.168.1.0/24
 +  set_real_ip_from  10.0.0.0/8;
 +  set_real_ip_from  172.16.0.0/12;
 +  set_real_ip_from  192.168.0.0/16;
-+  real_ip_recursive on;
  
    ## Individual nginx logs for this GitLab vhost
 -  access_log  /var/log/nginx/gitlab_access.log gitlab_access;
