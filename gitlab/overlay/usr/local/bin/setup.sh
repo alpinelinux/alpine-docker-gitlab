@@ -192,16 +192,9 @@ rm -rf /home/git/gitlab/node_modules \
 # cleanup gems
 gemdir=/usr/local/bundle
 rm -rf "$gemdir"/cache
-find "$gemdir"/extensions -name mkmf.log -delete -o -name gem_make.out -delete
-find "$gemdir"/gems -name "*.o" -delete -o \( -iname "*.so" ! -iname "libsass.so" \) -delete
-for cruft in test spec example licenses samples man ports doc docs CHANGELOG COPYING; do
+find "$gemdir" -type f \( -name "*.h" -o -name "*.c" -o -name "*.o" -o -name "*.log" -o -name "*.out" \) -delete
+find "$gemdir"/gems/*/ext -type f ! -name "*.so" ! -name "*.rb" -delete
+for cruft in test spec example licenses samples man ports doc docs CHANGELOG COPYING src; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
-# need to keep libsass
-for dir in "$gemdir"/gems/*/ext; do
-	case $dir in
-		*sassc*) continue ;;
-		*) rm -rf "$dir" ;;
-	esac
-done
