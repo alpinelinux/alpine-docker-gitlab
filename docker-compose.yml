@@ -3,47 +3,40 @@ services:
   gitlab:
     image: alpinelinux/alpine-docker-gitlab
     build: gitlab
-    container_name: gitlab-alpine
+    hostname: ${GITLAB_HOSTNAME}
+    restart: always
     volumes:
-      - /srv/docker/compose/gitlab/repositories:/home/git/repositories
-      - /srv/docker/compose/gitlab/config:/etc/gitlab
-      - /srv/docker/compose/gitlab/log:/var/log
-      - /srv/docker/compose/gitlab/builds:/home/git/gitlab/builds
-      - /srv/docker/compose/gitlab/shared:/home/git/gitlab/shared
-      - /srv/docker/compose/gitlab/uploads:/home/git/gitlab/public/uploads
-      - /srv/docker/compose/gitlab/plugins:/home/git/gitlab/plugins
-    secrets:
-      - pg_user
-      - pg_admin
-      - root_pass
+      - /srv/docker/gitlab/repositories:/home/git/repositories
+      - /srv/docker/gitlab/config:/etc/gitlab
+      - /srv/docker/gitlab/log:/var/log
+      - /srv/docker/gitlab/builds:/home/git/gitlab/builds
+      - /srv/docker/gitlab/shared:/home/git/gitlab/shared
+      - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
+      - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
     ports:
-      - "22"
-      - "80"
+      - "2222:22"
+      - "8080:80"
     depends_on:
       - postgres
       - redis
     environment:
-      # https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
-      - RUBYOPT=--disable-gems
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - GITLAB_ROOT_PASSWORD
+      - GITLAB_BACKUP_SKIP
+      - GITLAB_USE_PUMA
   postgres:
-    image: postgres:alpine
-    container_name: gitlab-postgres
+    image: postgres:11-alpine
+    restart: always
     volumes:
-      - /srv/docker/compose/gitlab/postgres:/var/lib/postgresql/data
-    secrets:
-      - pg_admin
+      - /srv/docker/gitlab/postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_admin
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
   redis:
-    image: redis:alpine
-    container_name: gitlab-redis
+    image: redis:5-alpine
+    restart: always
     volumes:
-      - /srv/docker/compose/gitlab/redis:/data
+      - /srv/docker/gitlab/redis:/data
     entrypoint: redis-server --appendonly yes
-secrets:
-  pg_admin:
-    file: /srv/docker/compose/gitlab/secrets/pg_admin.txt
-  pg_user:
-    file: /srv/docker/compose/gitlab/secrets/pg_user.txt
-  root_pass:
-    file: /srv/docker/compose/gitlab/secrets/root_pass.txt
+

@@ -2,6 +2,10 @@
 
 set -eu
 
+# https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
+export RUBYOPT="${RUBYOPT:---disable-gems}"
+export RAILS_ENV="${RAILS_ENV:-production}"
+
 # base config files found in gitlab/config dir
 BASECONF="
 	gitlab/gitlab.yml.example
@@ -15,21 +19,12 @@ BASECONF="
 "
 
 create_db() {
-	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
-	export PGPASSWORD=$(cat /run/secrets/pg_admin 2>/dev/null)
+	export PGPASSWORD=$POSTGRES_PASSWORD
 	echo "Connecting to postgres.."
 	while ! pg_isready -qh postgres; do sleep 1; done
-	echo "Connection succesful, creating database.."
-	if psql -lqt -h postgres -U postgres -d template1 | cut -d \| -f 1 | grep -qw gitlabhq_production; then
-		echo "Database exists already."
-	else
-		psql -h postgres -U postgres -d template1 \
-			-c "CREATE USER gitlab WITH CREATEDB ENCRYPTED PASSWORD '$pg_user';"
-		psql -h postgres -U postgres -d template1 \
-			-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-		psql -h postgres -U postgres -d template1 \
-			-c "CREATE DATABASE gitlabhq_production OWNER gitlab;"
-	fi
+	echo "Connection succesful"
+	psql -h postgres -U $POSTGRES_USER -d $POSTGRES_USER \
+		-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 }
 
 # install config if not yet exist
@@ -64,7 +59,7 @@ link_config() {
 
 enable_services() {
 	local web=unicorn
-	case ${USE_PUMA:-false} in
+	case ${GITLAB_USE_PUMA:-false} in
 		[Yy]|[Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|1) web=puma;;
 	esac
 	rm -rf /run/s6 && mkdir -p /run/s6
@@ -88,20 +83,19 @@ rebuild_conf() {
 		echo "Rebuild gitlab-shell configuration files.."
 		cd /home/git/gitlab
 		force=yes su-exec git \
-			bundle exec rake gitlab:shell:setup RAILS_ENV=production
+			bundle exec rake gitlab:shell:setup
 	fi
 }
 
 postgres_conf() {
-	local pg_user="$(cat /run/secrets/pg_user 2>/dev/null)"
 	cat <<- EOF > /etc/gitlab/gitlab/database.yml
 	production:
 	  adapter: postgresql
 	  encoding: unicode
-	  database: gitlabhq_production
+	  database: $POSTGRES_USER
 	  pool: 10
-	  username: gitlab
-	  password: "$pg_user"
+	  username: $POSTGRES_USER
+	  password: "$POSTGRES_PASSWORD"
 	  host: postgres
 	EOF
 }
@@ -119,11 +113,9 @@ setup_ssh() {
 }
 
 setup_gitlab() {
-	local root_pass="$(cat /run/secrets/root_pass 2>/dev/null)"
 	echo "Setting up gitlab..."
 	cd /home/git/gitlab
-	su-exec git bundle exec rake gitlab:setup RAILS_ENV=production force=yes \
-		GITLAB_ROOT_PASSWORD="$root_pass"
+	su-exec git bundle exec rake gitlab:setup force=yes
 }
 
 prepare_dirs() {
@@ -152,7 +144,7 @@ prepare_dirs() {
 verify() {
 	echo "Verifying gitlab installation..."
 	cd /home/git/gitlab
-	su-exec git bundle exec rake gitlab:env:info RAILS_ENV=production
+	su-exec git bundle exec rake gitlab:env:info
 }
 
 setup() {
@@ -170,11 +162,11 @@ setup() {
 upgrade() {
 	cd /home/git/gitlab
 	echo "Migrating database.."
-	su-exec git bundle exec rake db:migrate RAILS_ENV=production
+	su-exec git bundle exec rake db:migrate
 	echo "Clearing caches.."
-	su-exec git bundle exec rake cache:clear RAILS_ENV=production
+	su-exec git bundle exec rake cache:clear
 	echo "Checking gitlab install.."
-	su-exec git bundle exec rake gitlab:check RAILS_ENV=production
+	su-exec git bundle exec rake gitlab:check
 }
 
 upgrade_check() {
@@ -188,7 +180,7 @@ upgrade_check() {
 backup() {
 	cd /home/git/gitlab
 	echo "Creating GitLab backup.."
-	su-exec git bundle exec rake gitlab:backup:create RAILS_ENV=production
+	su-exec git bundle exec rake gitlab:backup:create SKIP=$GITLAB_BACKUP_SKIP
 }
 
 logrotate() {
@@ -225,11 +217,11 @@ usage() {
 	  verify     verify Gitlab installation
 	  logrotate  rotate logfiles
 	  shell      enter interactive shell
-	  usage      this help message
+	  help       this help message
 	EOF
 }
 
-case "${1:-usage}" in
+case "${1:-help}" in
 	start) start ;;
 	setup) setup ;;
 	upgrade) upgrade ;;
@@ -237,7 +229,7 @@ case "${1:-usage}" in
 	verify) verify ;;
 	logrotate) logrotate ;;
 	shell) /bin/sh ;;
-	usage) usage ;;
+	help) usage ;;
 	*) echo "Command \"$1\" is unknown."
 		usage
 		exit 1 ;;

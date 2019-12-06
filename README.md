@@ -13,18 +13,14 @@ Alpine Linux based docker image and tools for Gitlab.
 
 ## Setup
 
-To get Gitlab up and running you need to first generate 3 secrets in the secrets
-directory.
+To get Gitlab up and running you need to first generate 2 secrets and provide
+then as environment variables. Most suitable is via [.env](https://docs.docker.com/compose/env-file/)
+file in alongside your docker-compose file. Mandatory variables are:
 
-- PostgreSQL admin (pg_admin)
-- PostgreSQL user (pg_user)
-- Gitlab root user (root_pass)
-
-Generate secrets used by gitlab and related services
-
-```bash
-sudo /contrib/mksecrets.sh
-```
+ - GITLAB_HOSTNAME
+ - GITLAB_ROOT_PASSWORD
+ - POSTGRES_PASSWORD
+ - POSTGRES_USER
 
 After which you need to create and bring up the containers
 
@@ -40,14 +36,30 @@ Visit your Gitlab instance at http://dockerhost
 
 ## Configuration
 
-The default configuration is very limited. To make changes:
+The default configuration is very limited. The custom configuration is stored
+in `/etc/gitlab` in the container and will be copied to the config directory
+inside `/home/git/gitlab/config`. Any new configuration added will be
+automatically copied to the container. Any existing configuration will not
+be overwritten.
+
+Location of the configuration on the host depends on the volume settings. the
+default locations is:
 
 ```bash 
-cd /srv/docker/compose/gitlab/config
+cd /srv/docker/gitlab/config
 ```
 
 Modify a configuration file and restart the containers.
 
-P.S. every restart the container will copy sample configs to the config
-directory overwriting other sample configs if they already exist.
+## Additional functions
+
+The entrypoint command has some additional function. To show them run:
+
+```bash```
+docker-compose exec gitlab entrypoint.sh help
+
+### Backups
+
+To exclude some items from the backup you can use `$GITLAB_BACKUP_SKIP` see:
+https://docs.gitlab.com/ee/raketasks/backup_restore.html
 
