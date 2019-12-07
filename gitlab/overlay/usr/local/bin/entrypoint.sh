@@ -5,6 +5,7 @@ set -eu
 # https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
 export RUBYOPT="${RUBYOPT:---disable-gems}"
 export RAILS_ENV="${RAILS_ENV:-production}"
+: "${POSTGRES_DB:=$POSTGRES_USER}"
 
 # base config files found in gitlab/config dir
 BASECONF="
@@ -23,7 +24,7 @@ create_db() {
 	echo "Connecting to postgres.."
 	while ! pg_isready -qh postgres; do sleep 1; done
 	echo "Connection succesful"
-	psql -h postgres -U $POSTGRES_USER -d $POSTGRES_USER \
+	psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB \
 		-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 }
 
@@ -91,7 +92,7 @@ postgres_conf() {
 	production:
 	  adapter: postgresql
 	  encoding: unicode
-	  database: $POSTGRES_USER
+	  database: $POSTGRES_DB
 	  pool: 10
 	  username: $POSTGRES_USER
 	  password: "$POSTGRES_PASSWORD"
