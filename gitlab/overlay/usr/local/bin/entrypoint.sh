@@ -193,8 +193,8 @@ logrotate() {
 start() {
 	if [ -f "/etc/gitlab/.version" ]; then
 		echo "Configuration found"
-		prepare_dirs
 		install_conf
+		prepare_dirs
 		prepare_conf
 		rebuild_conf
 		upgrade_check
