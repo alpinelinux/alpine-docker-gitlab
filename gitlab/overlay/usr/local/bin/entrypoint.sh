@@ -190,6 +190,11 @@ logrotate() {
 	/usr/sbin/logrotate /etc/gitlab/logrotate/gitlab
 }
 
+cleanup() {
+	echo "Removing older CI build logs.."
+	find /home/git/gitlab/shared/artifacts -type f -mtime +30 -name "*.log" -delete
+}
+
 start() {
 	if [ -f "/etc/gitlab/.version" ]; then
 		echo "Configuration found"
@@ -218,6 +223,7 @@ usage() {
 	  backup     backup GitLab (excluding secrets.yml, gitlab.yml)
 	  verify     verify Gitlab installation
 	  logrotate  rotate logfiles
+	  cleanup    remove older CI log files
 	  shell      enter interactive shell
 	  help       this help message
 	EOF
@@ -230,6 +236,7 @@ case "${1:-help}" in
 	backup) backup ;;
 	verify) verify ;;
 	logrotate) logrotate ;;
+	cleanup) cleanup ;;
 	shell) /bin/sh ;;
 	help) usage ;;
 	*) echo "Command \"$1\" is unknown."
