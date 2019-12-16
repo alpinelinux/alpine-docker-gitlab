@@ -100,6 +100,14 @@ postgres_conf() {
 	EOF
 }
 
+workhorse_conf() {
+	mkdir -p /etc/gitlab/workhorse
+	cat <<- EOF >/etc/gitlab/workhorse/config.toml
+	[redis]
+	URL = "tcp://redis:6379"
+	EOF
+}
+
 setup_ssh() {
 	echo "Creating ssh keys..."
 	local keytype
