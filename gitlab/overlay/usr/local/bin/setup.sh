@@ -115,7 +115,7 @@ ln -sf config.yml.example config.yml
 patch -p0 -i /tmp/gitlab-shell/gitlab-shell-changes.patch
 install -Dm644 config.yml.example \
 	"$gitlab_location"/config/gitlab-shell/config.yml.example
-./bin/compile && ./bin/install
+make setup
 # gitlab-shell will not set PATH
 ln -s /usr/local/bin/ruby /usr/bin/ruby
 
