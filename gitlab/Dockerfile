@@ -1,6 +1,6 @@
 FROM ruby:2.6-alpine
 
-ENV GITLAB_VERSION=12.6.4
+ENV GITLAB_VERSION=12.6.6
 ARG GRPC_VERSION=1.24.3
 
 COPY gitlab/overlay/ /
