@@ -2,8 +2,8 @@ version: '3.5'
 services:
   gitlab:
     image: alpinelinux/alpine-docker-gitlab
-    build: gitlab
-    hostname: ${GITLAB_HOSTNAME}
+    build: .
+    hostname: ${GITLAB_HOSTNAME:-gitlab}
     restart: always
     volumes:
       - /srv/docker/gitlab/repositories:/home/git/repositories

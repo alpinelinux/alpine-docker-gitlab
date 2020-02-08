@@ -15,7 +15,6 @@ steps:
       password:
         from_secret: docker_pass
       repo: alpinelinux/alpine-docker-gitlab
-      dockerfile: gitlab/Dockerfile
       tags:
         - ${DRONE_COMMIT_BRANCH}
 ...
