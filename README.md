@@ -24,7 +24,11 @@ file in alongside your docker-compose file. Mandatory variables are:
 
 After which you need to create and bring up the containers
 
-```docker-compose up```
+```docker-compose up -d```
+
+To view the log run
+
+```docker-compose logs -f```
 
 Watch the output on console for errors. It will take some time to generate the db
 and update permissions. Ones its done without errors you can Ctrl+c to stop the
@@ -56,7 +60,7 @@ Modify a configuration file and restart the containers.
 The entrypoint command has some additional function. To show them run:
 
 ```bash
-docker-compose exec gitlab entrypoint.sh help
+docker-compose exec gitlab gitlab help
 ```
 
 ### Backups
