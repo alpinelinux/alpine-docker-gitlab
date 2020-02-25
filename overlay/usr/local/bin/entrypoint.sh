@@ -193,6 +193,17 @@ backup() {
 	su-exec git bundle exec rake gitlab:backup:create SKIP=$GITLAB_BACKUP_SKIP
 }
 
+dump_db() {
+	cd /home/git/gitlab
+	echo "Dumping GitLab database.."
+	local today="$(date +%Y-%m-%d)"
+	mkdir -p /home/git/backup
+	PGPASSWORD="$POSTGRES_PASSWORD" pg_dump --create --format c \
+		--host=postgres --user="$POSTGRES_USER" --dbname="$POSTGRES_DB" > \
+		/home/git/backup/"$POSTGRES_DB-$today".db
+	echo "Finished dumping: $POSTGRES_DB-$today.db"
+}
+
 logrotate() {
 	echo "Rotating log files.."
 	/usr/sbin/logrotate /etc/gitlab/logrotate/gitlab
@@ -229,6 +240,7 @@ usage() {
 	  setup      setup GitLab (used by docker build use with care)
 	  upgrade    upgrade GitLab
 	  backup     backup GitLab (excluding secrets.yml, gitlab.yml)
+	  dump       dump database in /home/git/backup
 	  verify     verify Gitlab installation
 	  logrotate  rotate logfiles
 	  cleanup    remove older CI log files
@@ -242,6 +254,7 @@ case "${1:-help}" in
 	setup) setup ;;
 	upgrade) upgrade ;;
 	backup) backup ;;
+	dump) dump_db ;;
 	verify) verify ;;
 	logrotate) logrotate ;;
 	cleanup) cleanup ;;
