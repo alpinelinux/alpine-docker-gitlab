@@ -98,9 +98,6 @@ for config in gitlab.yml.example database.yml.postgresql; do
 	ln -sf $config "$gitlab_location"/config/${config%.*}
 done
 
-# gprc is a nightmare so we build and install our own
-sh /tmp/grpc/build.sh
-
 # install gems to system so they are shared with gitaly
 cd "$gitlab_location"
 bundle install --without development test mysql aws kerberos
