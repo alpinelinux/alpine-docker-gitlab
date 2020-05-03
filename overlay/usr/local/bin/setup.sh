@@ -63,7 +63,8 @@ apk add --no-cache --virtual .gitlab-buildtime \
 	re2-dev \
 	c-ares-dev \
 	yarn \
-	go
+	go \
+	bash
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /bin/sh git
