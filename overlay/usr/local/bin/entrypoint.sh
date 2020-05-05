@@ -162,6 +162,7 @@ setup() {
 	create_db
 	postgres_conf
 	install_conf
+	workhorse_conf
 	setup_ssh
 	prepare_dirs
 	prepare_conf
