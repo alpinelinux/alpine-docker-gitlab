@@ -1,7 +1,6 @@
 FROM ruby:2.6-alpine
 
 ENV GITLAB_VERSION=12.10.4
-ARG GRPC_VERSION=1.24.3
 
 COPY overlay /
 
