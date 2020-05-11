@@ -6,6 +6,7 @@ set -eu
 export RUBYOPT="${RUBYOPT:---disable-gems}"
 export RAILS_ENV="${RAILS_ENV:-production}"
 : "${POSTGRES_DB:=$POSTGRES_USER}"
+: "${GITLAB_SERVICES:=gitaly nginx sidekiq sshd workhorse}"
 
 # base config files found in gitlab/config dir
 BASECONF="
@@ -64,7 +65,7 @@ enable_services() {
 		[Yy]|[Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|1) web=puma;;
 	esac
 	rm -rf /run/s6 && mkdir -p /run/s6
-	for srv in gitaly nginx sidekiq sshd workhorse; do
+	for srv in $GITLAB_SERVICES; do
 		ln -sf /etc/s6/$srv /run/s6/$srv
 	done
 	ln -sf /etc/s6/$web /run/s6/web
