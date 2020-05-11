@@ -1,0 +1,6 @@
+#!/bin/sh
+s6-svwait -t 5000 -u /run/s6/sidekiq
+echo "Starting mailroom.."
+exec 2>&1
+cd /home/git/gitlab
+bundle exec mail_room --log-exit-as json -q -c /home/git/gitlab/config/mail_room.yml

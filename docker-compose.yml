@@ -25,6 +25,7 @@ services:
       - GITLAB_ROOT_PASSWORD
       - GITLAB_BACKUP_SKIP
       - GITLAB_USE_PUMA
+      - GITLAB_SERVICES
   postgres:
     image: postgres:11-alpine
     restart: always
