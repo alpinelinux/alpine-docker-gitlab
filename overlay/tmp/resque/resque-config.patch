@@ -6,24 +6,19 @@
  #
 -development:
 -  url: redis://localhost:6379
-+# development:
-+#   url: redis://localhost:6379
++#development:
++#  url: redis://localhost:6379
    # sentinels:
    #   -
    #     host: localhost
-@@ -10,11 +10,12 @@ development:
+@@ -10,8 +10,8 @@ development:
    #   -
-   #     host: slave2
+   #     host: replica2
    #     port: 26381 # point to sentinel, not to redis port
 -test:
 -  url: redis://localhost:6379
-+# test:
-+#   url: redis://localhost:6379
++#test:
++#  url: redis://localhost:6379
  production:
    # Redis (single instance)
--  url: unix:/var/run/redis/redis.sock
-+  # url: unix:/var/run/redis/redis.sock
-+  url: redis://redis:6379
-   ##
-   # Redis + Sentinel (for HA)
-   #
+   url: unix:/var/run/redis/redis.sock
