@@ -14,5 +14,5 @@ for patch in ../*.patch; do
 done
 
 gem build google-protobuf.gemspec
-gem install --ignore-dependencies --verbose google-protobuf-"$PROTOBUF_VERSION".gem
+gem install --verbose google-protobuf-"$PROTOBUF_VERSION".gem
 
