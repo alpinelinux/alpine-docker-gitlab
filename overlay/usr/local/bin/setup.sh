@@ -98,6 +98,9 @@ for config in gitlab.yml.example database.yml.postgresql; do
 	ln -sf $config "$gitlab_location"/config/${config%.*}
 done
 
+# https://github.com/protocolbuffers/protobuf/pull/6848
+sh /tmp/protobuf/build.sh
+
 # install gems to system so they are shared with gitaly
 cd "$gitlab_location"
 bundle install --without development test mysql aws kerberos
