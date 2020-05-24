@@ -1,8 +1,8 @@
 This fixes problem with missing symbol __va_copy, see
 https://github.com/protocolbuffers/protobuf/pull/6848.
 
---- ./ext/google/protobuf_c/extconf.rb
-+++ ./ext/google/protobuf_c/extconf.rb
+--- ./ruby/ext/google/protobuf_c/extconf.rb
++++ ./ruby/ext/google/protobuf_c/extconf.rb
 @@ -3,9 +3,9 @@
  require 'mkmf'
  
