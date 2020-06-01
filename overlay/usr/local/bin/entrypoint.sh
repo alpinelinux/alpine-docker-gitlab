@@ -185,6 +185,7 @@ upgrade_check() {
 	local current_version=$(cat /etc/gitlab/.version)
 	if [ "$current_version" != "$GITLAB_VERSION" ]; then
 		echo "GitLab version change detected.."
+		dump_db
 		upgrade
 	fi
 }
