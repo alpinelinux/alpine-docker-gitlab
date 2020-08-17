@@ -4,7 +4,7 @@
  # only listen on a Unix domain socket. For Unix domain sockets use
  # "http+unix://<urlquoted-path-to-socket>", e.g.
  # "http+unix://%2Fpath%2Fto%2Fsocket"
--gitlab_url: "http://localhost:8080"
+-gitlab_url: "http+unix://%2Fhome%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab-workhorse.socket"
 +gitlab_url: "http+unix://%2Fhome%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab.socket"
  
  # See installation.md#using-https for additional HTTPS configuration details.
