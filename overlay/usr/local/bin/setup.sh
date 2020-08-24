@@ -3,6 +3,7 @@
 set -eu
 
 gitlab_location=/home/git/gitlab
+: ${PROTOBUF_VERSION:=}
 
 export BUNDLE_JOBS=$(nproc)
 export BUNDLE_FORCE_RUBY_PLATFORM=1
@@ -99,7 +100,10 @@ for config in gitlab.yml.example database.yml.postgresql; do
 done
 
 # https://github.com/protocolbuffers/protobuf/pull/6848
-sh /tmp/protobuf/build.sh
+if [ -n "$PROTOBUF_VERSION" ]; then
+	echo "Building local protobuf version: $PROTOBUF_VERSION"
+	sh /tmp/protobuf/build.sh
+fi
 
 # install gems to system so they are shared with gitaly
 cd "$gitlab_location"
