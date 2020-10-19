@@ -1,12 +1,13 @@
 --- ./lib/support/logrotate/gitlab
 +++ ./lib/support/logrotate/gitlab
-@@ -8,13 +8,5 @@
+@@ -8,14 +8,5 @@
      compress
      notifempty
      copytruncate
 -}
 -
 -/home/git/gitlab-shell/gitlab-shell.log {
+-    su git git
 -    daily
 -    missingok
 -    rotate 90
