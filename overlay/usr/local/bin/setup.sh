@@ -105,6 +105,10 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 	sh /tmp/protobuf/build.sh
 fi
 
+# https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
+cd "$gitlab_location"
+bundle config build.google-protobuf --with-cflags=-D__va_copy=va_copy
+
 # install gems to system so they are shared with gitaly
 cd "$gitlab_location"
 bundle install --without development test mysql aws kerberos
