@@ -1,0 +1,9 @@
+stages:
+  - build
+
+build-gitlab:
+  stage: build
+  image: alpinelinux/docker-compose
+  script:
+    - docker-compose build
+  tags: [ci-docker-image, x86_64]
