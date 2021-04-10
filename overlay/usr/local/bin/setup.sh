@@ -16,7 +16,7 @@ get_source() {
 	# version can be a tag or sha
 	[ "${#version}" != 40 ] && version="v$version"
 	mkdir -p "$destination" && cd "$destination"
-	git init
+	git -c init.defaultBranch=master init
 	git remote add origin https://gitlab.com/gitlab-org/$project.git
 	git fetch --depth 1 origin $version
 	git -c advice.detachedHead=false checkout FETCH_HEAD
