@@ -131,9 +131,9 @@ ln -s /usr/local/bin/ruby /usr/bin/ruby
 ###################
 ## gitlab-workhorse
 ###################
-GITLAB_WORKHORSE_VERSION=$(cat "$gitlab_location"/GITLAB_WORKHORSE_VERSION)
-get_source gitlab-workhorse "$GITLAB_WORKHORSE_VERSION" "/home/git/src/gitlab-workhorse"
-cd /home/git/src/gitlab-workhorse
+# GITLAB_WORKHORSE_VERSION=$(cat "$gitlab_location"/GITLAB_WORKHORSE_VERSION)
+# get_source gitlab-workhorse "$GITLAB_WORKHORSE_VERSION" "/home/git/src/gitlab-workhorse"
+cd "$gitlab_location"/workhorse
 make && make install
 
 ###############
