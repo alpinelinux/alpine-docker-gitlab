@@ -1,6 +1,6 @@
 FROM ruby:2.7-alpine3.13
 
-ENV GITLAB_VERSION=13.9.6
+ENV GITLAB_VERSION=13.9.7
 
 COPY overlay /
 
