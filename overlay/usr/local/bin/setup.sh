@@ -5,8 +5,7 @@ set -eu
 gitlab_location=/home/git/gitlab
 : ${PROTOBUF_VERSION:=}
 
-export BUNDLE_JOBS=$(nproc)
-export BUNDLE_FORCE_RUBY_PLATFORM=true
+# export so gitaly makefile does not set deployment to true
 export BUNDLE_DEPLOYMENT=false
 export MAKEFLAGS=-j$(nproc)
 
@@ -78,9 +77,20 @@ passwd -u git
 # 7. Redis
 # we use a seperate container for redis
 
+echo "### Set system wide bundler settings ###"
+bundle config set --global jobs $(nproc)
+bundle config set --global silence_root_warning true
+bundle config set --global force_ruby_platform true
+# we do not use deployment and share gems via system
+bundle config set --global deployment false
+bundle config set --global without development test mysql aws kerberos
+# https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
+bundle config set --global build.google-protobuf --with-cflags=-D__va_copy=va_copy
+
 #########
 ## gitlab
 #########
+echo "### Installing GitLab.. ###"
 get_source gitlab-foss "$GITLAB_VERSION" "/home/git/gitlab"
 # redir log directory
 install -do git -g git /var/log/gitlab /var/log/s6
@@ -106,17 +116,13 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 	sh /tmp/protobuf/build.sh
 fi
 
-# https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
 cd "$gitlab_location"
-bundle config build.google-protobuf --with-cflags=-D__va_copy=va_copy
-
-# install gems to system so they are shared with gitaly
-cd "$gitlab_location"
-bundle install --without development test mysql aws kerberos
+bundle install
 
 ###############
 ## gitlab-shell
 ###############
+echo "### Installing GitLab Shell.. ###"
 GITLAB_SHELL_VERSION=$(cat "$gitlab_location"/GITLAB_SHELL_VERSION)
 get_source gitlab-shell "$GITLAB_SHELL_VERSION" "/home/git/gitlab-shell"
 cd /home/git/gitlab-shell
@@ -132,6 +138,7 @@ ln -s /usr/local/bin/ruby /usr/bin/ruby
 ###################
 ## gitlab-workhorse
 ###################
+echo "### Installing GitLab Workhorse.. ###"
 # GITLAB_WORKHORSE_VERSION=$(cat "$gitlab_location"/GITLAB_WORKHORSE_VERSION)
 # get_source gitlab-workhorse "$GITLAB_WORKHORSE_VERSION" "/home/git/src/gitlab-workhorse"
 cd "$gitlab_location"/workhorse
@@ -140,6 +147,7 @@ make && make install
 ###############
 ## gitlab-pages
 ###############
+echo "### Installing GitLab Pages.. ###"
 GITLAB_PAGES_VERSION=$(cat "$gitlab_location"/GITLAB_PAGES_VERSION)
 get_source gitlab-pages "$GITLAB_PAGES_VERSION" "/home/git/src/gitlab-pages"
 cd /home/git/src/gitlab-pages
@@ -150,23 +158,24 @@ install ./gitlab-pages /usr/local/bin/gitlab-pages
 ## gitaly
 ## will also install ruby gems into system like gitlab
 #########
+echo "### Installing Gitaly.. ###"
 GITALY_SERVER_VERSION=$(cat "$gitlab_location"/GITALY_SERVER_VERSION)
 get_source gitaly "$GITALY_SERVER_VERSION" "/home/git/src/gitaly"
 cd /home/git/src/gitaly
 patch -p0 -i /tmp/gitaly/gitaly-set-defaults.patch
-make install BUNDLE_FLAGS=--system
+make install
 mv ruby /home/git/gitaly-ruby
 install -Dm644 config.toml.example \
 	"$gitlab_location"/config/gitaly/config.toml.example
 
+echo "### Compiling gettex.. ###"
+cd "$gitlab_location"
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
 export NODE_OPTIONS="--max_old_space_size=4096"
-
-# compile gettext
-cd "$gitlab_location"
 bundle exec rake gettext:compile RAILS_ENV=production
 
 # compile assets (this is terrible slow)
+echo "### Compiling GitLab assets.. ###"
 cd "$gitlab_location"
 yarn install --production --pure-lockfile
 bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
