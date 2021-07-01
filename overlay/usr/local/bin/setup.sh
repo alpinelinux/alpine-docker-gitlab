@@ -6,7 +6,8 @@ gitlab_location=/home/git/gitlab
 : ${PROTOBUF_VERSION:=}
 
 export BUNDLE_JOBS=$(nproc)
-export BUNDLE_FORCE_RUBY_PLATFORM=1
+export BUNDLE_FORCE_RUBY_PLATFORM=true
+export BUNDLE_DEPLOYMENT=false
 export MAKEFLAGS=-j$(nproc)
 
 get_source() {
