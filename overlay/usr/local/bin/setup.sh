@@ -36,7 +36,9 @@ get_source() {
 apk -U upgrade --no-cache -a
 # add runtime dependencies
 apk add --no-cache --virtual .gitlab-runtime \
-	git \
+	pcre2 \
+	libcurl \
+	zlib \
 	su-exec \
 	nodejs \
 	postgresql-client \
@@ -54,6 +56,10 @@ apk add --no-cache --virtual .gitlab-runtime \
 
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime \
+	git \
+	zlib-dev \
+	curl-dev \
+	pcre2-dev \
 	build-base \
 	cmake \
 	libxml2-dev \
@@ -164,6 +170,18 @@ get_source gitaly "$GITALY_SERVER_VERSION" "/home/git/src/gitaly"
 cd /home/git/src/gitaly
 patch -p0 -i /tmp/gitaly/gitaly-set-defaults.patch
 make install
+cat >>config.mak <<-EOF
+	GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
+    GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
+    GIT_BUILD_OPTIONS += NO_EXPAT=YesPlease
+    GIT_BUILD_OPTIONS += NO_TCLTK=YesPlease
+    GIT_BUILD_OPTIONS += NO_PERL=YesPlease
+    GIT_BUILD_OPTIONS += USE_LIBPCRE2=YesPlease
+    GIT_BUILD_OTPIONS += NO_SYS_POLL_H=1
+    GIT_BUILD_OPTIONS += ICONV_OMITS_BOM=Yes
+	GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
+EOF
+make git GIT_PREFIX=/usr/local
 mv ruby /home/git/gitaly-ruby
 install -Dm644 config.toml.example \
 	"$gitlab_location"/config/gitaly/config.toml.example
