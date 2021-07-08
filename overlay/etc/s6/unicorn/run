@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo "Starting unicorn.."
-exec 2>&1
-cd /home/git/gitlab
-rm -f /home/git/gitlab/tmp/pids/unicorn.pid
-su-exec git bundle exec unicorn_rails -E production \
-	-c /home/git/gitlab/config/unicorn.rb

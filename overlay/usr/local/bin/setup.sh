@@ -105,7 +105,6 @@ ln -sf /var/log/gitlab "$gitlab_location"/log
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/47483
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
-patch -p0 -i /tmp/gitlab/unicorn-log-to-stdout.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
 patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 patch -p0 -i /tmp/nginx/nginx-config.patch
