@@ -235,7 +235,7 @@ gemdir=/usr/local/bundle
 rm -rf "$gemdir"/cache
 find "$gemdir" -type f \( -name "*.h" -o -name "*.c" -o -name "*.o" -o -name "*.log" -o -name "*.out" \) -delete
 find "$gemdir"/gems/*/ext -type f ! -name "*.so" ! -name "*.rb" -delete
-for cruft in test spec example licenses samples man ports doc docs CHANGELOG COPYING; do
+for cruft in test spec example licenses samples man doc docs CHANGELOG COPYING; do
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
