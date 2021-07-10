@@ -2,28 +2,10 @@
 +++ ./config.toml.example
 @@ -3,7 +3,7 @@
  socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
- 
+
  # The directory where Gitaly's executables are stored
--bin_dir = "/home/git/gitaly"
+-bin_dir = "/home/git/gitaly/_build/bin"
 +bin_dir = "/usr/local/bin"
- 
+
  # # Optional: listen on a TCP socket. This is insecure (no authentication)
  # listen_addr = "localhost:9999"
-@@ -40,7 +40,7 @@ path = "/home/git/repositories"
- # # You can optionally configure Gitaly to output JSON-formatted log messages to stdout
- # [logging]
- # # The directory where Gitaly stores extra log files
--dir = "/home/git/gitlab/log"
-+# dir = "/home/git/gitlab/log"
- # format = "json"
- # # Optional: Set log level to only log entries with that severity or above
- # # One of, in order: debug, info, warn, errror, fatal, panic
-@@ -58,7 +58,7 @@ dir = "/home/git/gitlab/log"
- 
- [gitaly-ruby]
- # The directory where gitaly-ruby is installed
--dir = "/home/git/gitaly/ruby"
-+dir = "/home/git/gitaly-ruby"
- 
- # # Gitaly-ruby resident set size (RSS) that triggers a memory restart (bytes)
- # max_rss = 200000000
