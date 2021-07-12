@@ -3,6 +3,11 @@
 # shellcheck disable=SC3040
 set -eu -o pipefail
 
+_strip_binaries() {
+    dir=$1
+    scanelf -BARF '' "$dir" | cut -d: -f1 | sort -u | xargs strip
+}
+
 fetch_source() {
     mkdir -p /tmp/src
 
@@ -10,6 +15,31 @@ fetch_source() {
     curl --fail \
         "https://gitlab.com/gitlab-org/gitaly/-/archive/v$GITALY_SERVER_VERSION/gitaly-v$GITALY_SERVER_VERSION.tar.gz" \
         | tar xzf - --strip-components=1
+}
+
+gitaly() {
+    echo "Building gitaly"
+    apk add \
+        bash \
+        binutils \
+        cmake \
+        curl \
+        git \
+        make \
+        patch \
+        ruby-bundler
+
+    cd /tmp/src
+
+    echo test
+
+    patch -p0 -i /tmp/patches/gitaly-remove-ruby-bundle-from-build.patch
+    patch -p0 -i /tmp/patches/gitaly-set-defaults.patch
+
+    make build
+    make install DESTDIR=/tmp/gitaly/
+
+    _strip_binaries /tmp/gitaly
 }
 
 $1

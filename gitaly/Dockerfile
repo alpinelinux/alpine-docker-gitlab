@@ -8,3 +8,16 @@ USER root
 COPY overlay /
 
 RUN setup fetch_source
+
+######################################################
+
+FROM alpinelinux/golang AS build-go
+
+COPY --from=source /tmp/src /tmp/src
+COPY overlay /
+
+WORKDIR /tmp/src
+
+USER root
+
+RUN setup gitaly
