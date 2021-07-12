@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+fetch_source() {
+    mkdir -p /tmp/src
+
+    cd /tmp/src
+    curl --fail \
+        "https://gitlab.com/gitlab-org/gitaly/-/archive/v$GITALY_SERVER_VERSION/gitaly-v$GITALY_SERVER_VERSION.tar.gz" \
+        | tar xzf - --strip-components=1
+}
+
+$1

@@ -2,6 +2,8 @@
 
 version: '3'
 
+dotenv: [build-args.env]
+
 env:
   DOCKER_BUILDKIT: 1
 
@@ -14,6 +16,10 @@ tasks:
     sources:
       - build/versions.sh
       - GITLAB-VERSION
+  build-gitaly:
+    cmds:
+      - docker-compose build gitaly
+    deps: [build-args]
   config:
     cmds:
       - docker-compose config
