@@ -1,0 +1,19 @@
+# https://taskfile.dev
+
+version: '3'
+
+env:
+  DOCKER_BUILDKIT: 1
+
+tasks:
+  build-args:
+    cmds:
+      - GITLAB_VERSION=$(<GITLAB-VERSION) build/versions.sh >build-args.env
+    generates:
+      - build-args.env
+    sources:
+      - build/versions.sh
+      - GITLAB-VERSION
+  config:
+    cmds:
+      - docker-compose config

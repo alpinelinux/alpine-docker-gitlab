@@ -1,2 +1,4 @@
 *~
 .env
+.task/
+build-args.env
