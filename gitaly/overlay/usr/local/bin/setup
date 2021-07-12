@@ -102,4 +102,15 @@ gitaly_ruby() {
     _strip_binaries "$GEM_HOME"
 }
 
-$1
+dependencies() {
+    scanelf -BRF '%n#p' -E ET_DYN,ET_EXEC "$@" |
+        tr , '\n' |
+        sort -u |
+        awk '!/libruby|^$/ { print "so:" $1 }' |
+        xargs -rt apk add --no-cache -t .deps
+}
+
+command=$1
+shift 1
+
+$command "$@"

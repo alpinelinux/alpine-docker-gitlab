@@ -43,3 +43,16 @@ COPY overlay /
 WORKDIR /tmp/src
 
 RUN setup gitaly_ruby
+
+######################################################
+
+FROM ruby:2.7-alpine3.13
+
+COPY overlay /
+
+COPY --from=build-go /tmp/gitaly /
+COPY --from=build-git /tmp/git/ /
+COPY --from=build-gitaly-ruby /tmp/src/ruby /home/git/gitaly-ruby
+COPY --from=build-gitaly-ruby /usr/local/bundle /usr/local/bundle
+
+RUN setup dependencies /usr/local
