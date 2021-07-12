@@ -21,3 +21,14 @@ WORKDIR /tmp/src
 USER root
 
 RUN setup gitaly
+
+######################################################
+
+FROM alpinelinux/build-base AS build-git
+
+COPY --chown=buildozer:buildozer --from=source /tmp/src /tmp/src
+COPY overlay /
+
+WORKDIR /tmp/src
+
+RUN setup gitaly_git
