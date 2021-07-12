@@ -32,3 +32,14 @@ COPY overlay /
 WORKDIR /tmp/src
 
 RUN setup gitaly_git
+
+######################################################
+
+FROM ruby:2.7-alpine3.13 AS build-gitaly-ruby
+
+COPY --from=source /tmp/src /tmp/src
+COPY overlay /
+
+WORKDIR /tmp/src
+
+RUN setup gitaly_ruby
