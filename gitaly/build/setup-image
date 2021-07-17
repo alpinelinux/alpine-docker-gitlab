@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+dependencies() {
+    scanelf -BRF '%n#p' -E ET_DYN,ET_EXEC "$@" |
+        tr , '\n' |
+        sort -u |
+        awk '!/libruby|^$/ { print "so:" $1 }' |
+        xargs -rt apk add --no-cache -t .deps
+}
+dependencies /usr/local

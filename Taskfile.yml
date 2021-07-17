@@ -16,10 +16,27 @@ tasks:
     sources:
       - build/versions.sh
       - GITLAB-VERSION
+
+  .deploy-libs:
+    cmds:
+      - |-
+        [[ -z "{{.project}}" ]] && { echo "\$project not provided"; exit 1; }
+        install -Dm0644 lib/* -t {{.project}}/build/lib/
+    sources:
+      - lib/libsetup
+    generates:
+      - "{{.project}}/build/lib/libsetup"
+
+  deploy-libs-gitaly:
+    cmds:
+      - task: .deploy-libs
+        vars: {project: gitaly}
   build-gitaly:
     cmds:
       - docker-compose build gitaly
-    deps: [build-args]
+    deps:
+      - build-args
+      - deploy-libs-gitaly
   config:
     cmds:
       - docker-compose config

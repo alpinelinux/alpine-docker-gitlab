@@ -1,0 +1,18 @@
+#!/bin/sh
+
+_fetch_source() {
+    project=${1?"Error: Provide a project name"}
+    version=${2?"Error: Provide the version"}
+
+    mkdir -p /tmp/src
+    cd /tmp/src
+
+    curl --fail \
+         "https://gitlab.com/gitlab-org/$project/-/archive/v$version/gitaly-v$version.tar.gz" \
+        | tar xzf - --strip-components=1
+}
+
+_strip_binaries() {
+    dir=$1
+    scanelf -BARF '' "$dir" | cut -d: -f1 | sort -u | xargs strip
+}

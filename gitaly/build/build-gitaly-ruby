@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+# shellcheck source=lib/libsetup
+. "$(dirname "$0")"/../lib/libsetup
+
+gitaly_ruby() {
+    apk add \
+        bash \
+        build-base \
+        cmake \
+        git \
+        go \
+        icu-dev \
+        openssl-dev \
+        ruby-dev
+
+    # export so gitaly makefile does not set deployment to true
+    export BUNDLE_DEPLOYMENT=false
+    MAKEFLAGS=-j$(nproc)
+    export MAKEFLAGS
+
+    bundle config set --global jobs "$(nproc)"
+    bundle config set --global silence_root_warning true
+    bundle config set --global force_ruby_platform true
+    # we do not use deployment and share gems via system
+    bundle config set --global deployment false
+    bundle config set --global without development test mysql aws kerberos
+    # https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
+    bundle config set --global build.google-protobuf --with-cflags=-D__va_copy=va_copy
+
+    make /tmp/src/.ruby-bundle
+
+    rm -r "$GEM_HOME/cache"
+
+    for cruft in test spec example licenses samples man doc docs CHANGELOG COPYING; do
+        rm -rf "$GEM_HOME"/gems/*/$cruft
+    done
+
+    _strip_binaries "$GEM_HOME"
+}
+
+gitaly_ruby

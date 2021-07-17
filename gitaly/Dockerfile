@@ -6,53 +6,60 @@ WORKDIR /tmp/src
 USER root
 
 COPY overlay /
+COPY build/fetch-source /usr/local/bin/
 
-RUN setup fetch_source
+RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang AS build-go
+FROM alpinelinux/golang AS build-gitaly
 
 COPY --from=source /tmp/src /tmp/src
-COPY overlay /
+COPY build/lib/ /usr/local/lib/
+COPY build/patches/ /tmp/patches/
+COPY build/build-gitaly /usr/local/bin/
 
 WORKDIR /tmp/src
 
 USER root
 
-RUN setup gitaly
+RUN build-gitaly
 
 ######################################################
 
 FROM alpinelinux/build-base AS build-git
 
 COPY --chown=buildozer:buildozer --from=source /tmp/src /tmp/src
-COPY overlay /
+COPY build/lib/ /usr/local/lib/
+COPY build/build-git /usr/local/bin/
 
 WORKDIR /tmp/src
 
-RUN setup gitaly_git
+RUN build-git
 
 ######################################################
 
 FROM ruby:2.7-alpine3.13 AS build-gitaly-ruby
 
 COPY --from=source /tmp/src /tmp/src
-COPY overlay /
+COPY build/lib/ /usr/local/lib/
+COPY build/build-gitaly-ruby /usr/local/bin/
 
 WORKDIR /tmp/src
 
-RUN setup gitaly_ruby
+RUN build-gitaly-ruby
 
 ######################################################
 
 FROM ruby:2.7-alpine3.13
 
 COPY overlay /
+COPY build/setup-image /usr/local/bin/
 
-COPY --from=build-go /tmp/gitaly /
+COPY --from=build-gitaly /tmp/gitaly /
 COPY --from=build-git /tmp/git/ /
 COPY --from=build-gitaly-ruby /tmp/src/ruby /home/git/gitaly-ruby
 COPY --from=build-gitaly-ruby /usr/local/bundle /usr/local/bundle
 
-RUN setup dependencies /usr/local
+RUN setup-image
+

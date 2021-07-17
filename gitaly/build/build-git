@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+# shellcheck source=lib/libsetup
+. "$(dirname "$0")"/../lib/libsetup
+
+gitaly_git() {
+    sudo chmod 0777 /tmp
+    sudo apk add \
+        bash \
+        curl-dev \
+        pcre2-dev \
+        zlib-dev
+
+    cat >>config.mak <<-EOF
+		GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
+		GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
+		GIT_BUILD_OPTIONS += NO_EXPAT=YesPlease
+		GIT_BUILD_OPTIONS += NO_TCLTK=YesPlease
+		GIT_BUILD_OPTIONS += NO_PERL=YesPlease
+		GIT_BUILD_OPTIONS += USE_LIBPCRE2=YesPlease
+		GIT_BUILD_OTPIONS += NO_SYS_POLL_H=1
+		GIT_BUILD_OPTIONS += ICONV_OMITS_BOM=Yes
+		GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
+		GIT_BUILD_OPTIONS += DESTDIR=/tmp/git
+		EOF
+    make -j "$(nproc)" git GIT_PREFIX=/usr/local
+
+    _strip_binaries /tmp/git
+}
+
+gitaly_git
