@@ -13,6 +13,7 @@ services:
       - /srv/docker/gitlab/shared:/home/git/gitlab/shared
       - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
       - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
     ports:
       - "2222:22"
       - "8080:80"
@@ -31,6 +32,11 @@ services:
       context: ./gitaly
       args:
         - GITALY_SERVER_VERSION
+    volumes:
+      - /srv/docker/gitlab/repositories:/home/git/repositories
+      - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
+      - gitaly-socket:/home/git/run/gitaly
+      - gitlab-socket:/home/git/run/gitlab
   postgres:
     image: postgres:11-alpine
     restart: always
@@ -46,3 +52,5 @@ services:
       - /srv/docker/gitlab/redis:/data
     entrypoint: redis-server --appendonly yes
 
+volumes:
+  gitaly-socket:

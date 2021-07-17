@@ -10,4 +10,17 @@ dependencies() {
         awk '!/libruby|^$/ { print "so:" $1 }' |
         xargs -rt apk add --no-cache -t .deps
 }
+
+finalize() {
+    adduser -D git
+    install -dm0755 -ogit -ggit /home/git/repositories
+    install -dm0755 -ogit -ggit /home/git/gitlab
+    # mountpoint for gitaly-socket
+    install -dm0755 -ogit -ggit /home/git/run/gitaly
+    install -dm0755 -ogit -ggit /etc/gitlab/gitaly
+
+    chown -R git: /home/git
+}
+
 dependencies /usr/local
+finalize

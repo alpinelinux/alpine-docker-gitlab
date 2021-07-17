@@ -5,7 +5,7 @@
  # https://docs.gitlab.com/ee//administration/gitaly/reference
 
 -socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
-+socket_path = "/home/git/gitlab/gitaly.socket"
++socket_path = "/home/git/run/gitaly/gitaly.socket"
 
  # The directory where Gitaly's executables are stored
 -bin_dir = "/home/git/gitaly/_build/bin"
