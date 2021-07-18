@@ -1,3 +1,4 @@
+ARG GITLAB_SHELL_VERSION
 FROM curlimages/curl AS source
 
 ARG GITALY_SERVER_VERSION
@@ -5,7 +6,7 @@ ARG GITALY_SERVER_VERSION
 WORKDIR /tmp/src
 USER root
 
-COPY overlay /
+COPY build/lib/ /usr/local/lib/
 COPY build/fetch-source /usr/local/bin/
 
 RUN fetch-source
@@ -51,6 +52,11 @@ RUN build-gitaly-ruby
 
 ######################################################
 
+# Hack because `copy --from` does not support variable expansion
+FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
+
+######################################################
+
 FROM ruby:2.7-alpine3.13
 
 COPY overlay /
@@ -61,6 +67,7 @@ COPY --from=build-gitaly /tmp/src/config.toml.example /usr/local/share/gitaly/
 COPY --from=build-git /tmp/git/ /
 COPY --from=build-gitaly-ruby /tmp/src/ruby /home/git/gitaly-ruby
 COPY --from=build-gitaly-ruby /usr/local/bundle /usr/local/bundle
+COPY --from=gitlab-shell /tmp/src/ /home/git/gitlab-shell
 
 RUN setup-image
 

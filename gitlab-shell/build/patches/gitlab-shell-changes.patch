@@ -1,0 +1,20 @@
+--- ./config.yml.example
++++ ./config.yml.example
+@@ -13,7 +13,7 @@ user: git
+ # only listen on a Unix domain socket. For Unix domain sockets use
+ # "http+unix://<urlquoted-path-to-socket>", e.g.
+ # "http+unix://%2Fpath%2Fto%2Fsocket"
+-gitlab_url: "http+unix://%2Fhome%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab-workhorse.socket"
++gitlab_url: "http+unix://%2Fhome%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab.socket"
+ 
+ # See installation.md#using-https for additional HTTPS configuration details.
+ http_settings:
+@@ -37,7 +37,7 @@ auth_file: "/home/git/.ssh/authorized_keys"
+ 
+ # Log file.
+ # Default is gitlab-shell.log in the root directory.
+-# log_file: "/home/git/gitlab-shell/gitlab-shell.log"
++log_file: "/var/log/gitlab/gitlab-shell.log"
+ 
+ # Log level. INFO by default
+ log_level: INFO

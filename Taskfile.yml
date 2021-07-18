@@ -37,6 +37,21 @@ tasks:
     deps:
       - build-args
       - deploy-libs-gitaly
+      - build-gitlab-shell
+    sources:
+      - gitaly/*
+      - gitaly/**/*
+
+  deploy-libs-gitlab-shell:
+    cmds:
+      - task: .deploy-libs
+        vars: {project: gitlab-shell}
+  build-gitlab-shell:
+    cmds:
+      - docker-compose build gitlab-shell
+    deps:
+      - build-args
+      - deploy-libs-gitlab-shell
   config:
     cmds:
       - docker-compose config

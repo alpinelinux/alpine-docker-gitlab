@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+# shellcheck source=lib/libsetup
+. "$(dirname "$0")"/../lib/libsetup
+
+
+build_gitlab_shell() {
+    apk add make patch
+
+    patch -i /tmp/makefile-backport-install.patch
+    patch -p0 -i /tmp/gitlab-shell-changes.patch
+
+    make build
+    make install DESTDIR=/tmp/gitlab-shell PREFIX=/usr/local
+
+    cp config.yml.example /tmp
+
+    _strip_binaries /tmp/gitlab-shell
+}
+
+build_gitlab_shell

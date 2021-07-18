@@ -32,11 +32,18 @@ services:
       context: ./gitaly
       args:
         - GITALY_SERVER_VERSION
+        - GITLAB_SHELL_VERSION
     volumes:
       - /srv/docker/gitlab/repositories:/home/git/repositories
       - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
       - gitaly-socket:/home/git/run/gitaly
       - gitlab-socket:/home/git/run/gitlab
+  gitlab-shell:
+    image: alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
+    build:
+      context: ./gitlab-shell
+      args:
+        - GITLAB_SHELL_VERSION
   postgres:
     image: postgres:11-alpine
     restart: always
