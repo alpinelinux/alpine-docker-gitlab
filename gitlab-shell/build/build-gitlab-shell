@@ -14,11 +14,12 @@ build_gitlab_shell() {
     patch -p0 -i /tmp/gitlab-shell-changes.patch
 
     make build
-    make install DESTDIR=/tmp/gitlab-shell PREFIX=/usr/local
+    make install DESTDIR=/home/git/gitlab-shell PREFIX=/
+    install -Dm0644 VERSION /home/git/gitlab-shell/VERSION
 
     cp config.yml.example /tmp
 
-    _strip_binaries /tmp/gitlab-shell
+    _strip_binaries /home/git/gitlab-shell/bin/
 }
 
 build_gitlab_shell

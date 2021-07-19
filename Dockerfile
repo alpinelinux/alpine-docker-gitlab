@@ -6,7 +6,7 @@ COPY overlay /
 
 RUN  setup.sh
 
-EXPOSE 22 80
+EXPOSE 80
 
 ENTRYPOINT [ "entrypoint.sh" ]
 

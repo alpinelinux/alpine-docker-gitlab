@@ -3,10 +3,6 @@
 # shellcheck disable=SC3040
 set -eu -o pipefail
 
-if ! [ -f /home/git/gitlab-shell/.gitlab_shell_secret ]; then
-    dd status=none if=/dev/urandom bs=1 count=256 | sha512sum >/home/git/gitlab-shell/.gitlab_shell_secret
-fi
-
 if ! [ -f /etc/gitlab/gitaly/config.toml ]; then
     cp /usr/local/share/gitaly/config.toml.example /etc/gitlab/gitaly/config.toml
 fi

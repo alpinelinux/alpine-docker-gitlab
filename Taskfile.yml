@@ -52,6 +52,9 @@ tasks:
     deps:
       - build-args
       - deploy-libs-gitlab-shell
+    sources:
+      - gitlab-shell/*
+      - gitlab-shell/**/*
   config:
     cmds:
       - docker-compose config

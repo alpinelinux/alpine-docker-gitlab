@@ -33,17 +33,29 @@ services:
       args:
         - GITALY_SERVER_VERSION
         - GITLAB_SHELL_VERSION
+    depends_on:
+      - gitlab-shell # for gitlab-secret
     volumes:
       - /srv/docker/gitlab/repositories:/home/git/repositories
       - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
+      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
       - gitaly-socket:/home/git/run/gitaly
       - gitlab-socket:/home/git/run/gitlab
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   gitlab-shell:
     image: alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
     build:
       context: ./gitlab-shell
       args:
         - GITLAB_SHELL_VERSION
+    volumes:
+      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - /srv/docker/gitlab/config/ssh:/etc/gitlab/ssh
+      - /srv/docker/gitlab/log:/var/log
+      - ssh-authorized-keys:/home/git/.ssh/
+      - gitlab-socket:/home/git/run/gitlab
+      - gitaly-socket:/home/git/gitlab/tmp/sockets/private
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   postgres:
     image: postgres:11-alpine
     restart: always
@@ -61,3 +73,6 @@ services:
 
 volumes:
   gitaly-socket:
+  gitlab-socket:
+  ssh-authorized-keys:
+  gitlab-secret:

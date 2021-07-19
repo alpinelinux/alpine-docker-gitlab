@@ -18,6 +18,7 @@ finalize() {
     # mountpoint for gitaly-socket
     install -dm0755 -ogit -ggit /home/git/run/gitaly
     install -dm0755 -ogit -ggit /etc/gitlab/gitaly
+    install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell
 
     chown -R git: /home/git
 }

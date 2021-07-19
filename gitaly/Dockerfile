@@ -67,7 +67,7 @@ COPY --from=build-gitaly /tmp/src/config.toml.example /usr/local/share/gitaly/
 COPY --from=build-git /tmp/git/ /
 COPY --from=build-gitaly-ruby /tmp/src/ruby /home/git/gitaly-ruby
 COPY --from=build-gitaly-ruby /usr/local/bundle /usr/local/bundle
-COPY --from=gitlab-shell /tmp/src/ /home/git/gitlab-shell
+COPY --from=gitlab-shell /home/git/gitlab-shell/ /home/git/gitlab-shell
 
 RUN setup-image
 
