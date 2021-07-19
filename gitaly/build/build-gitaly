@@ -16,6 +16,7 @@ gitaly() {
         git \
         make \
         patch \
+        rdfind \
         ruby-bundler
 
     cd /tmp/src
@@ -28,6 +29,7 @@ gitaly() {
     make build
     make install DESTDIR=/tmp/gitaly/
 
+    rdfind -makesymlinks true /tmp/gitaly/usr/local/bin
     _strip_binaries /tmp/gitaly
 }
 
