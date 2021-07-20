@@ -2,7 +2,10 @@ version: '3.5'
 services:
   gitlab:
     image: alpinelinux/alpine-docker-gitlab
-    build: .
+    build:
+      context: .
+      args:
+        - GITLAB_SHELL_VERSION
     hostname: ${GITLAB_HOSTNAME:-gitlab}
     restart: always
     volumes:
@@ -13,13 +16,17 @@ services:
       - /srv/docker/gitlab/shared:/home/git/gitlab/shared
       - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
       - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
+      - ssh-authorized-keys:/home/git/.ssh/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
+      - gitlab-socket:/home/git/gitlab/tmp/sockets/
+      - gitaly-socket:/home/git/gitlab/tmp/sockets/private
     ports:
-      - "2222:22"
       - "8080:80"
     depends_on:
       - postgres
       - redis
+      - gitaly
+      - gitlab-shell
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD

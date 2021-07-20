@@ -1,6 +1,0 @@
-#!/bin/sh
-
-echo "Starting gitaly.."
-exec 2>&1
-cd /home/git/gitlab
-su-exec git gitaly /etc/gitlab/gitaly/config.toml

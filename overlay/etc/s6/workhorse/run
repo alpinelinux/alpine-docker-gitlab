@@ -1,6 +1,6 @@
 #!/bin/sh
 
-s6-svwait -t 5000 -u /run/s6/gitaly /run/s6/sidekiq
+s6-svwait -t 5000 -u /run/s6/sidekiq
 echo "Starting workhorse.."
 exec 2>&1
 cd /home/git/gitlab
