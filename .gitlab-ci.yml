@@ -5,5 +5,10 @@ build-gitlab:
   stage: build
   image: alpinelinux/docker-compose
   script:
-    - docker-compose build
+    - >-
+      apk add -X https://dl-cdn.alpinelinux.org/alpine/edge/community
+      go-task
+      curl
+    - go-task build-args
+    - go-task build
   tags: [ci-docker-image, x86_64]
