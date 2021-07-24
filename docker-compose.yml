@@ -64,10 +64,10 @@ services:
       - gitaly-socket:/home/git/gitlab/tmp/sockets/private
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   postgres:
-    image: postgres:11-alpine
+    image: postgres:12-alpine
     restart: always
     volumes:
-      - /srv/docker/gitlab/postgres:/var/lib/postgresql/data
+      - /srv/docker/gitlab/postgres12:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
