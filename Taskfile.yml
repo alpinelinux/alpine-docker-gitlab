@@ -16,6 +16,7 @@ tasks:
     sources:
       - build/versions.sh
       - GITLAB-VERSION
+    run: once
 
   .deploy-libs:
     label: "deploy-libs-{{.project}}"
@@ -27,6 +28,7 @@ tasks:
       - lib/libsetup
     generates:
       - "{{.project}}/build/lib/libsetup"
+    run: when_changed
 
   build:
     deps:
@@ -73,6 +75,7 @@ tasks:
     sources:
       - gitlab-shell/*
       - gitlab-shell/**/*
+    run: once
   config:
     cmds:
       - docker-compose config
