@@ -3,7 +3,7 @@ FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
 
 FROM ruby:2.7-alpine3.13
 
-ENV GITLAB_VERSION=14.0.2
+ENV GITLAB_VERSION=14.0.10
 
 COPY overlay /
 
