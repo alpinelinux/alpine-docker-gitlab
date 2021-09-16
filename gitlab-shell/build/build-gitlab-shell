@@ -11,6 +11,7 @@ build_gitlab_shell() {
     apk add make patch rdfind
 
     patch -i /tmp/makefile-backport-install.patch
+    patch -i /tmp/makefile-fix-version.patch
     patch -p0 -i /tmp/gitlab-shell-changes.patch
 
     make build
