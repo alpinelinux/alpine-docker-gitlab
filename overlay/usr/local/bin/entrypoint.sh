@@ -115,6 +115,7 @@ prepare_dirs() {
 		/home/git/gitlab/shared/lfs-objects	\
 		/home/git/gitlab/shared/pages \
 		/home/git/gitlab/shared/registry \
+		/home/git/run/gitlab \
 		/var/log/s6 \
 		/var/log/gitlab
 	mkdir -p /var/log/nginx

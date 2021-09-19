@@ -100,6 +100,7 @@ ln -sf /var/log/gitlab "$gitlab_location"/log
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
+patch -p0 -i /tmp/gitlab/puma-socket-path.patch
 patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 patch -p0 -i /tmp/nginx/nginx-config.patch
 patch -p0 -i /tmp/resque/resque-config.patch

@@ -18,8 +18,7 @@ services:
       - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
       - ssh-authorized-keys:/home/git/.ssh/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
-      - gitlab-socket:/home/git/gitlab/tmp/sockets/
-      - gitaly-socket:/home/git/gitlab/tmp/sockets/private
+      - sockets:/home/git/run/
     ports:
       - "8080:80"
     depends_on:
@@ -46,8 +45,7 @@ services:
       - /srv/docker/gitlab/repositories:/home/git/repositories
       - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
       - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
-      - gitaly-socket:/home/git/run/gitaly
-      - gitlab-socket:/home/git/run/gitlab
+      - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   gitlab-shell:
     image: alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
@@ -60,8 +58,7 @@ services:
       - /srv/docker/gitlab/config/ssh:/etc/gitlab/ssh
       - /srv/docker/gitlab/log:/var/log
       - ssh-authorized-keys:/home/git/.ssh/
-      - gitlab-socket:/home/git/run/gitlab
-      - gitaly-socket:/home/git/gitlab/tmp/sockets/private
+      - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   postgres:
     image: postgres:12-alpine
@@ -79,7 +76,6 @@ services:
     entrypoint: redis-server --appendonly yes
 
 volumes:
-  gitaly-socket:
-  gitlab-socket:
+  sockets:
   ssh-authorized-keys:
   gitlab-secret:

@@ -5,7 +5,7 @@ echo "Starting workhorse.."
 exec 2>&1
 cd /home/git/gitlab
 su-exec git gitlab-workhorse \
-	-authSocket /home/git/gitlab/tmp/sockets/gitlab.socket \
+	-authSocket /home/git/run/gitlab/gitlab.socket \
 	-documentRoot /home/git/gitlab/public \
 	-listenAddr 0.0.0.0:8181 \
 	-config /etc/gitlab/workhorse/config.toml \

@@ -13,4 +13,6 @@ if [ "$(stat -c %U /home/git/repositories)" != "git" ]; then
     exit 1
 fi
 
+mkdir -p /home/git/run/gitaly
+
 exec gitaly /etc/gitlab/gitaly/config.toml
