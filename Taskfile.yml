@@ -30,7 +30,15 @@ tasks:
       - "{{.project}}/build/lib/libsetup"
     run: when_changed
 
+  .save-image:
+    label: "save-image-{{.image}}"
+    cmds:
+      - |-
+        mkdir -p docker-images
+        docker image save {{.image}} | pigz >docker-images/{{.image | replace "/" "-"}}.tar.gz
+
   build:
+    description: "build all images"
     deps:
       - build-gitlab-shell
       - build-gitaly
@@ -46,6 +54,12 @@ tasks:
       - overlay/*
       - overlay/**/*
       - Dockerfile
+  save-image-gitlab:
+    deps:
+      - build-gitlab
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/alpine-docker-gitlab:latest"}
 
   deploy-libs-gitaly:
     cmds:
@@ -61,6 +75,10 @@ tasks:
     sources:
       - gitaly/*
       - gitaly/**/*
+  save-image-gitaly:
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"}
 
   deploy-libs-gitlab-shell:
     cmds:
@@ -76,6 +94,17 @@ tasks:
       - gitlab-shell/*
       - gitlab-shell/**/*
     run: once
+  save-image-gitlab-shell:
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"}
+
+  save-images:
+    deps:
+      - save-image-gitlab-shell
+      - save-image-gitaly
+      - save-image-gitlab
+
   config:
     cmds:
       - docker-compose config

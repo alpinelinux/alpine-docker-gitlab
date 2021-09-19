@@ -1,5 +1,6 @@
 stages:
   - build
+  - publish
 
 build-gitlab:
   stage: build
@@ -11,4 +12,23 @@ build-gitlab:
       curl
     - go-task build-args
     - go-task build
+  artifacts:
+    paths: [build-args.env]
+  tags: [ci-docker-image, x86_64]
+
+upload-gitlab:
+  stage: publish
+  image: alpinelinux/docker-cli
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+  script:
+    - |
+      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
+      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
+    - |
+      . ./build-args.env
+      docker-push-image alpinelinux/gitlab:latest alpinelinux/gitlab:$GITLAB_VERSION
+      docker-push-image alpinelinux/gitlab:latest alpinelinux/gitlab:${GITLAB_VERSION%.*}
+      docker push alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
+      docker push alpinelinux/gitaly:$GITALY_SERVER_VERSION
   tags: [ci-docker-image, x86_64]
