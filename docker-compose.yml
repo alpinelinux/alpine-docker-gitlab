@@ -19,8 +19,6 @@ services:
       - ssh-authorized-keys:/home/git/.ssh/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
       - sockets:/home/git/run/
-    ports:
-      - "8080:80"
     depends_on:
       - postgres
       - redis
