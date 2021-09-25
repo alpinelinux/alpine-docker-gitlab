@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+dependencies() {
+    scanelf -BRF '%n#p' -E ET_DYN,ET_EXEC "$@" |
+        tr , '\n' |
+        sort -u |
+        awk '!/libruby|^$/ { print "so:" $1 }' |
+        xargs -rt apk add --no-cache -t .deps
+}
+
+finalize() {
+    adduser -D git
+    install -dm0755 -ogit -ggit /home/git/repositories
+    install -dm0755 -ogit -ggit /home/git/gitlab
+    # mountpoint for gitaly-socket
+    install -dm0755 -ogit -ggit /home/git/run/gitaly
+    install -dm0755 -ogit -ggit /etc/gitlab/gitaly
+    install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell
+
+    chown -R git: /home/git
+}
+
+dependencies /usr/local
+finalize

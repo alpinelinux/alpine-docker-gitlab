@@ -1,0 +1,128 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv: [build-args.env]
+
+env:
+  DOCKER_BUILDKIT: 1
+
+tasks:
+  build-args:
+    cmds:
+      - GITLAB_VERSION=$(<GITLAB-VERSION) build/versions.sh >build-args.env
+    generates:
+      - build-args.env
+    sources:
+      - build/versions.sh
+      - GITLAB-VERSION
+    run: once
+
+  .deploy-libs:
+    label: "deploy-libs-{{.project}}"
+    cmds:
+      - |-
+        [[ -z "{{.project}}" ]] && { echo "\$project not provided"; exit 1; }
+        install -Dm0644 lib/* -t {{.project}}/build/lib/
+    sources:
+      - lib/libsetup
+    generates:
+      - "{{.project}}/build/lib/libsetup"
+    run: when_changed
+
+  .save-image:
+    label: "save-image-{{.image}}"
+    cmds:
+      - |-
+        mkdir -p docker-images
+        docker image save {{.image}} | pigz >docker-images/{{.image | replace "/" "-"}}.tar.gz
+
+  .generate-env:
+    cmds:
+      - |
+        if [ -f .env ] && ! grep -q '^# GENERATED' .env; then
+          echo "ERROR: Not overwriting non-generated .env file" >&2
+          exit 1
+        fi
+      - printf '# GENERATED\n\n' >.env
+      - cat build-args.env .env.* >>.env
+    deps: [ build-args ]
+    sources: [ .env.* ]
+    generates: [ .env ]
+
+  build:
+    description: "build all images"
+    deps:
+      - build-gitlab-shell
+      - build-gitaly
+      - build-gitlab
+
+  build-gitlab:
+    cmds:
+      - docker-compose build gitlab
+    deps:
+      - build-args
+      - build-gitlab-shell
+    sources:
+      - overlay/*
+      - overlay/**/*
+      - Dockerfile
+  save-image-gitlab:
+    deps:
+      - build-gitlab
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/alpine-docker-gitlab:latest"}
+
+  deploy-libs-gitaly:
+    cmds:
+      - task: .deploy-libs
+        vars: {project: gitaly}
+  build-gitaly:
+    cmds:
+      - docker-compose build gitaly
+    deps:
+      - build-args
+      - deploy-libs-gitaly
+      - build-gitlab-shell
+    sources:
+      - gitaly/*
+      - gitaly/**/*
+  save-image-gitaly:
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"}
+
+  deploy-libs-gitlab-shell:
+    cmds:
+      - task: .deploy-libs
+        vars: {project: gitlab-shell}
+  build-gitlab-shell:
+    cmds:
+      - docker-compose build gitlab-shell
+    deps:
+      - build-args
+      - deploy-libs-gitlab-shell
+    sources:
+      - gitlab-shell/*
+      - gitlab-shell/**/*
+    run: once
+  save-image-gitlab-shell:
+    cmds:
+      - task: .save-image
+        vars: {image: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"}
+
+  save-images:
+    deps:
+      - save-image-gitlab-shell
+      - save-image-gitaly
+      - save-image-gitlab
+
+  config:
+    cmds:
+      - docker-compose config
+
+  run:
+    cmds:
+      - docker-compose up -d
+    deps: [ .generate-env ]

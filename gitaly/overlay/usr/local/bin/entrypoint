@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+if ! [ -f /etc/gitlab/gitaly/config.toml ]; then
+    cp /usr/local/share/gitaly/config.toml.example /etc/gitlab/gitaly/config.toml
+fi
+
+if [ "$(stat -c %U /home/git/repositories)" != "git" ]; then
+    echo "FATAL: /home/git/repositories not owned by git" >&2
+    echo "Make sure it's owned by git (1000:1000)" >&2
+    exit 1
+fi
+
+mkdir -p /home/git/run/gitaly
+
+exec gitaly /etc/gitlab/gitaly/config.toml

@@ -6,7 +6,7 @@ set -eu
 export RUBYOPT="${RUBYOPT:---disable-gems}"
 export RAILS_ENV="${RAILS_ENV:-production}"
 : "${POSTGRES_DB:=$POSTGRES_USER}"
-: "${GITLAB_SERVICES:=gitaly nginx sidekiq sshd workhorse puma}"
+: "${GITLAB_SERVICES:=nginx sidekiq workhorse puma}"
 
 # base config files found in gitlab/config dir
 BASECONF="
@@ -15,8 +15,6 @@ BASECONF="
 	gitlab/puma.rb.example
 	gitlab/resque.yml.example
 	gitlab/initializers/rack_attack.rb.example
-	gitaly/config.toml.example
-	gitlab-shell/config.yml.example
 "
 
 create_db() {
@@ -68,9 +66,7 @@ enable_services() {
 prepare_conf() {
 	echo "Preparing configuration.."
 	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
-	link_config "/etc/gitlab/ssh" "/etc/ssh"
 	link_config "/etc/gitlab/nginx" "/etc/nginx"
-	link_config "/etc/gitlab/gitlab-shell" "/home/git/gitlab-shell"
 }
 
 rebuild_conf() {
@@ -103,18 +99,6 @@ workhorse_conf() {
 	EOF
 }
 
-setup_ssh() {
-	echo "Creating ssh keys..."
-	local keytype
-	mkdir -p /etc/gitlab/ssh
-	for keytype in ecdsa ed25519 rsa; do
-		if [ ! -f "/etc/gitlab/ssh/ssh_host_${keytype}_key" ]; then
-			ssh-keygen -q -N '' -t $keytype -f \
-				/etc/gitlab/ssh/ssh_host_${keytype}_key
-		fi
-	done
-}
-
 setup_gitlab() {
 	echo "Setting up gitlab..."
 	cd /home/git/gitlab
@@ -131,6 +115,7 @@ prepare_dirs() {
 		/home/git/gitlab/shared/lfs-objects	\
 		/home/git/gitlab/shared/pages \
 		/home/git/gitlab/shared/registry \
+		/home/git/run/gitlab \
 		/var/log/s6 \
 		/var/log/gitlab
 	mkdir -p /var/log/nginx
@@ -158,7 +143,6 @@ setup() {
 	postgres_conf
 	install_conf
 	workhorse_conf
-	setup_ssh
 	prepare_dirs
 	prepare_conf
 	setup_gitlab

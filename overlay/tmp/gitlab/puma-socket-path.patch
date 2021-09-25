@@ -1,0 +1,13 @@
+diff --git ./config/puma.rb.example ./config/puma.rb.example
+index f659529f..b2de4c4a 100644
+--- ./config/puma.rb.example
++++ ./config/puma.rb.example
+@@ -31,7 +31,7 @@ queue_requests false
+
+ # Bind the server to "url". "tcp://", "unix://" and "ssl://" are the only
+ # accepted protocols.
+-bind 'unix:///home/git/gitlab/tmp/sockets/gitlab.socket'
++bind 'unix:///home/git/run/gitlab/gitlab.socket'
+
+ workers 3
+

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+setup_image() {
+    apk add --no-cache openssh
+    adduser -D -g Gitlab -s /bin/sh git
+    passwd -u git
+
+    sed -i 's/#LogLevel INFO/LogLevel VERBOSE/' /etc/ssh/sshd_config
+
+    install -dm0755 -ogit -ggit /etc/gitlab/ssh/
+    install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell/
+    install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell/secret
+    # mountpoint for gitlab-socket
+    install -dm0755 -ogit -ggit /home/git/run/gitlab
+    install -dm0755 -ogit -ggit /home/git/.ssh
+
+    ln -s /etc/gitlab/gitlab-shell/config.yml /home/git/gitlab-shell/config.yml
+    ln -s /etc/gitlab/gitlab-shell/secret/gitlab_shell_secret /home/git/gitlab-shell/.gitlab_shell_secret
+
+    chown -R git:git /home/git/
+}
+
+setup_image

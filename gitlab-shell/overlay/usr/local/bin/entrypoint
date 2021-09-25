@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040,SC3043
+set -eu -o pipefail
+
+generate_gitlab_secret() {
+    if ! [ -f /etc/gitlab-shell/secret/gitlab_shell_secret ]; then
+        dd status=none if=/dev/urandom bs=1 count=256 |
+            sha512sum |
+            cut -d' ' -f1 >/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
+    fi
+}
+
+link_config() {
+    local src=$1 dst=$2 file=
+    # shellcheck disable=SC2044
+    for file in $(find "$src" -type f -not -name ".*"); do
+        mkdir -p "$(dirname "$dst/${file#*$src/}")"
+        ln -sf "$file" "$dst/${file#*$src/}"
+    done
+}
+
+setup_gitlab_shell() {
+    if ! [ -f /etc/gitlab/gitlab-shell/config.yml ]; then
+        cp /usr/local/share/gitlab-shell/config.yml.example \
+            /etc/gitlab/gitlab-shell/config.yml
+    fi
+
+    generate_gitlab_secret
+}
+
+setup_ssh() {
+    echo "Creating ssh keys..."
+    local keytype
+    mkdir -p /etc/gitlab/ssh
+    for keytype in ecdsa ed25519 rsa; do
+        if [ ! -f "/etc/gitlab/ssh/ssh_host_${keytype}_key" ]; then
+            ssh-keygen -q -N '' -t $keytype -f \
+                /etc/gitlab/ssh/ssh_host_${keytype}_key
+        fi
+    done
+}
+
+setup_gitlab_shell
+setup_ssh
+link_config "/etc/gitlab/ssh" "/etc/ssh"
+
+echo "Starting opensshd"
+exec /usr/sbin/sshd -D -f /etc/ssh/sshd_config -e

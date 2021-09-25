@@ -1,0 +1,24 @@
+--- ./config.toml.example
++++ ./config.toml.example
+@@ -2,10 +2,10 @@
+ # Documentation lives at https://docs.gitlab.com/ee/administration/gitaly/ and
+ # https://docs.gitlab.com/ee//administration/gitaly/reference
+
+-socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
++socket_path = "/home/git/run/gitaly/gitaly.socket"
+
+ # The directory where Gitaly's executables are stored
+-bin_dir = "/home/git/gitaly/_build/bin"
++bin_dir = "/usr/local/bin"
+
+ # # Optional: listen on a TCP socket. This is insecure (no authentication)
+ # listen_addr = "localhost:9999"
+@@ -68,7 +68,7 @@ dir = "/home/git/gitlab/log"
+
+ [gitaly-ruby]
+ # The directory where gitaly-ruby is installed
+-dir = "/home/git/gitaly/ruby"
++dir = "/home/git/gitaly-ruby"
+
+ # # Gitaly-ruby resident set size (RSS) that triggers a memory restart (bytes)
+ # max_rss = 200000000

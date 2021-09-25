@@ -1,2 +1,5 @@
 *~
 .env
+.env.*
+.task/
+*/build/lib/libsetup

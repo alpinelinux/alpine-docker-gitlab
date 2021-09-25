@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index 1d63621..19c81ff 100644
+--- Makefile
++++ Makefile
+@@ -198,7 +198,7 @@ all: INSTALL_DEST_DIR = ${SOURCE_DIR}
+ all: install
+
+ .PHONY: build
+-build: ${SOURCE_DIR}/.ruby-bundle libgit2
++build: libgit2
+ 	go install ${GO_LDFLAGS} -tags "${GO_BUILD_TAGS}" $(addprefix ${GITALY_PACKAGE}/cmd/, $(call find_commands))
+ 	# We use version suffix for the gitaly-git2go binary to support compatibility contract between
+ 	# gitaly and gitaly-git2go during upgrade deployment.

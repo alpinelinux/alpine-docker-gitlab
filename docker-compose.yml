@@ -1,8 +1,12 @@
 version: '3.5'
 services:
   gitlab:
-    image: alpinelinux/alpine-docker-gitlab
-    build: .
+    image: alpinelinux/gitlab:$GITLAB_VERSION
+    build:
+      context: .
+      args:
+        - GITLAB_VERSION
+        - GITLAB_SHELL_VERSION
     hostname: ${GITLAB_HOSTNAME:-gitlab}
     restart: always
     volumes:
@@ -13,23 +17,53 @@ services:
       - /srv/docker/gitlab/shared:/home/git/gitlab/shared
       - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
       - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
-    ports:
-      - "2222:22"
-      - "8080:80"
+      - ssh-authorized-keys:/home/git/.ssh/
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
+      - sockets:/home/git/run/
     depends_on:
       - postgres
       - redis
+      - gitaly
+      - gitlab-shell
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - GITLAB_ROOT_PASSWORD
       - GITLAB_BACKUP_SKIP
       - GITLAB_SERVICES
+  gitaly:
+    image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
+    build:
+      context: ./gitaly
+      args:
+        - GITALY_SERVER_VERSION
+        - GITLAB_SHELL_VERSION
+    depends_on:
+      - gitlab-shell # for gitlab-secret
+    volumes:
+      - /srv/docker/gitlab/repositories:/home/git/repositories
+      - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
+      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - sockets:/home/git/run/
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
+  gitlab-shell:
+    image: alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
+    build:
+      context: ./gitlab-shell
+      args:
+        - GITLAB_SHELL_VERSION
+    volumes:
+      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - /srv/docker/gitlab/config/ssh:/etc/gitlab/ssh
+      - /srv/docker/gitlab/log:/var/log
+      - ssh-authorized-keys:/home/git/.ssh/
+      - sockets:/home/git/run/
+      - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   postgres:
-    image: postgres:11-alpine
+    image: postgres:12-alpine
     restart: always
     volumes:
-      - /srv/docker/gitlab/postgres:/var/lib/postgresql/data
+      - /srv/docker/gitlab/postgres12:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -40,3 +74,7 @@ services:
       - /srv/docker/gitlab/redis:/data
     entrypoint: redis-server --appendonly yes
 
+volumes:
+  sockets:
+  ssh-authorized-keys:
+  gitlab-secret:

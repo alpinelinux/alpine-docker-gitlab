@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# shellcheck disable=SC3040
+set -eu -o pipefail
+
+# shellcheck source=lib/libsetup
+. "$(dirname "$0")"/../lib/libsetup
+
+_fetch_source gitlab-shell "$GITLAB_SHELL_VERSION"

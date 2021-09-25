@@ -36,9 +36,7 @@ get_source() {
 apk -U upgrade --no-cache -a
 # add runtime dependencies
 apk add --no-cache --virtual .gitlab-runtime \
-	pcre2 \
-	libcurl \
-	zlib \
+	git \
 	su-exec \
 	nodejs \
 	postgresql-client \
@@ -56,10 +54,6 @@ apk add --no-cache --virtual .gitlab-runtime \
 
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime \
-	git \
-	zlib-dev \
-	curl-dev \
-	pcre2-dev \
 	build-base \
 	cmake \
 	libxml2-dev \
@@ -106,6 +100,7 @@ ln -sf /var/log/gitlab "$gitlab_location"/log
 cd "$gitlab_location"
 patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
 patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
+patch -p0 -i /tmp/gitlab/puma-socket-path.patch
 patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 patch -p0 -i /tmp/nginx/nginx-config.patch
 patch -p0 -i /tmp/resque/resque-config.patch
@@ -123,22 +118,6 @@ fi
 
 cd "$gitlab_location"
 bundle install
-
-###############
-## gitlab-shell
-###############
-echo "### Installing GitLab Shell.. ###"
-GITLAB_SHELL_VERSION=$(cat "$gitlab_location"/GITLAB_SHELL_VERSION)
-get_source gitlab-shell "$GITLAB_SHELL_VERSION" "/home/git/gitlab-shell"
-cd /home/git/gitlab-shell
-# needed for setup
-ln -sf config.yml.example config.yml
-patch -p0 -i /tmp/gitlab-shell/gitlab-shell-changes.patch
-install -Dm644 config.yml.example \
-	"$gitlab_location"/config/gitlab-shell/config.yml.example
-make setup
-# gitlab-shell will not set PATH
-ln -s /usr/local/bin/ruby /usr/bin/ruby
 
 ###################
 ## gitlab-workhorse
@@ -158,32 +137,6 @@ get_source gitlab-pages "$GITLAB_PAGES_VERSION" "/home/git/src/gitlab-pages"
 cd /home/git/src/gitlab-pages
 make
 install ./gitlab-pages /usr/local/bin/gitlab-pages
-
-#########
-## gitaly
-## will also install ruby gems into system like gitlab
-#########
-echo "### Installing Gitaly.. ###"
-GITALY_SERVER_VERSION=$(cat "$gitlab_location"/GITALY_SERVER_VERSION)
-get_source gitaly "$GITALY_SERVER_VERSION" "/home/git/src/gitaly"
-cd /home/git/src/gitaly
-patch -p0 -i /tmp/gitaly/gitaly-set-defaults.patch
-make install
-cat >>config.mak <<-EOF
-	GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
-    GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
-    GIT_BUILD_OPTIONS += NO_EXPAT=YesPlease
-    GIT_BUILD_OPTIONS += NO_TCLTK=YesPlease
-    GIT_BUILD_OPTIONS += NO_PERL=YesPlease
-    GIT_BUILD_OPTIONS += USE_LIBPCRE2=YesPlease
-    GIT_BUILD_OTPIONS += NO_SYS_POLL_H=1
-    GIT_BUILD_OPTIONS += ICONV_OMITS_BOM=Yes
-	GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
-EOF
-make git GIT_PREFIX=/usr/local
-mv ruby /home/git/gitaly-ruby
-install -Dm644 config.toml.example \
-	"$gitlab_location"/config/gitaly/config.toml.example
 
 echo "### Compiling gettex.. ###"
 cd "$gitlab_location"
@@ -225,8 +178,6 @@ rm -rf /home/git/gitlab/node_modules \
     /root/.cache \
     /root/go \
     /var/cache/apk/* \
-    /home/git/gitlab-shell/go \
-    /home/git/gitlab-shell/go_build \
     /usr/local/share/.cache
 
 # cleanup gems
@@ -238,3 +189,6 @@ for cruft in test spec example licenses samples man doc docs CHANGELOG COPYING; 
 	rm -rf "$gemdir"/gems/*/$cruft
 done
 
+# Prevent the generated secret from ending up in the image
+rm -f .gitlab_shell_secret
+ln -s /etc/gitlab/gitlab-shell/secret/gitlab_shell_secret /home/git/gitlab/.gitlab_shell_secret

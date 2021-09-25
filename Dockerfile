@@ -1,12 +1,18 @@
+ARG GITLAB_SHELL_VERSION
+FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
+
 FROM ruby:2.7-alpine3.13
 
-ENV GITLAB_VERSION=14.0.2
+ARG GITLAB_VERSION
+ENV GITLAB_VERSION=$GITLAB_VERSION
 
 COPY overlay /
 
 RUN  setup.sh
 
-EXPOSE 22 80
+EXPOSE 80
+
+COPY --from=gitlab-shell /home/git/gitlab-shell /home/git/gitlab-shell
 
 ENTRYPOINT [ "entrypoint.sh" ]
 

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-s6-svwait -t 5000 -u /run/s6/web
 echo "Starting nginx.."
 exec 2>&1
 rm -f /tmp/nginx.pid
