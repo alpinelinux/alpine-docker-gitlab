@@ -37,6 +37,19 @@ tasks:
         mkdir -p docker-images
         docker image save {{.image}} | pigz >docker-images/{{.image | replace "/" "-"}}.tar.gz
 
+  .generate-env:
+    cmds:
+      - |
+        if [ -f .env ] && ! grep -q '^# GENERATED' .env; then
+          echo "ERROR: Not overwriting non-generated .env file" >&2
+          exit 1
+        fi
+      - printf '# GENERATED\n\n' >.env
+      - cat build-args.env .env.* >>.env
+    deps: [ build-args ]
+    sources: [ .env.* ]
+    generates: [ .env ]
+
   build:
     description: "build all images"
     deps:
@@ -108,3 +121,8 @@ tasks:
   config:
     cmds:
       - docker-compose config
+
+  run:
+    cmds:
+      - docker-compose up -d
+    deps: [ .generate-env ]

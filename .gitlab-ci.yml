@@ -27,8 +27,8 @@ upload-gitlab:
       printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
     - |
       . ./build-args.env
-      docker-push-image alpinelinux/gitlab:latest alpinelinux/gitlab:$GITLAB_VERSION
-      docker-push-image alpinelinux/gitlab:latest alpinelinux/gitlab:${GITLAB_VERSION%.*}
+      docker push alpinelinux/gitlab:$GITLAB_VERSION
+      docker-push-image alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:$GITLAB_MAJOR_VERSION
       docker push alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
       docker push alpinelinux/gitaly:$GITALY_SERVER_VERSION
   tags: [ci-docker-image, x86_64]

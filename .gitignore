@@ -1,5 +1,5 @@
 *~
 .env
+.env.*
 .task/
-build-args.env
 */build/lib/libsetup

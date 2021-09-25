@@ -12,6 +12,7 @@ fi
 base_url="https://gitlab.com/gitlab-org/gitlab/-/raw/v$GITLAB_VERSION-ee"
 
 printf "GITLAB_VERSION=%s\n" "$GITLAB_VERSION"
+printf "GITLAB_MAJOR_VERSION=%s\n" "${GITLAB_VERSION%.*}"
 printf "GITLAB_WORKHORSE_VERSION=%s\n" "$GITLAB_VERSION"
 
 for F in GITALY_SERVER_VERSION GITLAB_SHELL_VERSION ; do

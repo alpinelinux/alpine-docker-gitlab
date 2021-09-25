@@ -1,10 +1,11 @@
 version: '3.5'
 services:
   gitlab:
-    image: alpinelinux/gitlab:14.0
+    image: alpinelinux/gitlab:$GITLAB_VERSION
     build:
       context: .
       args:
+        - GITLAB_VERSION
         - GITLAB_SHELL_VERSION
     hostname: ${GITLAB_HOSTNAME:-gitlab}
     restart: always
