@@ -21,6 +21,7 @@ upload-gitlab:
   image: alpinelinux/docker-cli
   rules:
     - if: $CI_COMMIT_REF_NAME == "master"
+    - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
   script:
     - |
       [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
