@@ -2,10 +2,10 @@ diff --git a/Makefile b/Makefile
 index 1d63621..19c81ff 100644
 --- Makefile
 +++ Makefile
-@@ -198,7 +198,7 @@ all: INSTALL_DEST_DIR = ${SOURCE_DIR}
- all: install
+@@ -242,7 +242,7 @@ all: INSTALL_DEST_DIR = ${SOURCE_DIR}
 
  .PHONY: build
+ ## Build Go binaries and install required Ruby Gems.
 -build: ${SOURCE_DIR}/.ruby-bundle libgit2
 +build: libgit2
  	go install ${GO_LDFLAGS} -tags "${GO_BUILD_TAGS}" $(addprefix ${GITALY_PACKAGE}/cmd/, $(call find_commands))
