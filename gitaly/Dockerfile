@@ -13,7 +13,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang AS build-gitaly
+FROM alpinelinux/golang:alpine3.13 AS build-gitaly
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
