@@ -12,6 +12,9 @@ dependencies() {
 }
 
 finalize() {
+    # Required by gitally
+    apk add --no-cache tzdata
+
     adduser -D git
     install -dm0755 -ogit -ggit /home/git/repositories
     install -dm0755 -ogit -ggit /home/git/gitlab
