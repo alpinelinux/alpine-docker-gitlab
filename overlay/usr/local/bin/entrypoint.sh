@@ -42,9 +42,9 @@ install_conf() {
 		install -Dm644 /home/git/gitlab/lib/support/logrotate/gitlab \
 			/etc/gitlab/logrotate/gitlab
 	fi
-	if [ ! -f "/etc/gitlab/nginx/conf.d/default.conf" ]; then
+	if [ ! -f "/etc/gitlab/nginx/http.d/default.conf" ]; then
 		install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
-			/etc/gitlab/nginx/conf.d/default.conf
+			/etc/gitlab/nginx/http.d/default.conf
 	fi
 }
 
