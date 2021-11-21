@@ -13,7 +13,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:alpine3.13 AS build-gitaly
+FROM alpinelinux/golang:alpine3.14 AS build-gitaly
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
@@ -40,7 +40,7 @@ RUN build-git
 
 ######################################################
 
-FROM ruby:2.7-alpine3.13 AS build-gitaly-ruby
+FROM ruby:2.7-alpine3.14 AS build-gitaly-ruby
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
@@ -57,7 +57,7 @@ FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
 
 ######################################################
 
-FROM ruby:2.7-alpine3.13
+FROM ruby:2.7-alpine3.14
 
 COPY overlay /
 COPY build/setup-image /usr/local/bin/

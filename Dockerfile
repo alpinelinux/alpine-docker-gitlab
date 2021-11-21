@@ -1,7 +1,7 @@
 ARG GITLAB_SHELL_VERSION
 FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
 
-FROM ruby:2.7-alpine3.13
+FROM ruby:2.7-alpine3.14
 
 ARG GITLAB_VERSION
 ENV GITLAB_VERSION=$GITLAB_VERSION

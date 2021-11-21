@@ -12,7 +12,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:alpine3.13 as builder
+FROM alpinelinux/golang:alpine3.14 as builder
 
 WORKDIR /tmp/src
 USER root
