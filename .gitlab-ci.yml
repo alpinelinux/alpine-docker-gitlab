@@ -8,10 +8,9 @@ build-gitlab:
   script:
     - >-
       apk add -X https://dl-cdn.alpinelinux.org/alpine/edge/community
-      go-task
+      go-task-task
       curl
-    - go-task build-args
-    - go-task build
+    - task build
   artifacts:
     paths: [build-args.env]
   tags: [ci-docker-image, x86_64]
