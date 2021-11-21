@@ -16,3 +16,17 @@ _strip_binaries() {
     dir=$1
     scanelf -BARF '' "$dir" | cut -d: -f1 | sort -u | xargs strip
 }
+
+apply_patch() {
+    patch_file=
+    options=
+    for arg; do
+        case $arg in
+            -*) options="$options $arg";;
+            *) patch_file=$arg; patch_name=$(basename "$arg");;
+        esac
+    done
+    echo "Applying $patch_name"
+    # shellcheck disable=SC2086
+    patch $options -i $patch_file
+}
