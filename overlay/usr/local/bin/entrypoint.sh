@@ -81,13 +81,14 @@ rebuild_conf() {
 postgres_conf() {
 	cat <<- EOF > /etc/gitlab/gitlab/database.yml
 	production:
-	  adapter: postgresql
-	  encoding: unicode
-	  database: $POSTGRES_DB
-	  pool: 10
-	  username: $POSTGRES_USER
-	  password: "$POSTGRES_PASSWORD"
-	  host: postgres
+	  main:
+	    adapter: postgresql
+	    encoding: unicode
+	    database: $POSTGRES_DB
+	    pool: 10
+	    username: $POSTGRES_USER
+	    password: "$POSTGRES_PASSWORD"
+	    host: postgres
 	EOF
 }
 
