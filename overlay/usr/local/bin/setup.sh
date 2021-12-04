@@ -110,6 +110,11 @@ for config in gitlab.yml.example database.yml.postgresql; do
 	ln -sf $config "$gitlab_location"/config/${config%.*}
 done
 
+# This needs to exist, otherwise gitlab will fail by trying to write to
+# a symlink.
+install -dm0755 /etc/gitlab/gitlab-shell/secret
+echo 'changeme' >/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
+
 # https://github.com/protocolbuffers/protobuf/pull/6848
 if [ -n "$PROTOBUF_VERSION" ]; then
 	echo "Building local protobuf version: $PROTOBUF_VERSION"

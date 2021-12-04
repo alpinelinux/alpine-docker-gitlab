@@ -4,9 +4,9 @@
 set -eu -o pipefail
 
 generate_gitlab_secret() {
-    if ! [ -f /etc/gitlab-shell/secret/gitlab_shell_secret ]; then
-        dd status=none if=/dev/urandom bs=1 count=256 |
-            sha512sum |
+    secret_file=/etc/gitlab-shell/secret/gitlab_shell_secret
+    if ! [ -f $secret_file ] || [ "$(cat "$secret_file")" = "changeme" ]; then
+        head -c 256 /dev/urandom | sha512sum |
             cut -d' ' -f1 >/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
     fi
 }

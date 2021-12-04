@@ -7,12 +7,11 @@ ARG GITLAB_VERSION
 ENV GITLAB_VERSION=$GITLAB_VERSION
 
 COPY overlay /
+COPY --from=gitlab-shell /home/git/gitlab-shell /home/git/gitlab-shell
 
 RUN  setup.sh
 
 EXPOSE 80
-
-COPY --from=gitlab-shell /home/git/gitlab-shell /home/git/gitlab-shell
 
 ENTRYPOINT [ "entrypoint.sh" ]
 

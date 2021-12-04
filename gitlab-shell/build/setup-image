@@ -19,6 +19,7 @@ setup_image() {
 
     ln -s /etc/gitlab/gitlab-shell/config.yml /home/git/gitlab-shell/config.yml
     ln -s /etc/gitlab/gitlab-shell/secret/gitlab_shell_secret /home/git/gitlab-shell/.gitlab_shell_secret
+    echo 'changeme' >/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
 
     chown -R git:git /home/git/
 }
