@@ -7,6 +7,11 @@ dotenv: [build-args.env]
 env:
   DOCKER_BUILDKIT: 1
 
+vars:
+  GITLAB_IMAGE: "alpinelinux/gitlab:{{.GITLAB_VERSION}}"
+  GITALY_IMAGE: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"
+  GITLAB_SHELL_IMAGE: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"
+
 tasks:
   build:
     desc: "build all images"
@@ -76,6 +81,7 @@ tasks:
     sources: [ build-args.env, .env.* ]
     generates: [ .env ]
 
+  ### GITLAB ###
   build-gitlab:
     cmds:
       - docker-compose build gitlab
@@ -87,13 +93,16 @@ tasks:
       - overlay/*
       - overlay/**/*
       - Dockerfile
+    status:
+      - docker image inspect {{.GITLAB_IMAGE}}
   save-image-gitlab:
     deps:
       - build-gitlab
     cmds:
       - task: .save-image
-        vars: {image: "alpinelinux/alpine-docker-gitlab:latest"}
+        vars: {image: "{{.GITLAB_IMAGE}}"}
 
+  ### GITALY ###
   deploy-libs-gitaly:
     cmds:
       - task: .deploy-libs
@@ -109,11 +118,14 @@ tasks:
       - build-args.env
       - gitaly/*
       - gitaly/**/*
+    status:
+      - docker image inspect {{.GITALY_IMAGE}}
   save-image-gitaly:
     cmds:
       - task: .save-image
-        vars: {image: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"}
+        vars: {image: "{{.GITALY_IMAGE}}"}
 
+  ### GITLAB-SHELL ###
   deploy-libs-gitlab-shell:
     cmds:
       - task: .deploy-libs
@@ -129,10 +141,12 @@ tasks:
       - gitlab-shell/*
       - gitlab-shell/**/*
     run: once
+    status:
+      - docker image inspect {{.GITLAB_SHELL_IMAGE}}
   save-image-gitlab-shell:
     cmds:
       - task: .save-image
-        vars: {image: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"}
+        vars: {image: "{{.GITLAB_SHELL_IMAGE}}"}
 
   save-images:
     deps:
