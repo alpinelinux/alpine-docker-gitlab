@@ -7,8 +7,8 @@ set -eu -o pipefail
 . "$(dirname "$0")"/../lib/libsetup
 
 gitaly_git() {
-    sudo chmod 0777 /tmp
-    sudo apk add \
+    doas chmod 0777 /tmp
+    doas apk add \
         bash \
         curl-dev \
         pcre2-dev \
