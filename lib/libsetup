@@ -20,13 +20,18 @@ _strip_binaries() {
 apply_patch() {
     patch_file=
     options=
-    for arg; do
+    while true; do
+        arg=$1
         case $arg in
-            -*) options="$options $arg";;
-            *) patch_file=$arg; patch_name=$(basename "$arg");;
+            -i)  patch_file=$2; shift;;
+            -i*) patch_file=${arg#-i*};;
+            *)   options="$options $arg";;
         esac
+
+        shift
+        [ $# -eq 0 ] && break
     done
-    echo "Applying $patch_name"
+    echo "Applying $(basename "$patch_file")"
     # shellcheck disable=SC2086
     patch $options -i $patch_file
 }

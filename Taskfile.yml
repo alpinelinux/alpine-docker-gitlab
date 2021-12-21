@@ -82,12 +82,24 @@ tasks:
     generates: [ .env ]
 
   ### GITLAB ###
+  deploy-libs-gitlab:
+    cmds:
+      - |-
+        install -Dm0644 lib/* -t overlay/usr/local/lib/
+        echo "Deployed libs for gitlab"
+    silent: true
+    sources:
+      - lib/libsetup
+    generates:
+      - "overlay/usr/local/lib/libsetup"
+    run: when_changed
   build-gitlab:
     cmds:
       - docker-compose build gitlab
     deps:
       - .build-args
       - build-gitlab-shell
+      - deploy-libs-gitlab
     sources:
       - build-args.env
       - overlay/*

@@ -9,8 +9,8 @@ set -eu -o pipefail
 build_gitlab_shell() {
     apk add make patch rdfind
 
-    apply_patch /tmp/makefile-fix-version.patch
-    apply_patch -p0 /tmp/gitlab-shell-changes.patch
+    apply_patch -i /tmp/makefile-fix-version.patch
+    apply_patch -p0 -i /tmp/gitlab-shell-changes.patch
 
     make build
     make install DESTDIR=/home/git/gitlab-shell PREFIX=/
