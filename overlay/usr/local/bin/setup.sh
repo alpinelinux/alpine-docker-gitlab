@@ -2,6 +2,8 @@
 
 set -eu
 
+. /usr/local/lib/libsetup
+
 gitlab_location=/home/git/gitlab
 : ${PROTOBUF_VERSION:=}
 
@@ -98,12 +100,12 @@ rm -rf "$gitlab_location"/log
 ln -sf /var/log/gitlab "$gitlab_location"/log
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/47483
 cd "$gitlab_location"
-patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
-patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
-patch -p0 -i /tmp/gitlab/puma-socket-path.patch
-patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
-patch -p0 -i /tmp/nginx/nginx-config.patch
-patch -p0 -i /tmp/resque/resque-config.patch
+apply_patch -p0 -i /tmp/gitlab/disable-check-gitaly.patch
+apply_patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
+apply_patch -p0 -i /tmp/gitlab/puma-socket-path.patch
+apply_patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
+apply_patch -p0 -i /tmp/nginx/nginx-config.patch
+apply_patch -p0 -i /tmp/resque/resque-config.patch
 
 # temporary symlink the example configs to make setup happy
 for config in gitlab.yml.example database.yml.postgresql; do
