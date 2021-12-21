@@ -43,8 +43,13 @@ install_conf() {
 			/etc/gitlab/logrotate/gitlab
 	fi
 	if [ ! -f "/etc/gitlab/nginx/http.d/default.conf" ]; then
-		install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
-			/etc/gitlab/nginx/http.d/default.conf
+		if [ -f "/etc/gitlab/nginx/conf.d/default.conf" ]; then
+			# migrate from conf.d to http.d
+			mv /etc/gitlab/nginx/conf.d /etc/nginx/http.d
+		else
+			install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
+				/etc/gitlab/nginx/http.d/default.conf
+		fi
 	fi
 }
 
