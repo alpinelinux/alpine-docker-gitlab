@@ -44,8 +44,9 @@ install_conf() {
 	fi
 	if [ ! -f "/etc/gitlab/nginx/http.d/default.conf" ]; then
 		if [ -f "/etc/gitlab/nginx/conf.d/default.conf" ]; then
-			# migrate from conf.d to http.d
-			mv /etc/gitlab/nginx/conf.d /etc/nginx/http.d
+			echo "Migrating nginx config from conf.d to http.d"
+			install -Dm0644 /etc/gitlab/nginx/conf.d/* -t /etc/gitlab/nginx/http.d/
+			rm -r /etc/gitlab/nginx/conf.d
 		else
 			install -Dm644 /home/git/gitlab/lib/support/nginx/gitlab \
 				/etc/gitlab/nginx/http.d/default.conf
