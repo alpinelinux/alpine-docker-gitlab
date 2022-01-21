@@ -9,7 +9,6 @@ set -eu -o pipefail
 build_gitlab_shell() {
     apk add make patch rdfind
 
-    apply_patch -i /tmp/makefile-fix-version.patch
     apply_patch -p0 -i /tmp/gitlab-shell-changes.patch
 
     make build
