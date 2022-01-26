@@ -1,3 +1,4 @@
+ARG ALPINE_VERSION
 FROM curlimages/curl AS source
 
 ARG GITLAB_SHELL_VERSION
@@ -12,7 +13,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:alpine3.14 as builder
+FROM alpinelinux/golang:$ALPINE_VERSION as builder
 
 WORKDIR /tmp/src
 USER root
@@ -26,7 +27,7 @@ RUN build-gitlab-shell
 
 ######################################################
 
-FROM alpine:3.14
+FROM alpine:$ALPINE_VERSION
 
 COPY overlay/ /
 COPY --from=builder /home/git/gitlab-shell/ /home/git/gitlab-shell/

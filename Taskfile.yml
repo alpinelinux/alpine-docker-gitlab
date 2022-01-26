@@ -16,6 +16,7 @@ tasks:
   build:
     desc: "build all images"
     deps:
+      - .generate-env
       - build-gitlab-shell
       - build-gitaly
       - build-gitlab
@@ -74,11 +75,12 @@ tasks:
           exit 1
         fi
       - printf '# GENERATED\n\n' >.env
-      - cat build-args.env .env.* >>.env
+      - find . \( -name build-args.env -o -name '.env.*' \) -exec cat {} + >>.env
+      - printf "ALPINE_VERSION=%s\n" "$(cat ALPINE-VERSION)" >>.env
       - echo "Generated .env"
     silent: true
     deps: [ .build-args ]
-    sources: [ build-args.env, .env.* ]
+    sources: [ build-args.env, .env.* ALPINE-VERSION]
     generates: [ .env ]
 
   ### GITLAB ###

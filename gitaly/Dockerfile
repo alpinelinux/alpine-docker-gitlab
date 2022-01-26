@@ -1,3 +1,4 @@
+ARG ALPINE_VERSION
 ARG GITLAB_SHELL_VERSION
 FROM curlimages/curl AS source
 
@@ -13,7 +14,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:alpine3.14 AS build-gitaly
+FROM alpinelinux/golang:$ALPINE_VERSION AS build-gitaly
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
@@ -40,7 +41,7 @@ RUN build-git
 
 ######################################################
 
-FROM ruby:2.7-alpine3.14 AS build-gitaly-ruby
+FROM ruby:2.7-alpine$ALPINE_VERSION AS build-gitaly-ruby
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
@@ -53,11 +54,11 @@ RUN build-gitaly-ruby
 ######################################################
 
 # Hack because `copy --from` does not support variable expansion
-FROM alpinelinux/gitlab-shell:${GITLAB_SHELL_VERSION} as gitlab-shell
+FROM alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION as gitlab-shell
 
 ######################################################
 
-FROM ruby:2.7-alpine3.14
+FROM ruby:2.7-alpine$ALPINE_VERSION
 
 COPY overlay /
 COPY build/setup-image /usr/local/bin/

@@ -5,6 +5,7 @@ services:
     build:
       context: .
       args:
+        - ALPINE_VERSION
         - GITLAB_VERSION
         - GITLAB_SHELL_VERSION
     hostname: ${GITLAB_HOSTNAME:-gitlab}
@@ -36,6 +37,7 @@ services:
     build:
       context: ./gitaly
       args:
+        - ALPINE_VERSION
         - GITALY_SERVER_VERSION
         - GITLAB_SHELL_VERSION
     depends_on:
@@ -51,6 +53,7 @@ services:
     build:
       context: ./gitlab-shell
       args:
+        - ALPINE_VERSION
         - GITLAB_SHELL_VERSION
     volumes:
       - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
