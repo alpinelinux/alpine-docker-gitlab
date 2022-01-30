@@ -34,6 +34,7 @@ services:
       - GITLAB_SERVICES
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
+    init: true
     build:
       context: ./gitaly
       args:
