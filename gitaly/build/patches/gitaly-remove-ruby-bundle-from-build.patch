@@ -1,13 +1,13 @@
 diff --git a/Makefile b/Makefile
-index 2034afdb4..8ccf99feb 100644
---- Makefile
-+++ Makefile
-@@ -282,7 +282,7 @@ help:
+index 1149b093a..b544c839b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -289,7 +289,7 @@ help:
  
  .PHONY: build
  ## Build Go binaries and install required Ruby Gems.
 -build: ${SOURCE_DIR}/.ruby-bundle libgit2
 +build: libgit2
- 	${Q}# We used to install Gitaly binaries into the source directory by default when executing
- 	${Q}# "make" or "make all", which has been changed in v14.5 to only build binaries into
- 	${Q}# `_build/bin`. In order to quickly fail in case any source install still refers to these
+ 	@ # We used to install Gitaly binaries into the source directory by default when executing
+ 	@ # "make" or "make all", which has been changed in v14.5 to only build binaries into
+ 	@ # `_build/bin`. In order to quickly fail in case any source install still refers to these

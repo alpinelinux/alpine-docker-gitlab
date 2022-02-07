@@ -21,7 +21,7 @@ gitaly() {
 
     cd /tmp/src
 
-    apply_patch -p0 -i /tmp/patches/gitaly-remove-ruby-bundle-from-build.patch
+    apply_patch -p1 -i /tmp/patches/gitaly-remove-ruby-bundle-from-build.patch
     apply_patch -p0 -i /tmp/patches/gitaly-set-defaults.patch
 
     make build
