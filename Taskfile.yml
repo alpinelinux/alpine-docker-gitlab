@@ -21,6 +21,13 @@ tasks:
       - build-gitaly
       - build-gitlab
 
+  update:
+    desc: "Update environment to current version and pull images"
+    deps:
+      - update-env
+    cmd:
+      - docker-compose pull
+
   update-env:
     desc: make sure all environment files are up-to-date
     deps:
