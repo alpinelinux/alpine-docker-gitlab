@@ -47,6 +47,7 @@ services:
       - /srv/docker/gitlab/repositories:/home/git/repositories
       - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
       - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - /srv/docker/gitlab/log/gitaly:/var/log/gitaly
       - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   gitlab-shell:
