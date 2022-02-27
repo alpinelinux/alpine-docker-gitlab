@@ -25,7 +25,7 @@ tasks:
     desc: "Update environment to current version and pull images"
     deps:
       - update-env
-    cmd:
+    cmds:
       - docker-compose pull
 
   update-env:
