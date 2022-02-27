@@ -35,6 +35,7 @@ services:
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
     init: true
+    restart: always
     build:
       context: ./gitaly
       args:
@@ -52,6 +53,7 @@ services:
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   gitlab-shell:
     image: alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
+    restart: always
     build:
       context: ./gitlab-shell
       args:
