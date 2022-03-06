@@ -14,7 +14,7 @@ _fetch_source() {
 
 _strip_binaries() {
     dir=$1
-    scanelf -BARF '' "$dir" | cut -d: -f1 | sort -u | xargs strip
+    scanelf -BARF '' "$dir" | cut -d: -f1 | sort -u | xargs -P"$(nproc)" strip
 }
 
 apply_patch() {
