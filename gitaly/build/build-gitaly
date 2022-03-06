@@ -21,8 +21,10 @@ gitaly() {
 
     cd /tmp/src
 
-    apply_patch -p1 -i /tmp/patches/gitaly-remove-ruby-bundle-from-build.patch
     apply_patch -p0 -i /tmp/patches/gitaly-set-defaults.patch
+
+    # Skip building ruby components, which will done in a separate stage
+    touch /tmp/src/.ruby-bundle
 
     make build
     make install DESTDIR=/tmp/gitaly/
