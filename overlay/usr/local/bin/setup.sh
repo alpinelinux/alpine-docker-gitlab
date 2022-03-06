@@ -159,11 +159,7 @@ bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
 
 echo "Build finish, cleaning up..."
 
-# strip go bins
-for bin in /usr/local/bin/*; do
-	[ "${bin##*.}" = sh ] && continue
-	strip "$bin" || true
-done
+_strip_binaries /usr/local/bin
 
 # detect gem library depends and add them to world
 gemdeps.sh | xargs -rt apk add --no-cache --virtual .gems-runtime
