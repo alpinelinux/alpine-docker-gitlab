@@ -104,7 +104,7 @@ tasks:
     run: when_changed
   build-gitlab:
     cmds:
-      - docker-compose build gitlab
+      - docker-compose build {{.CLI_ARGS}} gitlab
     deps:
       - .build-args
       - build-gitlab-shell
@@ -130,7 +130,7 @@ tasks:
         vars: {project: gitaly}
   build-gitaly:
     cmds:
-      - docker-compose build gitaly
+      - docker-compose build {{.CLI_ARGS}} gitaly
     deps:
       - .build-args
       - deploy-libs-gitaly
@@ -153,7 +153,7 @@ tasks:
         vars: {project: gitlab-shell}
   build-gitlab-shell:
     cmds:
-      - docker-compose build gitlab-shell
+      - docker-compose build {{.CLI_ARGS}} gitlab-shell
     deps:
       - .build-args
       - deploy-libs-gitlab-shell

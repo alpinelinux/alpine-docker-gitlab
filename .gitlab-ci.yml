@@ -10,7 +10,7 @@ build-gitlab:
       apk add -X https://dl-cdn.alpinelinux.org/alpine/edge/community
       go-task-task
       curl
-    - task build
+    - task build -- --no-cache
   artifacts:
     paths: [build-args.env]
   tags: [ci-docker-image, x86_64]
