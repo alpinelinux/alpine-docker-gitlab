@@ -87,7 +87,7 @@ tasks:
       - echo "Generated .env"
     silent: true
     deps: [ .build-args ]
-    sources: [ build-args.env, .env.* ALPINE-VERSION]
+    sources: [ build-args.env, .env.*, ALPINE-VERSION]
     generates: [ .env ]
 
   ### GITLAB ###
