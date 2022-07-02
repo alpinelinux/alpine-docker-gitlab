@@ -202,13 +202,17 @@ cleanup() {
 	find /home/git/gitlab/shared/artifacts -type f -mtime +30 -name "*.log" -delete
 }
 
+config() {
+	install_conf
+	prepare_dirs
+	prepare_conf
+	rebuild_conf
+}
+
 start() {
 	if [ -f "/etc/gitlab/.version" ]; then
 		echo "Configuration found"
-		install_conf
-		prepare_dirs
-		prepare_conf
-		rebuild_conf
+		config
 		upgrade_check
 	else
 		echo "No configuration found. Running setup.."
@@ -226,6 +230,7 @@ usage() {
 	Functions to operate on GitLab instance
 	  start      start GitLab
 	  setup      setup GitLab (used by docker build use with care)
+	  config     prepare configuration files
 	  upgrade    upgrade GitLab
 	  backup     backup GitLab (excluding secrets.yml, gitlab.yml)
 	  dump       dump database in /home/git/backup
@@ -240,6 +245,7 @@ usage() {
 case "${1:-help}" in
 	start) start ;;
 	setup) setup ;;
+	config) config ;;
 	upgrade) upgrade ;;
 	backup) backup ;;
 	dump) dump_db ;;
