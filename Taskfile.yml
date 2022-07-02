@@ -35,7 +35,7 @@ tasks:
     deps:
       - .build-args
       - .generate-env
-  run:
+  up:
     desc: Run all containers
     cmds:
       - "{{.COMPOSE}} up -d"
@@ -176,6 +176,10 @@ tasks:
       - save-image-gitlab-shell
       - save-image-gitaly
       - save-image-gitlab
+
+  run:
+    cmds:
+      - "{{.COMPOSE}} run --rm {{.CLI_ARGS}}"
 
   config:
     cmds:
