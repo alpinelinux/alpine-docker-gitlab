@@ -13,6 +13,7 @@ BASECONF="
 	gitlab/gitlab.yml.example
 	gitlab/secrets.yml.example
 	gitlab/puma.rb.example
+	gitlab/cable.yml.example
 	gitlab/resque.yml.example
 	gitlab/initializers/rack_attack.rb.example
 "
