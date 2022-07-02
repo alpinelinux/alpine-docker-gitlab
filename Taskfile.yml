@@ -11,6 +11,8 @@ vars:
   GITLAB_IMAGE: "alpinelinux/gitlab:{{.GITLAB_VERSION}}"
   GITALY_IMAGE: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"
   GITLAB_SHELL_IMAGE: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"
+  COMPOSE:
+    sh: docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose"
 
 tasks:
   build:
@@ -26,7 +28,7 @@ tasks:
     deps:
       - update-env
     cmds:
-      - docker-compose pull
+      - "{{.COMPOSE}} pull"
 
   update-env:
     desc: make sure all environment files are up-to-date
@@ -36,7 +38,7 @@ tasks:
   run:
     desc: Run all containers
     cmds:
-      - docker-compose up -d
+      - "{{.COMPOSE}} up -d"
     deps: [ update-env ]
 
   .build-args:
@@ -104,7 +106,7 @@ tasks:
     run: when_changed
   build-gitlab:
     cmds:
-      - docker-compose build {{.CLI_ARGS}} gitlab
+      - "{{.COMPOSE}} build {{.CLI_ARGS}} gitlab"
     deps:
       - .build-args
       - build-gitlab-shell
@@ -130,7 +132,7 @@ tasks:
         vars: {project: gitaly}
   build-gitaly:
     cmds:
-      - docker-compose build {{.CLI_ARGS}} gitaly
+      - "{{.COMPOSE}} build {{.CLI_ARGS}} gitaly"
     deps:
       - .build-args
       - deploy-libs-gitaly
@@ -153,7 +155,7 @@ tasks:
         vars: {project: gitlab-shell}
   build-gitlab-shell:
     cmds:
-      - docker-compose build {{.CLI_ARGS}} gitlab-shell
+      - "{{.COMPOSE}} build {{.CLI_ARGS}} gitlab-shell"
     deps:
       - .build-args
       - deploy-libs-gitlab-shell
@@ -177,5 +179,4 @@ tasks:
 
   config:
     cmds:
-      - docker-compose config
-
+      - "{{.COMPOSE}} config"
