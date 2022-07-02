@@ -252,7 +252,7 @@ case "${1:-help}" in
 	verify) verify ;;
 	logrotate) logrotate ;;
 	cleanup) cleanup ;;
-	shell) /bin/sh ;;
+	shell|sh) /bin/sh ;;
 	help) usage ;;
 	*) echo "Command \"$1\" is unknown."
 		usage
