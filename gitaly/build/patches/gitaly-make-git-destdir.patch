@@ -1,0 +1,22 @@
+diff --git a/Makefile b/Makefile
+index 117498e19..8b2bdf19d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -487,7 +487,7 @@ upgrade-module:
+ 
+ .PHONY: git
+ ## Build Git.
+-git: ${GIT_PREFIX}/bin/git
++git: ${DESTDIR}/${GIT_PREFIX}/bin/git
+ 
+ .PHONY: libgit2
+ ## Build libgit2.
+@@ -518,7 +518,7 @@ ${DEPENDENCY_DIR}: | ${BUILD_DIR}
+ 	${Q}mkdir -p ${DEPENDENCY_DIR}
+ 
+ # This target builds a full Git distribution and installs it into GIT_PREFIX.
+-${GIT_PREFIX}/bin/git: ${DEPENDENCY_DIR}/git-distribution/Makefile
++${DESTDIR}/${GIT_PREFIX}/bin/git: ${DEPENDENCY_DIR}/git-distribution/Makefile
+ 	@ # Remove the Git installation first in case GIT_PREFIX is the default
+ 	@ # prefix which always points into our build directory. This is done so
+ 	@ # we never end up with mixed Git installations on developer machines.

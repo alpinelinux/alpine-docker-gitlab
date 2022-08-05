@@ -14,6 +14,8 @@ gitaly_git() {
         pcre2-dev \
         zlib-dev
 
+    apply_patch -p1 -i /tmp/patches/gitaly-make-git-destdir.patch
+
     cat >>config.mak <<-EOF
 		GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
 		GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
@@ -26,7 +28,7 @@ gitaly_git() {
 		GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
 		GIT_BUILD_OPTIONS += DESTDIR=/tmp/git
 		EOF
-    make -j "$(nproc)" git GIT_PREFIX=/usr/local
+    make -j "$(nproc)" git GIT_PREFIX=/usr/local DESTDIR=/tmp/git
 
     _strip_binaries /tmp/git
 }
