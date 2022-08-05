@@ -29,7 +29,7 @@ RUN build-gitaly
 
 ######################################################
 
-FROM alpinelinux/build-base AS build-git
+FROM alpinelinux/build-base:$ALPINE_VERSION AS build-git
 
 COPY --chown=buildozer:buildozer --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
