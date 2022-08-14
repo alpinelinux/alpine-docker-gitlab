@@ -12,8 +12,8 @@ dependencies() {
 }
 
 finalize() {
-    # Required by gitally
-    apk add --no-cache tzdata
+    # tzdata required by gitally
+    apk add --no-cache tzdata git
 
     adduser -D git
     install -dm0755 -ogit -ggit /home/git/repositories

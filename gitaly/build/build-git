@@ -28,7 +28,8 @@ gitaly_git() {
 		GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
 		GIT_BUILD_OPTIONS += DESTDIR=/tmp/git
 		EOF
-    make -j "$(nproc)" git GIT_PREFIX=/usr/local DESTDIR=/tmp/git
+    make -j "$(nproc)" build-bundled-git GIT_PREFIX=/usr/local
+    make install-bundled-git DESTDIR=/tmp/git
 
     _strip_binaries /tmp/git
 }
