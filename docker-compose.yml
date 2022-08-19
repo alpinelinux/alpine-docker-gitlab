@@ -18,6 +18,7 @@ services:
       - /srv/docker/gitlab/shared:/home/git/gitlab/shared
       - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
       - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
+      - ./storage/certs/registry:/home/git/certs/registry
       - ssh-authorized-keys:/home/git/.ssh/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
       - sockets:/home/git/run/
@@ -32,6 +33,12 @@ services:
       - GITLAB_ROOT_PASSWORD
       - GITLAB_BACKUP_SKIP
       - GITLAB_SERVICES
+      - REGISTRY_S3_ACCESSKEY
+      - REGISTRY_S3_SECRET
+      - REGISTRY_S3_REGION
+      - REGISTRY_S3_ENDPOINT
+      - REGISTRY_S3_BUCKET
+      - REGISTRY_TOKEN_REALM
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
     init: true
@@ -80,6 +87,16 @@ services:
     volumes:
       - /srv/docker/gitlab/redis:/data
     entrypoint: redis-server --appendonly yes
+
+  registry:
+    image: registry:2
+    ports:
+      - 5001:5000
+    depends_on:
+      - gitlab
+    volumes:
+      - ./storage/config/registry:/etc/docker/registry/
+      - ./storage/certs/registry/public:/etc/docker/certs
 
 volumes:
   sockets:
