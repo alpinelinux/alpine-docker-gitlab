@@ -142,10 +142,10 @@ registry_certs() {
 		return
 	fi
 
-	mkdir -p /home/git/certs/registry/private
-	mkdir -p /home/git/certs/registry/public
+	install -dm0755 -ogit -ggit /home/git/certs/registry/private
+	install -dm0755 -ogit -ggit /home/git/certs/registry/public
 
-	openssl req \
+	su-exec git:git openssl req \
 		-x509 \
 		-newkey rsa:4096 \
 		-sha256 \
