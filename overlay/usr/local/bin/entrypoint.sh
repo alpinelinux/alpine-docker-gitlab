@@ -132,7 +132,7 @@ registry_conf() {
 	    realm: $REGISTRY_TOKEN_REALM
 	    service: container_registry
 	    issuer: gitlab-issuer
-	    rootcertbundle: /etc/docker/certs/bundle.crt
+	    rootcertbundle: /etc/docker/certs/gitlab.crt
 	    autoredirect: false
 	EOF
 }

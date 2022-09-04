@@ -95,7 +95,7 @@ services:
     depends_on:
       - gitlab
     volumes:
-      - ./storage/config/registry/config.yml:/etc/docker/registry/config.yml
+      - ./storage/config/registry:/etc/docker/registry/
       - ./storage/certs/registry/public:/etc/docker/certs
 
 volumes:
