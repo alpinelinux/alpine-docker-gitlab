@@ -107,6 +107,55 @@ workhorse_conf() {
 	EOF
 }
 
+registry_conf() {
+	mkdir -p /etc/gitlab/registry
+	cat <<-EOF >/etc/gitlab/registry/config.yml
+	version: 0.1
+	storage:
+	  s3:
+	    accesskey: $REGISTRY_S3_ACCESSKEY
+	    secretkey: $REGISTRY_S3_SECRET
+	    region: $REGISTRY_S3_REGION
+	    regionendpoint: SREGISTRY_S3_ENDPOINT
+	    bucket: $REGISTRY_S3_BUCKET
+	    secure: true
+	    v4auth: true
+	    rootdirectory: /
+	redis:
+	  addr: redis:6379
+	  db: 1
+	http:
+	  addr: 0.0.0.0:5000
+	  secret: notused
+	auth:
+	  token:
+	    realm: $REGISTRY_TOKEN_REALM
+	    service: container_registry
+	    issuer: gitlab-issuer
+	    rootcertbundle: /etc/docker/certs/gitlab.crt
+	    autoredirect: false
+	EOF
+}
+
+registry_certs() {
+	if [ -f /home/git/certs/registry/private/gitlab.key ]; then
+		return
+	fi
+
+	install -dm0755 -ogit -ggit /home/git/certs/registry/private
+	install -dm0755 -ogit -ggit /home/git/certs/registry/public
+
+	su-exec git:git openssl req \
+		-x509 \
+		-newkey rsa:4096 \
+		-sha256 \
+		-days 3650 \
+		-nodes \
+		-subj "/CN=gitlab-issuer" \
+		-keyout /home/git/certs/registry/private/gitlab.key \
+		-out /home/git/certs/registry/public/gitlab.crt
+}
+
 setup_gitlab() {
 	echo "Setting up gitlab..."
 	cd /home/git/gitlab
@@ -151,9 +200,12 @@ setup() {
 	postgres_conf
 	install_conf
 	workhorse_conf
+	registry_conf
+	registry_certs
 	prepare_dirs
 	prepare_conf
 	setup_gitlab
+
 	verify
 }
 
@@ -204,6 +256,8 @@ cleanup() {
 
 config() {
 	install_conf
+	registry_conf
+	registry_certs
 	prepare_dirs
 	prepare_conf
 	rebuild_conf

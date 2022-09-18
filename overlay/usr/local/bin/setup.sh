@@ -52,7 +52,8 @@ apk add --no-cache --virtual .gitlab-runtime \
 	graphicsmagick \
 	lua5.3 \
 	lua-mqtt-publish \
-	lua-cjson
+	lua-cjson \
+	openssl
 
 # add buildtime dependencies
 apk add --no-cache --virtual .gitlab-buildtime \

@@ -4,3 +4,4 @@
 .task/
 */build/lib/libsetup
 overlay/usr/local/lib/libsetup
+storage/

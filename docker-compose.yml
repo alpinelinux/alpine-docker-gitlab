@@ -11,13 +11,14 @@ services:
     hostname: ${GITLAB_HOSTNAME:-gitlab}
     restart: always
     volumes:
-      - /srv/docker/gitlab/repositories:/home/git/repositories
-      - /srv/docker/gitlab/config:/etc/gitlab
-      - /srv/docker/gitlab/log:/var/log
-      - /srv/docker/gitlab/builds:/home/git/gitlab/builds
-      - /srv/docker/gitlab/shared:/home/git/gitlab/shared
-      - /srv/docker/gitlab/uploads:/home/git/gitlab/public/uploads
-      - /srv/docker/gitlab/plugins:/home/git/gitlab/plugins
+      - ./storage/repositories:/home/git/repositories
+      - ./storage/config:/etc/gitlab
+      - ./storage/log:/var/log
+      - ./storage/builds:/home/git/gitlab/builds
+      - ./storage/shared:/home/git/gitlab/shared
+      - ./storage/uploads:/home/git/gitlab/public/uploads
+      - ./storage/plugins:/home/git/gitlab/plugins
+      - ./storage/certs/registry:/home/git/certs/registry
       - ssh-authorized-keys:/home/git/.ssh/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
       - sockets:/home/git/run/
@@ -32,6 +33,12 @@ services:
       - GITLAB_ROOT_PASSWORD
       - GITLAB_BACKUP_SKIP
       - GITLAB_SERVICES
+      - REGISTRY_S3_ACCESSKEY
+      - REGISTRY_S3_SECRET
+      - REGISTRY_S3_REGION
+      - REGISTRY_S3_ENDPOINT
+      - REGISTRY_S3_BUCKET
+      - REGISTRY_TOKEN_REALM
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
     init: true
@@ -45,10 +52,10 @@ services:
     depends_on:
       - gitlab-shell # for gitlab-secret
     volumes:
-      - /srv/docker/gitlab/repositories:/home/git/repositories
-      - /srv/docker/gitlab/config/gitaly/:/etc/gitlab/gitaly
-      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
-      - /srv/docker/gitlab/log/gitaly:/var/log/gitaly
+      - ./storage/repositories:/home/git/repositories
+      - ./storage/config/gitaly/:/etc/gitlab/gitaly
+      - ./storage/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - ./storage/log/gitaly:/var/log/gitaly
       - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   gitlab-shell:
@@ -60,9 +67,9 @@ services:
         - ALPINE_VERSION
         - GITLAB_SHELL_VERSION
     volumes:
-      - /srv/docker/gitlab/config/gitlab-shell:/etc/gitlab/gitlab-shell
-      - /srv/docker/gitlab/config/ssh:/etc/gitlab/ssh
-      - /srv/docker/gitlab/log:/var/log
+      - ./storage/config/gitlab-shell:/etc/gitlab/gitlab-shell
+      - ./storage/config/ssh:/etc/gitlab/ssh
+      - ./storage/log:/var/log
       - ssh-authorized-keys:/home/git/.ssh/
       - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
@@ -70,7 +77,7 @@ services:
     image: postgres:12-alpine
     restart: always
     volumes:
-      - /srv/docker/gitlab/postgres12:/var/lib/postgresql/data
+      - ./storage/postgres12:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -78,8 +85,18 @@ services:
     image: redis:5-alpine
     restart: always
     volumes:
-      - /srv/docker/gitlab/redis:/data
+      - ./storage/redis:/data
     entrypoint: redis-server --appendonly yes
+
+  registry:
+    image: registry:2
+    ports:
+      - 5001:5000
+    depends_on:
+      - gitlab
+    volumes:
+      - ./storage/config/registry:/etc/docker/registry/
+      - ./storage/certs/registry/public:/etc/docker/certs
 
 volumes:
   sockets:
