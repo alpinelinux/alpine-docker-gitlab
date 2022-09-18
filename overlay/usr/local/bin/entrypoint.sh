@@ -116,7 +116,7 @@ registry_conf() {
 	    accesskey: $REGISTRY_S3_ACCESSKEY
 	    secretkey: $REGISTRY_S3_SECRET
 	    region: $REGISTRY_S3_REGION
-	    regionendpoint: SREGISTRY_S3_ENDPOINT
+	    regionendpoint: $REGISTRY_S3_ENDPOINT
 	    bucket: $REGISTRY_S3_BUCKET
 	    secure: true
 	    v4auth: true
