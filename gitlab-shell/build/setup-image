@@ -8,7 +8,10 @@ setup_image() {
     adduser -D -g Gitlab -s /bin/sh git
     passwd -u git
 
-    sed -i 's/#LogLevel INFO/LogLevel VERBOSE/' /etc/ssh/sshd_config
+    sed -i \
+        -e 's/#LogLevel INFO/LogLevel VERBOSE/' \
+        -e '$ a AcceptEnv GIT_PROTOCOL' \
+        /etc/ssh/sshd_config
 
     install -dm0755 -ogit -ggit /etc/gitlab/ssh/
     install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell/
