@@ -14,8 +14,6 @@ gitaly_git() {
         pcre2-dev \
         zlib-dev
 
-    apply_patch -p1 -i /tmp/patches/gitaly-make-git-destdir.patch
-
     cat >>config.mak <<-EOF
 		GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
 		GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
