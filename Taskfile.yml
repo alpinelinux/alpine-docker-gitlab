@@ -84,8 +84,7 @@ tasks:
           exit 1
         fi
       - printf '# GENERATED\n\n' >.env
-      - find . -maxdepth 1 \( -name build-args.env -o -name '.env.*' \) -exec cat {} + >>.env
-      - ': <VERSIONS >>.env'
+      - '{ find . -maxdepth 1 \( -name build-args.env -o -name ".env.*" \) -exec cat "{}" +; cat VERSIONS; } | sort -u >>.env'
       - echo "Generated .env"
     silent: true
     deps: [ .build-args ]
