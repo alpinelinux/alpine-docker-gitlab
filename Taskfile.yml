@@ -43,14 +43,14 @@ tasks:
 
   .build-args:
     cmds:
-      - GITLAB_VERSION=$(<GITLAB-VERSION) build/versions.sh >build-args.env
+      - build/versions.sh >build-args.env
       - echo "Generated build-args.env"
     silent: true
     generates:
       - build-args.env
     sources:
       - build/versions.sh
-      - GITLAB-VERSION
+      - VERSIONS
     run: once
 
   .deploy-libs:
@@ -85,11 +85,11 @@ tasks:
         fi
       - printf '# GENERATED\n\n' >.env
       - find . -maxdepth 1 \( -name build-args.env -o -name '.env.*' \) -exec cat {} + >>.env
-      - printf "ALPINE_VERSION=%s\n" "$(cat ALPINE-VERSION)" >>.env
+      - ': <VERSIONS >>.env'
       - echo "Generated .env"
     silent: true
     deps: [ .build-args ]
-    sources: [ build-args.env, .env.*, ALPINE-VERSION]
+    sources: [ build-args.env, .env.*, VERSIONS]
     generates: [ .env ]
 
   ### GITLAB ###

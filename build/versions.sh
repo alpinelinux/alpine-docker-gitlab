@@ -4,8 +4,10 @@
 # shellcheck disable=SC3040
 set -eu -o pipefail
 
+. "$(dirname "$0")"/../VERSIONS
+
 if [ -z "${GITLAB_VERSION:-}" ]; then
-    echo "Please provide GITLAB_VERSION environment variable"
+    echo "Please provide GITLAB_VERSION environment variable" >&2
     exit 1
 fi
 
