@@ -1,4 +1,5 @@
 ARG ALPINE_VERSION
+ARG RUBY_VERSION
 ARG GITLAB_SHELL_VERSION
 FROM curlimages/curl AS source
 
@@ -42,7 +43,7 @@ RUN build-git
 
 ######################################################
 
-FROM ruby:2.7-alpine$ALPINE_VERSION AS build-gitaly-ruby
+FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION AS build-gitaly-ruby
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/
