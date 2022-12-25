@@ -84,7 +84,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
   redis:
-    image: redis:5-alpine
+    image: redis:6-alpine
     restart: always
     volumes:
       - ./storage/redis:/data
