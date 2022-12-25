@@ -121,8 +121,8 @@ registry_conf() {
 	    secure: true
 	    v4auth: true
 	    rootdirectory: /
-	delete:
-	  enabled: true
+	  delete:
+	    enabled: true
 	redis:
 	  addr: redis:6379
 	  db: 1
