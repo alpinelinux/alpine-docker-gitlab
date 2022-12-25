@@ -41,6 +41,16 @@ tasks:
       - "{{.COMPOSE}} up -d"
     deps: [ update-env ]
 
+  backup:
+    desc: Create a database dump
+    cmds:
+      - >
+        docker exec -i gitlab-postgres-1
+        pg_dump
+        -U postgres
+        -d gitlabhq_production
+        >/root/dbbackup/gitlab-$(date "+%Y%m%d").sql
+
   .build-args:
     cmds:
       - build/versions.sh >build-args.env
