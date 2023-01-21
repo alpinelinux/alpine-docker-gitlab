@@ -74,6 +74,10 @@ prepare_conf() {
 	echo "Preparing configuration.."
 	link_config "/etc/gitlab/gitlab" "/home/git/gitlab/config"
 	link_config "/etc/gitlab/nginx" "/etc/nginx"
+
+	for key in /etc/gitlab/ssh/ssh_host*.pub; do
+		ln -fs "$key" /etc/ssh/
+	done
 }
 
 rebuild_conf() {
