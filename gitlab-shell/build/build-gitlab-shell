@@ -7,7 +7,7 @@ set -eu -o pipefail
 . "$(dirname "$0")"/../lib/libsetup
 
 build_gitlab_shell() {
-    apk add make patch rdfind
+    apk add make patch rdfind krb5-dev
 
     apply_patch -p0 -i /tmp/gitlab-shell-changes.patch
 
