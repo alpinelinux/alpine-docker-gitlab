@@ -60,7 +60,7 @@ FROM alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION as gitlab-shell
 
 ######################################################
 
-FROM ruby:2.7-alpine$ALPINE_VERSION
+FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
 
 COPY overlay /
 COPY build/setup-image /usr/local/bin/

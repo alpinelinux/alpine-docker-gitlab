@@ -11,7 +11,7 @@ ENV GITLAB_VERSION=$GITLAB_VERSION
 COPY overlay /
 COPY --from=gitlab-shell /home/git/gitlab-shell /home/git/gitlab-shell
 
-RUN  setup.sh
+RUN setup.sh
 
 EXPOSE 80
 

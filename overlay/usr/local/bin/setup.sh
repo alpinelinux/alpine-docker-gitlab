@@ -107,6 +107,8 @@ apply_patch -p0 -i /tmp/gitlab/puma-socket-path.patch
 apply_patch -p1 -i /tmp/gitlab/cable-defaults.patch
 apply_patch -p1 -i /tmp/gitlab/database-remove-geo.patch
 apply_patch -p1 -i /tmp/gitlab/mr-119042-mr-failed.patch
+apply_patch -p1 -i /tmp/gitlab/openssl-3.0.patch
+apply_patch -p1 -i /tmp/gitlab/ruby-3.1-compat.patch
 apply_patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 apply_patch -p0 -i /tmp/nginx/nginx-config.patch
 apply_patch -p0 -i /tmp/resque/resque-config.patch
