@@ -1,0 +1,61 @@
+From 6d772f5eb5e60e0fb02f1412ccbec09c7efecd2a Mon Sep 17 00:00:00 2001
+From: Stanislav Lashmanov <slashmanov@gitlab.com>
+Date: Fri, 28 Apr 2023 13:41:43 +0400
+Subject: [PATCH] Fix Merge request tabs page bundle loading
+
+Fix unnecessary scroll to top on the new MR page
+
+Changelog: fixed
+---
+ app/assets/javascripts/merge_request_tabs.js | 5 +++--
+ spec/frontend/merge_request_tabs_spec.js     | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/app/assets/javascripts/merge_request_tabs.js b/app/assets/javascripts/merge_request_tabs.js
+index 124b14a98451f7..870e2d18dd285d 100644
+--- a/app/assets/javascripts/merge_request_tabs.js
++++ b/app/assets/javascripts/merge_request_tabs.js
+@@ -250,10 +250,11 @@ export default class MergeRequestTabs {
+   }
+   recallScroll(action) {
+     const storedPosition = this.scrollPositions[action];
++    if (storedPosition == null) return;
+ 
+     setTimeout(() => {
+       window.scrollTo({
+-        top: storedPosition && storedPosition > 0 ? storedPosition : 0,
++        top: storedPosition > 0 ? storedPosition : 0,
+         left: 0,
+         behavior: 'auto',
+       });
+@@ -306,7 +307,7 @@ export default class MergeRequestTabs {
+       const tab = this.mergeRequestTabs.querySelector(`.${action}-tab`);
+       if (tab) tab.classList.add('active');
+ 
+-      if (!this.loadedPages[action] && action in pageBundles) {
++      if (isInVueNoteablePage() && !this.loadedPages[action] && action in pageBundles) {
+         toggleLoader(true);
+         pageBundles[action]()
+           .then(({ default: init }) => {
+diff --git a/spec/frontend/merge_request_tabs_spec.js b/spec/frontend/merge_request_tabs_spec.js
+index 399c1446f37726..39c3a5f7bc59e6 100644
+--- a/spec/frontend/merge_request_tabs_spec.js
++++ b/spec/frontend/merge_request_tabs_spec.js
+@@ -380,12 +380,12 @@ describe('MergeRequestTabs', () => {
+         });
+       });
+ 
+-      it('scrolls to 0, if no position is stored', () => {
++      it('does not scroll if no position is stored', () => {
+         testContext.class.tabShown('unknownTab');
+ 
+         jest.advanceTimersByTime(250);
+ 
+-        expect(window.scrollTo.mock.calls[0][0]).toEqual({ top: 0, left: 0, behavior: 'auto' });
++        expect(window.scrollTo).not.toHaveBeenCalled();
+       });
+     });
+   });
+-- 
+GitLab
+
