@@ -1,9 +1,9 @@
 diff --git a/Gemfile b/Gemfile
-index bdb425b4aeda..e453baac9fe4 100644
+index 25fbc65d271c..bdbb62c8c3bd 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -602,3 +602,9 @@ install_if -> { Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.0.0") } do
- end
+@@ -601,3 +601,9 @@ gem 'telesignenterprise', '~> 2.2'
+ gem 'net-protocol', '~> 0.1.3'
  
  gem 'duo_api', '~> 1.3'
 +

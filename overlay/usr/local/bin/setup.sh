@@ -153,6 +153,7 @@ install ./gitlab-pages /usr/local/bin/gitlab-pages
 
 echo "### Compiling gettex.. ###"
 cd "$gitlab_location"
+yarn install --production --pure-lockfile
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
 export NODE_OPTIONS="--max_old_space_size=4096"
 bundle exec rake gettext:compile RAILS_ENV=production
@@ -160,7 +161,6 @@ bundle exec rake gettext:compile RAILS_ENV=production
 # compile assets (this is terrible slow)
 echo "### Compiling GitLab assets.. ###"
 cd "$gitlab_location"
-yarn install --production --pure-lockfile
 bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
 
 echo "Build finish, cleaning up..."

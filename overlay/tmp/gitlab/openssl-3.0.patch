@@ -2,20 +2,20 @@ diff --git a/Gemfile b/Gemfile
 index 8cafe3b8909c..bdb425b4aeda 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -19,7 +19,7 @@ gem 'bootsnap', '~> 1.16.0', require: false
+@@ -19,5 +19,5 @@ gem 'bootsnap', '~> 1.16.0', require: false
  
  # Pin openssl to match the version bundled with our supported Rubies.
  # See https://stdgems.org/openssl/#gem-version.
 -gem 'openssl', '2.2.2'
 +gem 'openssl', '3.0.1'
- # This gem was originally bundled with Ruby 2.7, but is unbundled as of Ruby 3.
- # Since the latest version caused problems with GitLab, we pin this to an older
- # version for now.
+ gem 'ipaddr', '~> 1.2.5'
+ 
+ # Responders respond_to and respond_with
 diff --git a/Gemfile.lock b/Gemfile.lock
 index 1f1f566be37c..bd274e05d353 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1070,7 +1070,7 @@ GEM
+@@ -1093,7 +1093,7 @@ GEM
        validate_email
        validate_url
        webfinger (>= 1.0.1)
@@ -24,7 +24,7 @@ index 1f1f566be37c..bd274e05d353 100644
        ipaddr
      openssl-signature_algorithm (1.3.0)
        openssl (> 2.0)
-@@ -1826,7 +1826,7 @@ DEPENDENCIES
+@@ -1855,7 +1855,7 @@ DEPENDENCIES
    omniauth_crowd (~> 2.4.0)!
    omniauth_openid_connect (~> 0.6.1)
    openid_connect (= 1.3.0)

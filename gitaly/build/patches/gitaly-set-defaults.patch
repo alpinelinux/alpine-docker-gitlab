@@ -13,12 +13,3 @@
 
  # # Optional: listen on a TCP socket. This is insecure (no authentication)
  # listen_addr = "localhost:9999"
-@@ -68,7 +68,7 @@ dir = "/home/git/gitlab/log"
-
- [gitaly-ruby]
- # The directory where gitaly-ruby is installed
--dir = "/home/git/gitaly/ruby"
-+dir = "/home/git/gitaly-ruby"
-
- # # Gitaly-ruby resident set size (RSS) that triggers a memory restart (bytes)
- # max_rss = 200000000
