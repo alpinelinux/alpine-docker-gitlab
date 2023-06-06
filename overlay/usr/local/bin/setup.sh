@@ -186,6 +186,8 @@ chown -R git:git /home/git
 rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab/docker \
     /home/git/gitlab/qa \
+    /home/git/gitlab/.git \
+	/home/git/gitlab/tmp/cache \
     /root/.bundle/cache \
     /root/.cache \
     /root/go \
