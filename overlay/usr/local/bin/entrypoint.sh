@@ -15,7 +15,6 @@ BASECONF="
 	gitlab/puma.rb.example
 	gitlab/cable.yml.example
 	gitlab/resque.yml.example
-	gitlab/initializers/rack_attack.rb.example
 "
 
 create_db() {
