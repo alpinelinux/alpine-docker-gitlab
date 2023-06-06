@@ -80,8 +80,8 @@ passwd -u git
 # 7. Redis
 # we use a seperate container for redis
 
-echo "### Set system wide bundler settings ###"
-bundle config set --global jobs $(nproc)
+echo "### Set root bundler settings ###"
+bundle config set --global jobs "$(nproc)"
 bundle config set --global silence_root_warning true
 bundle config set --global force_ruby_platform true
 # we do not use deployment and share gems via system
@@ -89,6 +89,9 @@ bundle config set --global deployment false
 bundle config set --global without development test mysql aws kerberos
 # https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
 bundle config set --global build.google-protobuf --with-cflags=-D__va_copy=va_copy
+
+# Persist the 'without' config system wide
+printf -- '---\nBUNDLE_WITHOUT: "development:test:mysql:aws:kerberos"\n' >/usr/local/bundle/config
 
 #########
 ## gitlab
@@ -183,7 +186,7 @@ chown -R git:git /home/git
 rm -rf /home/git/gitlab/node_modules \
     /home/git/gitlab/docker \
     /home/git/gitlab/qa \
-    /root/.bundle \
+    /root/.bundle/cache \
     /root/.cache \
     /root/go \
     /var/cache/apk/* \
