@@ -140,7 +140,8 @@ echo "### Installing GitLab Workhorse.. ###"
 # GITLAB_WORKHORSE_VERSION=$(cat "$gitlab_location"/GITLAB_WORKHORSE_VERSION)
 # get_source gitlab-workhorse "$GITLAB_WORKHORSE_VERSION" "/home/git/src/gitlab-workhorse"
 cd "$gitlab_location"/workhorse
-make && make install
+make
+make install
 
 ###############
 ## gitlab-pages
