@@ -69,3 +69,12 @@ To exclude some items from the backup you can set the environment variable
 `$GITLAB_BACKUP_SKIP` which will set `SKIP=` see:
 https://docs.gitlab.com/ee/raketasks/backup_restore.html
 
+## Gitlab 16
+
+Gitlab 16 requires postgres 13 or higher. This image will use postgresql 15,
+and switches the storage directory.
+
+You can use [pg-upgrade][] to migrate the existing postgres12 database to
+postgres15.
+
+[pg-upgrade]:https://gitlab.alpinelinux.org/alpine/infra/compose/pg-upgrade
