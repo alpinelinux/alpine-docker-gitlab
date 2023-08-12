@@ -4,12 +4,9 @@ stages:
 
 build-gitlab:
   stage: build
-  image: alpinelinux/docker-compose
+  image: alpinelinux/docker-cli
   script:
-    - >-
-      apk add -X https://dl-cdn.alpinelinux.org/alpine/edge/community
-      go-task-task
-      curl
+    - apk add go-task-task curl
     - task build -- --no-cache
   artifacts:
     paths: [build-args.env]
