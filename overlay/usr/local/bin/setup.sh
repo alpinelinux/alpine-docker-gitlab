@@ -89,6 +89,8 @@ bundle config set --global deployment false
 bundle config set --global without development test mysql aws kerberos
 # https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
 bundle config set --global build.google-protobuf --with-cflags=-D__va_copy=va_copy
+# Bundled libraries do not work on alpine
+bundle config set --global build.re2 --enable-system-libraries
 
 # Persist the 'without' config system wide
 printf -- '---\nBUNDLE_WITHOUT: "development:test:mysql:aws:kerberos"\n' >/usr/local/bundle/config
@@ -156,6 +158,7 @@ install ./gitlab-pages /usr/local/bin/gitlab-pages
 echo "### Compiling gettex.. ###"
 cd "$gitlab_location"
 yarn install --production --pure-lockfile
+
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
 export NODE_OPTIONS="--max_old_space_size=4096"
 bundle exec rake gettext:compile RAILS_ENV=production
