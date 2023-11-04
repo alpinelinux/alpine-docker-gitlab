@@ -114,7 +114,7 @@ apply_patch -p1 -i /tmp/gitlab/database-remove-geo.patch
 apply_patch -p1 -i /tmp/gitlab/ruby-3.1-compat.patch
 apply_patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 apply_patch -p0 -i /tmp/nginx/nginx-config.patch
-apply_patch -p0 -i /tmp/resque/resque-config.patch
+apply_patch -p1 -i /tmp/resque/resque-config.patch
 
 # temporary symlink the example configs to make setup happy
 for config in gitlab.yml.example database.yml.postgresql; do

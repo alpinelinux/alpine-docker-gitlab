@@ -1,5 +1,5 @@
 diff --git a/config/database.yml.postgresql b/config/database.yml.postgresql
-index b210b9c412bc..900612080416 100644
+index da9f458ff091..2d6d44e37bb4 100644
 --- a/config/database.yml.postgresql
 +++ b/config/database.yml.postgresql
 @@ -26,13 +26,6 @@ production:
@@ -44,8 +44,8 @@ index b210b9c412bc..900612080416 100644
  
  # Warning: The database defined as "test" will be erased and
  # re-generated from your development database when you run "rake".
-@@ -117,17 +96,3 @@ test: &test
-     prepared_statements: false
+@@ -119,19 +98,3 @@ test: &test
+     reaping_frequency: nil
      variables:
        statement_timeout: 15s
 -  geo:
@@ -55,6 +55,7 @@ index b210b9c412bc..900612080416 100644
 -    username: postgres
 -    password:
 -    host: localhost
+-    reaping_frequency: nil
 -  embedding:
 -    adapter: postgresql
 -    encoding: unicode
@@ -62,3 +63,4 @@ index b210b9c412bc..900612080416 100644
 -    username: postgres
 -    password:
 -    host: localhost
+-    reaping_frequency: nil

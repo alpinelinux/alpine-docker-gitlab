@@ -1,17 +1,19 @@
---- ./config/resque.yml.example
-+++ ./config/resque.yml.example
+diff --git a/config/resque.yml.example b/config/resque.yml.example
+index 600b9c67d6fa..2a473782f99b 100644
+--- a/config/resque.yml.example
++++ b/config/resque.yml.example
 @@ -1,8 +1,8 @@
- # If you change this file in a Merge Request, please also create
- # a Merge Request on https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests
+ # If you change this file in a merge request, please also create
+ # a merge request on https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests
  #
 -development:
 -  url: redis://localhost:6379
 +#development:
 +#  url: redis://localhost:6379
-   # sentinels:
-   #   -
-   #     host: localhost
-@@ -10,8 +10,8 @@ development:
+   # ssl_params:
+   #   ca_path: "/path/to/dir/with/certs"
+   #   ca_file: "/path/to/ca.crt"
+@@ -15,8 +15,8 @@ development:
    #   -
    #     host: replica2
    #     port: 26381 # point to sentinel, not to redis port

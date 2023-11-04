@@ -15,7 +15,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:$ALPINE_VERSION AS build-gitaly
+FROM registry.alpinelinux.org/alpine/infra/docker/golang:$ALPINE_VERSION AS build-gitaly
 
 COPY --from=source /tmp/src /tmp/src
 COPY build/lib/ /usr/local/lib/

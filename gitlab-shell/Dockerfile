@@ -13,7 +13,7 @@ RUN fetch-source
 
 ######################################################
 
-FROM alpinelinux/golang:$ALPINE_VERSION as builder
+FROM registry.alpinelinux.org/alpine/infra/docker/golang:$ALPINE_VERSION as builder
 
 WORKDIR /tmp/src
 USER root
