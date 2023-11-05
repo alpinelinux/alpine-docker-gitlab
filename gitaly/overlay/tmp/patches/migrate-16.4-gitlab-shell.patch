@@ -1,0 +1,16 @@
+diff --git a/config.toml b/config.toml
+index 8439ef9..c31a0e4 100644
+--- a/config.toml
++++ b/config.toml
+@@ -5,10 +5,9 @@ name = "default"
+ path = "/home/git/repositories"
+ [gitaly-ruby]
+ dir = "/home/git/gitaly-ruby"
+-[gitlab-shell]
+-dir = "/home/git/gitlab-shell"
+ [gitlab]
+ url = "http+unix://%2Fhome%2Fgit%2Frun%2Fgitlab%2Fgitlab.socket"
++secret_file = /etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
+ [logging]
+ dir = "/var/log/gitaly"
+ level = "warn"

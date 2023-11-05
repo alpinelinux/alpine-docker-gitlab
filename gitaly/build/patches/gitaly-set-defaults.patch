@@ -1,15 +1,28 @@
---- ./config.toml.example
-+++ ./config.toml.example
+diff --git a/config.toml.example b/config.toml.example
+index b0694b47d..8b4f85e07 100644
+--- a/config.toml.example
++++ b/config.toml.example
 @@ -2,10 +2,10 @@
  # Documentation lives at https://docs.gitlab.com/ee/administration/gitaly/ and
  # https://docs.gitlab.com/ee//administration/gitaly/reference
-
+ 
 -socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
 +socket_path = "/home/git/run/gitaly/gitaly.socket"
-
+ 
  # The directory where Gitaly's executables are stored
 -bin_dir = "/home/git/gitaly/_build/bin"
 +bin_dir = "/usr/local/bin"
-
- # # Optional: listen on a TCP socket. This is insecure (no authentication)
- # listen_addr = "localhost:9999"
+ 
+ # # Optional: The directory where Gitaly can create all files required to
+ # # properly operate at runtime. If not set, Gitaly will create a directory in
+@@ -74,8 +74,8 @@ dir = "/home/git/gitlab/log"
+ custom_hooks_dir = "/home/git/custom_hooks"
+ 
+ [gitlab]
+-secret_file = "/home/git/gitlab-shell/.gitlab_shell_secret"
+-url = "http+unix://%2Fhome%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab-workhorse.socket"
++secret_file = "/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret"
++url = "http+unix://%2Fhome%2Fgit%2Frun%2Fgitlab%2Fgitlab.socket"
+ # Only needed if a UNIX socket is used in `url` and GitLab is configured to
+ # use a relative path (e.g. /gitlab).
+ # relative_url_root = '/'

@@ -50,7 +50,6 @@ services:
         - ALPINE_VERSION
         - RUBY_VERSION
         - GITALY_SERVER_VERSION
-        - GITLAB_SHELL_VERSION
     depends_on:
       - gitlab-shell # for gitlab-secret
     volumes:

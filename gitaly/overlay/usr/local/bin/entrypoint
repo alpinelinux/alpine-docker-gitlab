@@ -15,4 +15,8 @@ fi
 
 mkdir -p /home/git/run/gitaly
 
+if grep -q gitlab-shell /etc/gitlab/gitaly/config.toml && ! grep -q secret_file /etc/gitlab/gitaly/config.toml; then
+    patch -p1 </tmp/patches/migrate-16.4-gitlab-shell.patch
+fi
+
 exec gitaly /etc/gitlab/gitaly/config.toml
