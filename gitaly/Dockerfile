@@ -42,7 +42,7 @@ RUN build-git
 
 ######################################################
 
-FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
+FROM alpine:$ALPINE_VERSION
 
 COPY overlay /
 COPY build/setup-image /usr/local/bin/

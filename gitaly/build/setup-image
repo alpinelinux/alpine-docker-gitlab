@@ -7,7 +7,7 @@ dependencies() {
     scanelf -BRF '%n#p' -E ET_DYN,ET_EXEC "$@" |
         tr , '\n' |
         sort -u |
-        awk '!/libruby|^$/ { print "so:" $1 }' |
+        awk '!/^$/ { print "so:" $1 }' |
         xargs -rt apk add --no-cache -t .deps
 }
 
