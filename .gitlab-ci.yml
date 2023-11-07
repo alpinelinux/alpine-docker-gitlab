@@ -29,3 +29,22 @@ upload-gitlab:
       docker push alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
       docker push alpinelinux/gitaly:$GITALY_SERVER_VERSION
   tags: [ci-docker-image, x86_64]
+
+upload-gitlab-next:
+  stage: publish
+  image: alpinelinux/docker-cli
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "next"
+  script:
+    - |
+      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
+      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
+    - |
+      . ./build-args.env
+      docker tag alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:next
+      docker push alpinelinux/gitlab:next
+      docker tag alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION alpinelinux/gitlab-shell:next
+      docker push alpinelinux/gitlab-shell:next
+      docker tag  alpinelinux/gitaly:$GITALY_SERVER_VERSION alpinelinux/gitaly:next
+      docker push alpinelinux/gitaly:next
+  tags: [ci-docker-image, x86_64]
