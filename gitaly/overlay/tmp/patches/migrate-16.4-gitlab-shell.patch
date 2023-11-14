@@ -10,7 +10,7 @@ index 8439ef9..c31a0e4 100644
 -dir = "/home/git/gitlab-shell"
  [gitlab]
  url = "http+unix://%2Fhome%2Fgit%2Frun%2Fgitlab%2Fgitlab.socket"
-+secret_file = /etc/gitlab/gitlab-shell/secret/gitlab_shell_secret
++secret_file = "/etc/gitlab/gitlab-shell/secret/gitlab_shell_secret"
  [logging]
  dir = "/var/log/gitaly"
  level = "warn"
