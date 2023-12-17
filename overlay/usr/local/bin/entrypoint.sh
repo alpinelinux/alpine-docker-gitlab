@@ -124,9 +124,9 @@ registry_conf() {
 	    secure: true
 	    v4auth: true
 	    rootdirectory: /
-		# fix compattibility issue with linode object storage
-		# see: https://www.linode.com/community/questions/24117
-		multipartcopythresholdsize: 5368709120
+	    # fix compattibility issue with linode object storage
+	    # see: https://www.linode.com/community/questions/24117
+	    multipartcopythresholdsize: 5368709120
 	  delete:
 	    enabled: true
 	redis:
