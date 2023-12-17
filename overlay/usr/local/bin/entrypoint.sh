@@ -129,6 +129,9 @@ registry_conf() {
 	    multipartcopythresholdsize: 5368709120
 	  delete:
 	    enabled: true
+	  maintenance:
+	    readonly:
+	      enabled: false
 	redis:
 	  addr: redis:6379
 	  db: 1
