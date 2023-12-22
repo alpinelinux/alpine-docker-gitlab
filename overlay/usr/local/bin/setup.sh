@@ -87,8 +87,6 @@ bundle config set --global force_ruby_platform true
 # we do not use deployment and share gems via system
 bundle config set --global deployment false
 bundle config set --global without development test mysql aws kerberos
-# https://github.com/protocolbuffers/protobuf/issues/2335#issuecomment-579913357
-bundle config set --global build.google-protobuf --with-cflags=-D__va_copy=va_copy
 # Bundled libraries do not work on alpine
 bundle config set --global build.re2 --enable-system-libraries
 
