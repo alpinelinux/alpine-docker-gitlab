@@ -1,11 +1,11 @@
 diff --git a/Gemfile b/Gemfile
-index 2107186fe159..e1e967aa83fd 100644
+index 0ddaf9afb3a3..52258f9d0979 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -630,3 +630,9 @@ gem 'net-protocol', '~> 0.1.3' # rubocop:todo Gemfile/MissingFeatureCategory
- gem 'net-http', '= 0.1.1' # rubocop:todo Gemfile/MissingFeatureCategory
- 
+@@ -652,3 +651,9 @@ gem 'net-http', '= 0.1.1' # rubocop:todo Gemfile/MissingFeatureCategory
  gem 'duo_api', '~> 1.3' # rubocop:todo Gemfile/MissingFeatureCategory
+ 
+ gem 'gitlab-sdk', feature_category: :application_instrumentation
 +
 +# ruby 3.1 compattibility
 +gem 'net-smtp'

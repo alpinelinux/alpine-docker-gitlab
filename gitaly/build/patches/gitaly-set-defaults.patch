@@ -1,21 +1,21 @@
 diff --git a/config.toml.example b/config.toml.example
-index b0694b47d..8b4f85e07 100644
+index d878b16ad..281345eec 100644
 --- a/config.toml.example
 +++ b/config.toml.example
 @@ -2,10 +2,10 @@
- # Documentation lives at https://docs.gitlab.com/ee/administration/gitaly/ and
- # https://docs.gitlab.com/ee//administration/gitaly/reference
+ # For Gitaly documentation, see https://docs.gitlab.com/ee/administration/gitaly/
  
+ # A path which Gitaly should open a Unix socket.
 -socket_path = "/home/git/gitlab/tmp/sockets/private/gitaly.socket"
 +socket_path = "/home/git/run/gitaly/gitaly.socket"
  
- # The directory where Gitaly's executables are stored
+ # Directory containing Gitaly executables.
 -bin_dir = "/home/git/gitaly/_build/bin"
 +bin_dir = "/usr/local/bin"
  
- # # Optional: The directory where Gitaly can create all files required to
+ # # Optional. The directory where Gitaly can create all files required to
  # # properly operate at runtime. If not set, Gitaly will create a directory in
-@@ -74,8 +74,8 @@ dir = "/home/git/gitlab/log"
+@@ -83,8 +83,8 @@ dir = "/home/git/gitlab/log"
  custom_hooks_dir = "/home/git/custom_hooks"
  
  [gitlab]
