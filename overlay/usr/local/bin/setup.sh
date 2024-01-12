@@ -68,7 +68,10 @@ apk add --no-cache --virtual .gitlab-buildtime \
 	c-ares-dev \
 	yarn \
 	go \
-	bash
+	bash \
+	cargo \
+	llvm \
+	clang-dev
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /bin/sh git
@@ -110,7 +113,6 @@ apply_patch -p0 -i /tmp/gitlab/puma-socket-path.patch
 apply_patch -p1 -i /tmp/gitlab/cable-defaults.patch
 apply_patch -p1 -i /tmp/gitlab/database-remove-geo.patch
 apply_patch -p1 -i /tmp/gitlab/ruby-3.1-compat.patch
-apply_patch -p1 -i /tmp/gitlab/remove-prometheus-client-gem.patch
 apply_patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 apply_patch -p0 -i /tmp/nginx/nginx-config.patch
 apply_patch -p1 -i /tmp/resque/resque-config.patch
