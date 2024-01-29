@@ -93,6 +93,8 @@ bundle config set --global without development test mysql aws kerberos
 # Bundled libraries do not work on alpine
 bundle config set --global build.re2 --enable-system-libraries
 
+bundle config set --global build.prometheus-client-mmap -j 16
+
 # Persist the 'without' config system wide
 printf -- '---\nBUNDLE_WITHOUT: "development:test:mysql:aws:kerberos"\n' >/usr/local/bundle/config
 
