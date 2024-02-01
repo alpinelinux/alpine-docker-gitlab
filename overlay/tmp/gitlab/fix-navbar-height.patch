@@ -1,0 +1,40 @@
+Source: https://gitlab.com/gitlab-org/gitlab/-/merge_requests/143012
+
+From b706f715fca4529230d8250afc1bc000b497c961 Mon Sep 17 00:00:00 2001
+From: sdejonge <sdejonge@gitlab.com>
+Date: Mon, 29 Jan 2024 12:40:15 +1000
+Subject: [PATCH] Fix logged out header custom logo size increasing header
+ height
+
+---
+ app/assets/stylesheets/framework/header.scss | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/app/assets/stylesheets/framework/header.scss b/app/assets/stylesheets/framework/header.scss
+index 1f58964cfc0084..ad78976c0e2bdb 100644
+--- a/app/assets/stylesheets/framework/header.scss
++++ b/app/assets/stylesheets/framework/header.scss
+@@ -81,6 +81,8 @@
+     align-items: center;
+     padding: 4px;
+     margin-left: -4px;
++    height: 32px;
++    width: auto;
+     border-radius: $border-radius-default;
+ 
+     &:hover,
+@@ -97,6 +99,11 @@
+       background-color: $brand-gray-03;
+     }
+   }
++
++  img {
++    height: 100%;
++    width: auto;
++  }
+ }
+ 
+ .header-logged-out-toggle {
+-- 
+GitLab
+
