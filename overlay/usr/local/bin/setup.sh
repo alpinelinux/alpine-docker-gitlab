@@ -93,8 +93,6 @@ bundle config set --global without development test mysql aws kerberos
 # Bundled libraries do not work on alpine
 bundle config set --global build.re2 --enable-system-libraries
 
-bundle config set --global build.prometheus-client-mmap -j 16
-
 # Persist the 'without' config system wide
 printf -- '---\nBUNDLE_WITHOUT: "development:test:mysql:aws:kerberos"\n' >/usr/local/bundle/config
 
@@ -114,7 +112,6 @@ apply_patch -p0 -i /tmp/gitlab/puma-no-redirect.patch
 apply_patch -p0 -i /tmp/gitlab/puma-socket-path.patch
 apply_patch -p1 -i /tmp/gitlab/cable-defaults.patch
 apply_patch -p1 -i /tmp/gitlab/database-remove-geo.patch
-apply_patch -p1 -i /tmp/gitlab/ruby-3.1-compat.patch
 apply_patch -p1 -i /tmp/gitlab/fix-navbar-height.patch
 apply_patch -p0 -i /tmp/logrotate/logrotate-defaults.patch
 apply_patch -p0 -i /tmp/nginx/nginx-config.patch
