@@ -134,7 +134,7 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-bundle install --gemfile Gemfile.rust
+bundle install --jobs 4 --gemfile Gemfile.rust
 bundle install
 
 ###################
