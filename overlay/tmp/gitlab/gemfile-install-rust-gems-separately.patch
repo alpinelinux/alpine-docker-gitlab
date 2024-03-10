@@ -7,4 +7,4 @@ index 000000000000..095cc40c98c9
 +source 'https://rubygems.org'
 +
 +gem 'prometheus-client-mmap', '~> 1.1', '>= 1.1.1', require: 'prometheus/client' # rubocop:todo Gemfile/MissingFeatureCategory
-+gem 'gitlab-glfm-markdown', '~> 0.0.11'
++gem 'gitlab-glfm-markdown', '~> 0.0.12'
