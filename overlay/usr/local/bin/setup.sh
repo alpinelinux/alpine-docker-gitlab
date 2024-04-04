@@ -135,7 +135,7 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-strace -f -o -e file,execve bundle install --gemfile Gemfile.rust
+strace -f -e file,execve bundle install --gemfile Gemfile.rust
 bundle install
 
 ###################
