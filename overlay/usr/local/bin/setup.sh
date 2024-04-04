@@ -71,7 +71,8 @@ apk add --no-cache --virtual .gitlab-buildtime \
 	bash \
 	cargo \
 	llvm \
-	clang-dev
+	clang-dev \
+	strace
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /bin/sh git
@@ -134,7 +135,7 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-bundle install --gemfile Gemfile.rust
+strace -f -o -e file,execve bundle install --gemfile Gemfile.rust
 bundle install
 
 ###################
