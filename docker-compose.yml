@@ -1,4 +1,3 @@
-version: '3.5'
 services:
   gitlab:
     image: alpinelinux/gitlab:$GITLAB_VERSION
