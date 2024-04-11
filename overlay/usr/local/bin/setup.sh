@@ -134,7 +134,7 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-bundle install --gemfile Gemfile.rust
+MAKEFLAGS='-j1' bundle install --gemfile Gemfile.rust
 bundle install
 
 ###################
