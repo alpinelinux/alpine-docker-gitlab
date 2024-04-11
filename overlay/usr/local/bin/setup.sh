@@ -134,21 +134,7 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-
-### WORKAROUND
-for dep in memchr-85c72d72091aaf9a regex_syntax-2b87d7be2ab6f0c9 regex_syntax-8089b2e1dcd267dc \
-		   bitflags-1ee38df52d6d63ef either-9d320364959df6bf rb_sys_env-eb232dbe043f12ba \
-		   strsim-74e79c07b87e46eb lazy_static-61db7bde4cbe20a2 typed_arena-d86be7c740fbb147 \
-		   fnv-cc4a28030e8e8b55 minimal_lexical-57811b10f157d957 unicode_ident-916bfd259f283b80 \
-		   rustc_hash-155e022c39ebee87 ident_case-22bca6106be2fd92 deunicode-6b8776b97962182f \
-		   glob-2fa167933fffa735 entities-39255b67d67dd51e shlex-9a977df8d4f58b5d cfg_if-f31761412cc4455e \
-		   lazycell-ba43e82e9660e352 seq_macro-746db2e0d12cb1a5 once_cell-c30117d5a8709542 \
-		   shell_words-7d71f8dca6aa8a0a unicode_categories-cd70d21122614ca4; do
-	install -dm0755 "/usr/local/bundle/gems/gitlab-glfm-markdown-0.0.12/ext/glfm_markdown/target/release/deps/$dep.d"
-done
-### END WORKAROUND
-
-bundle install --gemfile Gemfile.rust
+MAKEFLAGS='-j1' bundle install --gemfile Gemfile.rust
 bundle install
 
 ###################
