@@ -1,0 +1,13 @@
+diff --git a/lib/sys/unix/sys/filesystem/functions.rb b/lib/sys/unix/sys/filesystem/functions.rb
+index e2f9e7eb..c8bcd19d 100644
+--- a/lib/sys/unix/sys/filesystem/functions.rb
++++ b/lib/sys/unix/sys/filesystem/functions.rb
+@@ -20,8 +20,6 @@ def self.linux64?
+
+       if RbConfig::CONFIG['host_os'] =~ /sunos|solaris/i
+         attach_function(:statvfs, :statvfs64, %i[string pointer], :int)
+-      elsif linux64?
+-        attach_function(:statvfs, :statvfs64, %i[string pointer], :int)
+       else
+         attach_function(:statvfs, %i[string pointer], :int)
+       end

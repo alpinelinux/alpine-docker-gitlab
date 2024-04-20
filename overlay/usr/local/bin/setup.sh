@@ -59,6 +59,7 @@ apk add --no-cache --virtual .gitlab-runtime \
 apk add --no-cache --virtual .gitlab-buildtime \
 	build-base \
 	cmake \
+	gpgme-dev \
 	libxml2-dev \
 	icu-dev \
 	openssl-dev \
@@ -92,6 +93,8 @@ bundle config set --global deployment false
 bundle config set --global without development test mysql aws kerberos
 # Bundled libraries do not work on alpine
 bundle config set --global build.re2 --enable-system-libraries
+# gpgme bundled libraries use lfs64 symbols
+bundle config set --global build.gpgme --use-system-libraries
 
 # Persist the 'without' config system wide
 printf -- '---\nBUNDLE_WITHOUT: "development:test:mysql:aws:kerberos"\n' >/usr/local/bundle/config
@@ -136,6 +139,8 @@ fi
 cd "$gitlab_location"
 MAKEFLAGS='-j1' bundle install --gemfile Gemfile.rust
 bundle install
+
+apply_patch -d /usr/local/bundle/gems/sys-filesystem*/ -p1 -i /tmp/gitlab/gem-sys-filesystem-no-lfs64.patch
 
 ###################
 ## gitlab-workhorse
