@@ -72,7 +72,8 @@ apk add --no-cache --virtual .gitlab-buildtime \
 	bash \
 	cargo \
 	llvm \
-	clang-dev
+	clang-dev \
+	strace
 
 # 5 setup system user
 adduser -D -g "GitLab" -s /bin/sh git
@@ -137,7 +138,8 @@ if [ -n "$PROTOBUF_VERSION" ]; then
 fi
 
 cd "$gitlab_location"
-MAKEFLAGS='-j1' bundle install --gemfile Gemfile.rust
+export MAKEFLAGS='-j1'
+strace -o bundle-install.strace -e file,clone,execve,mkdir -s128 -f bundle install --gemfile Gemfile.rust || { cat bundle-install.strace || exit 1; }
 bundle install
 
 apply_patch -d /usr/local/bundle/gems/sys-filesystem*/ -p1 -i /tmp/gitlab/gem-sys-filesystem-no-lfs64.patch
