@@ -7,7 +7,10 @@ build-gitlab:
   image: alpinelinux/docker-cli
   script:
     - apk add -u go-task-task curl
-    - task build -- --no-cache
+    - task update-env
+    - task build-gitlab-shell -- --no-cache
+    - task build-gitaly -- --no-cache
+    - task build-gitlab -- --no-cache
   artifacts:
     paths: [build-args.env]
   tags: [ci-docker-image, x86_64]
