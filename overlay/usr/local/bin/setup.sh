@@ -139,7 +139,6 @@ fi
 
 cd "$gitlab_location"
 export MAKEFLAGS='-j1'
-strace -o bundle-install.strace -e file,clone,execve,mkdir -s128 -f bundle install --gemfile Gemfile.rust || { cat bundle-install.strace || exit 1; }
 bundle install
 
 apply_patch -d /usr/local/bundle/gems/sys-filesystem*/ -p1 -i /tmp/gitlab/gem-sys-filesystem-no-lfs64.patch
