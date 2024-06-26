@@ -125,6 +125,7 @@ tasks:
       - overlay/*
       - overlay/**/*
       - Dockerfile
+      - .env
     status:
       - docker image inspect {{.GITLAB_IMAGE}}
   save-image-gitlab:
