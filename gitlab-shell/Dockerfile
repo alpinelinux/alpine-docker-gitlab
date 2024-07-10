@@ -3,6 +3,8 @@ FROM curlimages/curl AS source
 
 ARG GITLAB_SHELL_VERSION
 
+RUN mkdir -p /tmp/src
+
 WORKDIR /tmp/src
 USER root
 
