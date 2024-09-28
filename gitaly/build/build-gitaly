@@ -19,12 +19,29 @@ gitaly() {
         rdfind \
         ruby-bundler
 
+    apk add -t .git-deps \
+        curl-dev \
+        pcre2-dev \
+        zlib-dev
+
     cd /tmp/src
 
     apply_patch -p1 -i /tmp/patches/gitaly-set-defaults.patch
 
     # Skip building ruby components, which will done in a separate stage
     touch /tmp/src/.ruby-bundle
+
+    cat >>config.mak <<-EOF
+		GIT_BUILD_OPTIONS += NO_GETTEXT=YesPlease
+		GIT_BUILD_OPTIONS += NO_REGEX=YesPlease
+		GIT_BUILD_OPTIONS += NO_EXPAT=YesPlease
+		GIT_BUILD_OPTIONS += NO_TCLTK=YesPlease
+		GIT_BUILD_OPTIONS += NO_PERL=YesPlease
+		GIT_BUILD_OPTIONS += USE_LIBPCRE2=YesPlease
+		GIT_BUILD_OTPIONS += NO_SYS_POLL_H=1
+		GIT_BUILD_OPTIONS += ICONV_OMITS_BOM=Yes
+		GIT_BUILD_OPTIONS += NO_INSTALL_HARDLINKS=YesPlease
+		EOF
 
     make build
     make install DESTDIR=/tmp/gitaly/
