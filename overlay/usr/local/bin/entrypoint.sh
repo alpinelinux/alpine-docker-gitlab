@@ -20,7 +20,7 @@ BASECONF="
 create_db() {
 	export PGPASSWORD=$POSTGRES_PASSWORD
 	echo "Connecting to postgres.."
-	while ! pg_isready -qh postgres; do sleep 1; done
+	while ! pg_isready -qh postgres -U $POSTGRES_USER; do sleep 1; done
 	echo "Connection succesful"
 	psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB \
 		-c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
