@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#shellcheck shell=busybox
+
 set -eu
 
 # https://gitlab.com/gitlab-org/omnibus-gitlab/merge_requests/1707
@@ -96,6 +98,15 @@ postgres_conf() {
 	    encoding: unicode
 	    database: $POSTGRES_DB
 	    pool: 10
+	    username: $POSTGRES_USER
+	    password: "$POSTGRES_PASSWORD"
+	    host: postgres
+	  ci:
+	    adapter: postgresql
+	    encoding: unicode
+	    database: $POSTGRES_DB
+	    pool: 10
+	    database_tasks: false
 	    username: $POSTGRES_USER
 	    password: "$POSTGRES_PASSWORD"
 	    host: postgres
