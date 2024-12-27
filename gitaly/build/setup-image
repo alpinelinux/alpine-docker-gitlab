@@ -24,6 +24,7 @@ finalize() {
     install -dm0755 -ogit -ggit /etc/gitlab/gitlab-shell
 
     chown -R git: /home/git
+    chmod 1777 /tmp
 }
 
 dependencies /usr/local
