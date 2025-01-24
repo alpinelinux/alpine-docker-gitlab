@@ -168,7 +168,7 @@ cd "$gitlab_location"
 yarn install --production --pure-lockfile
 
 # https://gitlab.com/gitlab-org/gitlab-foss/issues/50937
-export NODE_OPTIONS="--max_old_space_size=4096"
+export NODE_OPTIONS="--max_old_space_size=8096"
 bundle exec rake gettext:compile RAILS_ENV=production
 
 # compile assets (this is terrible slow)
