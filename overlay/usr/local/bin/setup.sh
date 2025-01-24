@@ -180,6 +180,17 @@ echo "Build finish, cleaning up..."
 
 _strip_binaries /usr/local/bin
 
+# built against glibc / non-alpine libraries, appears to be not used.
+# Remove them to prevent gemdeps.sh from returning those libraries as
+# required dependencies
+echo "### Deleting binaries linked to glibc ###"
+find /usr/local/bundle \( \
+	-name protoc \
+	-or -name 'grpc_tools_ruby_protoc' \
+	-or -name grpc_ruby_plugin \
+	-or -name grpc_tools_ruby_protoc_plugin \
+	\) -print -delete
+
 # detect gem library depends and add them to world
 gemdeps.sh | xargs -rt apk add --no-cache --virtual .gems-runtime
 
