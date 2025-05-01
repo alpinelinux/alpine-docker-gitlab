@@ -27,7 +27,6 @@ gitaly() {
     cd /tmp/src
 
     apply_patch -p1 -i /tmp/patches/gitaly-set-defaults.patch
-    apply_patch -p1 -i /tmp/patches/go-mod-go-1.22.patch
 
     # Skip building ruby components, which will done in a separate stage
     touch /tmp/src/.ruby-bundle
