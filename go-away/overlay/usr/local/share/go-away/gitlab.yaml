@@ -24,6 +24,14 @@ conditions:
     # docker
     - 'path == "/jwt/auth"'
     - 'path.endsWith(".atom")'
+  is-raw-resource:
+    - 'path.endsWith(".patch")'
+    - 'path.endsWith(".diff")'
+  is-job-output:
+    - 'path.matches("/-/jobs/\\d+/raw$")'
+    - 'path.matches("/-/jobs/\\d+/artifacts/")'
+  is-source-archive:
+    - 'path.matches("/-/archive/.*\\.(zip|tar\\.gz|tar\\.bz1|tar)")'
 
 rules:
   - name: allow-well-known-resources
@@ -96,6 +104,13 @@ rules:
       # SEO / Ads and marketing
       - 'userAgent.contains("BLEXBot")'
     action: block
+
+  - name: allowed-resources
+    conditions:
+      - ($is-raw-resource)
+      - ($is-source-archive)
+      - ($is-job-output)
+    action: pass
 
   - name: unknown-crawlers
     conditions:
