@@ -13,6 +13,7 @@ fi
 
 args="
     --config /etc/go-away/config.yaml
+    --client-ip-header=X-Forwarded-For
     --cache /var/cache/go-away
     --slog-level=INFO
     --policy /etc/go-away/gitlab.yaml
