@@ -1,0 +1,31 @@
+#!/bin/sh
+# shellcheck shell=busybox
+
+set -eu -o pipefail
+
+if ! [ -f /etc/go-away/config.yaml ]; then
+    cp /usr/local/share/go-away/config.yaml /etc/go-away/config.yaml
+fi
+
+if ! [ -f /etc/go-away/gitlab.yaml ]; then
+    cp /usr/local/share/go-away/gitlab.yaml /etc/go-away/gitlab.yaml
+fi
+
+args="
+    --config /etc/go-away/config.yaml
+    --cache /var/cache/go-away
+    --slog-level=INFO
+    --policy /etc/go-away/gitlab.yaml
+    --policy-snippets /snippets
+    --policy-snippets /usr/local/share/go-away/snippets
+"
+
+case ${1-} in
+    sh) shift; exec sh "$@";;
+    check) args="$args --check";;
+esac
+
+# shellcheck disable=SC2086
+su-exec go-away /bin/go-away \
+    $args \
+    "$@"

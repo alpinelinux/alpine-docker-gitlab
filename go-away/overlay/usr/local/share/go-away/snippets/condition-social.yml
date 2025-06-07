@@ -1,0 +1,8 @@
+conditions:
+  is-social-ua:
+    - 'userAgent.contains("+https://api.slack.com/robots")'
+    - 'userAgent.startsWith("Mastodon/")'
+    - 'userAgent.startsWith("Synapse/")'
+    - 'userAgent.startsWith("TelegramBot")'
+    - 'userAgent.startsWith("matrix-hookshot/")'
+    - 'userAgent.startsWith("matrix-media-server")'

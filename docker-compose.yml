@@ -99,7 +99,20 @@ services:
       - ./storage/config/registry:/etc/docker/registry/
       - ./storage/certs/registry/public:/etc/docker/certs
 
+  go-away:
+    image: local/go-away
+    build:
+      context: go-away/
+      args:
+        - GOAWAY_VERSION
+    restart: always
+    init: true
+    volumes:
+      - ./storage/config/go-away:/etc/go-away
+      - goaway-cache:/var/cache/go-away
+
 volumes:
   sockets:
   ssh-authorized-keys:
   gitlab-secret:
+  goaway-cache:

@@ -1,0 +1,7 @@
+backends:
+  "*":
+    url: "http://gitlab:80"
+    ip-header: "X-Forwarded-For"
+
+bind-debug: ":6060"
+bind-metrics: ":9090"

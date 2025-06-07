@@ -1,0 +1,15 @@
+conditions:
+  is-feed-reader-ua:
+    - 'userAgent.startsWith("Feedly/*")'
+    - 'userAgent.startsWith("FreshRSS/*")'
+    - 'userAgent.startsWith("Lenns.io/")'
+    - 'userAgent.startsWith("Newsboat/")'
+    - 'userAgent.startsWith("NextCloud-News/")'
+    - 'userAgent.startsWith("Reeder/*")'
+    - 'userAgent.startsWith("Tiny Tiny RSS/")'
+    - 'userAgent.startsWith("feedparser/*")'
+    - 'userAgent.startsWith("flowerss/*")'
+    - 'userAgent.startsWith("maubot/*")'
+    - 'userAgent.startsWith("newsraft/*")'
+    - 'userAgent.startsWith("rssTt/*")'
+    - 'userAgent.startsWith("rssbot/*")'

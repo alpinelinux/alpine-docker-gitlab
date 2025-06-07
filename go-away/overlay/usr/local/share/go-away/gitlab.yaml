@@ -1,0 +1,110 @@
+---
+networks:
+
+challenges:
+
+  gitlab-session-check:
+    runtime: http
+    parameters:
+      http-url: http://gitlab/api/v4/user
+      http-cookie: _gitlab_session
+      http-code: 200
+      verify-probability: 1.0
+
+  cookie:
+    runtime: "cookie"
+
+conditions:
+  is-static-asset:
+    - 'path.startsWith("/assets/")'
+    - 'path.matches("\\.(manifest|ttf|woff|woff2|jpg|jpeg|gif|png|webp|avif|svg|mp4|webm|css|js|mjs|wasm)$")'
+  is-automation-request:
+    - 'path.startsWith("/api/v4")'
+    - 'path == "/api/graphql"'
+    # docker
+    - 'path == "/jwt/auth"'
+    - 'path.endsWith(".atom")'
+
+rules:
+  - name: allow-well-known-resources
+    conditions:
+      - '($is-well-known-asset)'
+    action: pass
+
+  - name: allow-low-cost-resources
+    conditions:
+      - '($is-static-asset)'
+      - '($is-automation-request)'
+    action: pass
+  
+  - name: allow-known-tools
+    conditions:
+      - '($is-git-ua)'
+      - '($is-tool-ua)'
+      - '($is-feed-reader-ua)'
+      - '($is-social-ua)'
+      - '($is-automation-ua)'
+    action: pass 
+
+  - name: home-site
+    conditions:
+      - 'path == "/"'
+      - 'path == "/alpine"'
+    action: pass
+
+  - name: logged-in-user
+    action: challenge
+    settings:
+      challenges: [gitlab-session-check]
+      fail: none
+
+  - name: non-get-request
+    action: pass
+    conditions:
+      - '!(method == "HEAD" || method == "GET")'
+  
+  - name: desired-crawlers
+    conditions:
+      - ($is-bot-googlebot)
+      - ($is-bot-bingbot)
+      - ($is-bot-duckduckbot)
+      - ($is-bot-kagibot)
+      - ($is-bot-qwantbot)
+      - ($is-bot-yandexbot)
+    action: pass
+
+  - name: undesired-crawlers
+    conditions:
+      - '($is-headless-chromium)'
+      - 'userAgent.startsWith("Lightpanda/")'
+      - 'userAgent.startsWith("masscan/")'
+      # Typo'd opera botnet
+      - 'userAgent.matches("^Opera/[0-9.]+\\.\\(")'
+      # AI bullshit stuff, they do not respect robots.txt even while they read it
+      # TikTok Bytedance AI training
+      - 'userAgent.contains("Bytedance") || userAgent.contains("Bytespider")'
+      # Meta AI training; The Meta-ExternalAgent crawler crawls the web for use cases such as training AI models or improving products by indexing content directly.
+      - 'userAgent.contains("meta-externalagent/") || userAgent.contains("meta-externalfetcher/") || userAgent.contains("FacebookBot")'
+      # Anthropic AI training and usage
+      - 'userAgent.contains("ClaudeBot") || userAgent.contains("Claude-User")|| userAgent.contains("Claude-SearchBot")'
+      # Common Crawl AI crawlers
+      - 'userAgent.contains("CCBot")'
+      # ChatGPT AI crawlers https://platform.openai.com/docs/bots
+      - 'userAgent.contains("GPTBot") || userAgent.contains("OAI-SearchBot") || userAgent.contains("ChatGPT-User")'
+      # Other AI crawlers
+      - 'userAgent.contains("Amazonbot") || userAgent.contains("Google-Extended") || userAgent.contains("PanguBot") || userAgent.contains("AI2Bot") || userAgent.contains("Diffbot") || userAgent.contains("cohere-training-data-crawler") || userAgent.contains("Applebot-Extended") || userAgent.contains("DuckAssistBot")'
+      # SEO / Ads and marketing
+      - 'userAgent.contains("BLEXBot")'
+    action: block
+
+  - name: unknown-crawlers
+    conditions:
+      # No user agent set
+      - 'userAgent == ""'
+    action: deny
+
+  - name: challenge-remaining
+    action: challenge
+    settings:
+      challenges: [cookie]
+      fail: deny
