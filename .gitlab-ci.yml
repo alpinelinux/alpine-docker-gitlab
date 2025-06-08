@@ -51,3 +51,25 @@ upload-gitlab-next:
       docker tag  alpinelinux/gitaly:$GITALY_SERVER_VERSION alpinelinux/gitaly:next
       docker push alpinelinux/gitaly:next
   tags: [ci-docker-image, x86_64]
+
+build-go-away:
+  stage: build
+  image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
+  script: [pwd]
+  variables:
+    EXEC_COMMAND: build
+    COMPONENT: go-away
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "false"
+  tags: [ci-docker-image, x86_64]
+
+publish-go-away:
+  stage: build
+  image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
+  script: [pwd]
+  variables:
+    EXEC_COMMAND: publish
+    COMPONENT: go-away
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
+  tags: [ci-docker-image, x86_64]
