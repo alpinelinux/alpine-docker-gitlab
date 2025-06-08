@@ -25,7 +25,7 @@ conditions:
     - 'path == "/jwt/auth"'
     - 'path.endsWith(".atom")'
     - 'path.matches("/-/(commits|tags)") && has(query.format) && query.format == "atom"'
-    - 'path == "/search/opensearch.xml'
+    - 'path == "/search/opensearch.xml"'
   is-raw-resource:
     - 'path.endsWith(".patch")'
     - 'path.endsWith(".diff")'

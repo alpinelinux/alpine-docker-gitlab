@@ -100,7 +100,7 @@ services:
       - ./storage/certs/registry/public:/etc/docker/certs
 
   go-away:
-    image: local/go-away
+    image: registry.alpinelinux.org/alpine/infra/docker/gitlab/go-away
     build:
       context: go-away/
       args:
