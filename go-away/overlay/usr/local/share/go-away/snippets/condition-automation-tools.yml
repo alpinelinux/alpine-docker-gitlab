@@ -1,0 +1,9 @@
+conditions:
+  is-automation-ua:
+    - 'userAgent.contains("+https://repology.org/docs/bots")'
+    - 'userAgent.contains("CFNetwork/")'
+    - 'userAgent.startsWith("Anitya ")'
+    # busybox wget
+    - 'userAgent.startsWith("Wget")'
+    - 'userAgent.startsWith("axios/")'
+    - 'userAgent.startsWith("go-gitlab")'
