@@ -1,6 +1,6 @@
 ARG GOAWAY_VERSION=0.7.0
 ARG ALPINE_VERSION=3.21
-FROM git.gammaspectra.live/git/go-away:${GOAWAY_VERSION}-alpine${ALPINE_VERSION}
+FROM registry.alpinelinux.org/alpine/infra/docker/go-away:v${GOAWAY_VERSION}
 
 COPY overlay /
 
