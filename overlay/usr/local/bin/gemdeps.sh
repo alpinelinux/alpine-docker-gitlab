@@ -6,7 +6,7 @@ find_elf() {
 	# libruby is provided by docker image
 	find $gemdir -type f -not \( -name '*.o' \) |
 		xargs -n1 -P$(nproc) sh $0 scan | tr ',' '\n' | sort -u |
-		grep -v libruby | awk '{ print "so:" $1 }'
+		grep -vE 'libruby|^$' | awk '{ print "so:" $1 }'
 }
 
 scan() {
