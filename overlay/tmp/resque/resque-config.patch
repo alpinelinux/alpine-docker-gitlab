@@ -1,5 +1,5 @@
 diff --git a/config/resque.yml.example b/config/resque.yml.example
-index 600b9c67d6fa..2a473782f99b 100644
+index da93c8efcaa0..b5c591978f1d 100644
 --- a/config/resque.yml.example
 +++ b/config/resque.yml.example
 @@ -1,8 +1,8 @@
@@ -13,7 +13,7 @@ index 600b9c67d6fa..2a473782f99b 100644
    # ssl_params:
    #   ca_path: "/path/to/dir/with/certs"
    #   ca_file: "/path/to/ca.crt"
-@@ -15,8 +15,8 @@ development:
+@@ -15,11 +15,11 @@ development:
    #   -
    #     host: replica2
    #     port: 26381 # point to sentinel, not to redis port
@@ -23,4 +23,8 @@ index 600b9c67d6fa..2a473782f99b 100644
 +#  url: redis://localhost:6379
  production:
    # Redis (single instance)
-   url: unix:/var/run/redis/redis.sock
+-  url: unix:/var/run/redis/redis.sock
++  url: redis://redis:6379
+   ##
+   # Redis + Sentinel (for HA)
+   #
