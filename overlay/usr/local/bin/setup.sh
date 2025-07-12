@@ -67,6 +67,7 @@ apk add --no-cache --virtual .gitlab-buildtime \
 	linux-headers \
 	re2-dev \
 	c-ares-dev \
+	yaml-dev \
 	yarn \
 	go \
 	bash \

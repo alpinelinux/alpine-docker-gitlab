@@ -75,10 +75,10 @@ services:
       - sockets:/home/git/run/
       - gitlab-secret:/etc/gitlab/gitlab-shell/secret
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     restart: always
     volumes:
-      - ./storage/postgres15:/var/lib/postgresql/data
+      - ./storage/postgres16:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
