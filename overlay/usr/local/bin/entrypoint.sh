@@ -157,6 +157,18 @@ registry_conf() {
 	    rootcertbundle: /etc/docker/certs/gitlab.crt
 	    autoredirect: false
 	EOF
+
+	if [ -n "$REGISTRY_DB" ]; then
+	cat <<-EOF >>/etc/gitlab/registry/config.yml
+	database:
+	  enabled: true
+	  host: $REGISTRY_DB_HOST
+	  user: $REGISTRY_DB_USER
+	  password: $REGISTRY_DB_PASSWORD
+	  dbname: $REGISTRY_DB
+	  sslmode: disable
+	EOF
+	fi
 }
 
 registry_certs() {
@@ -176,6 +188,17 @@ registry_certs() {
 		-subj "/CN=gitlab-issuer" \
 		-keyout /home/git/certs/registry/private/gitlab.key \
 		-out /home/git/certs/registry/public/gitlab.crt
+}
+
+registry_create_db() {
+	export PGPASSWORD=$POSTGRES_PASSWORD
+
+	echo "Creating registry database..."
+	cat <<-SQL | psql -h postgres -U "$POSTGRES_USER" -f-
+	CREATE USER $REGISTRY_DB_USER WITH PASSWORD '$REGISTRY_DB_PASSWORD';
+	CREATE DATABASE $REGISTRY_DB OWNER $REGISTRY_DB_USER;
+	SQL
+	echo "Done"
 }
 
 setup_gitlab() {
@@ -314,6 +337,7 @@ usage() {
 	  logrotate  rotate logfiles
 	  cleanup    remove older CI log files
 	  shell      enter interactive shell
+	  registrydb Create the registry database
 	  help       this help message
 	EOF
 }
@@ -329,6 +353,7 @@ case "${1:-help}" in
 	logrotate) logrotate ;;
 	cleanup) cleanup ;;
 	shell|sh) /bin/sh ;;
+	registrydb) registry_create_db;;
 	help) usage ;;
 	*) echo "Command \"$1\" is unknown."
 		usage

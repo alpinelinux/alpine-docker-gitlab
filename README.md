@@ -78,3 +78,35 @@ You can use [pg-upgrade][] to migrate the existing postgres12 database to
 postgres15.
 
 [pg-upgrade]:https://gitlab.alpinelinux.org/alpine/infra/compose/pg-upgrade
+
+## Registry metadata database
+
+Gitlab optionally supports a [metadata database][metadata-db] to speed up
+operations and support online garbage collection.
+
+To enable the metadata database, provide the following environment variables:
+
+- `REGISTRY_DB`: The name of the database
+- `REGISTRY_DB_HOST`: The hostname of the database
+- `REGISTRY_DB_USER`: The user to connect to the database
+- `REGISTRY_DB_PASSWORD`: The password to connect to the database
+
+Either create the database and user manually, or run the `registrydb` command:
+
+```sh
+docker compose run --rm gitlab registrydb
+```
+
+After creating the database, it's necessary to run migrations:
+
+```sh
+docker compose run --rm registry /scripts/db-migrate
+```
+
+After this, the registry should be ready to go.
+
+To migrate existing registries, follow the [migration
+instructions][migration-instructions].
+
+[metadata-db]: https://docs.gitlab.com/administration/packages/container_registry_metadata_database/
+[migration-instructions]:https://docs.gitlab.com/administration/packages/container_registry_metadata_database/#existing-registries

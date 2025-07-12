@@ -40,6 +40,10 @@ services:
       - REGISTRY_S3_ENDPOINT
       - REGISTRY_S3_BUCKET
       - REGISTRY_TOKEN_REALM
+      - REGISTRY_DB
+      - REGISTRY_DB_HOST
+      - REGISTRY_DB_USER
+      - REGISTRY_DB_PASSWORD
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
     init: true
