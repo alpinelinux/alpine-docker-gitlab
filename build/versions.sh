@@ -22,3 +22,7 @@ for F in GITALY_SERVER_VERSION GITLAB_SHELL_VERSION ; do
     version=$(curl -Ss --fail "$url")
     printf "%s=%s\n" "$F" "$version"
 done
+
+registry_url=https://gitlab.com/gitlab-org/build/CNG/-/raw/v$GITLAB_VERSION-ee/gitlab-container-registry/Dockerfile
+registry_version=$(curl -Ss --fail "$registry_url" | awk -F= '/ARG REGISTRY_VERSION/ { print $2 }')
+printf "REGISTRY_VERSION=%s\n" "$registry_version"

@@ -90,7 +90,7 @@ services:
     entrypoint: redis-server --appendonly yes
 
   registry:
-    image: registry:2
+    image: registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry:$REGISTRY_VERSION
     ports:
       - 5001:5000
     depends_on:
