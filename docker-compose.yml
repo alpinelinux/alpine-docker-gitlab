@@ -34,16 +34,6 @@ services:
       - GITLAB_ROOT_PASSWORD
       - GITLAB_BACKUP_SKIP
       - GITLAB_SERVICES
-      - REGISTRY_S3_ACCESSKEY
-      - REGISTRY_S3_SECRET
-      - REGISTRY_S3_REGION
-      - REGISTRY_S3_ENDPOINT
-      - REGISTRY_S3_BUCKET
-      - REGISTRY_TOKEN_REALM
-      - REGISTRY_DB
-      - REGISTRY_DB_HOST
-      - REGISTRY_DB_USER
-      - REGISTRY_DB_PASSWORD
   gitaly:
     image: alpinelinux/gitaly:$GITALY_SERVER_VERSION
     init: true
@@ -99,9 +89,23 @@ services:
       - 5001:5000
     depends_on:
       - gitlab
+    environment:
+      CONFIG_TEMPLATE_DIRECTORY: /etc/docker/templates
+      GL_REGISTRY_S3_ACCESSKEY:
+      GL_REGISTRY_S3_SECRET:
+      GL_REGISTRY_S3_REGION:
+      GL_REGISTRY_S3_ENDPOINT:
+      GL_REGISTRY_S3_BUCKET:
+      GL_REGISTRY_TOKEN_REALM:
+      GL_REGISTRY_DB:
+      GL_REGISTRY_DB_ENABLED:
+      GL_REGISTRY_DB_HOST:
+      GL_REGISTRY_DB_USER:
+      GL_REGISTRY_DB_PASSWORD:
     volumes:
       - ./storage/config/registry:/etc/docker/registry/
       - ./storage/certs/registry/public:/etc/docker/certs
+      - ./registry/config.yml.tpl:/etc/docker/templates/config.yml.tpl
 
   go-away:
     image: registry.alpinelinux.org/alpine/infra/docker/gitlab/go-away

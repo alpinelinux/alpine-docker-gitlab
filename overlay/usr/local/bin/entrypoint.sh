@@ -121,57 +121,6 @@ workhorse_conf() {
 	EOF
 }
 
-registry_conf() {
-	mkdir -p /etc/gitlab/registry
-	cat <<-EOF >/etc/gitlab/registry/config.yml
-	version: 0.1
-	storage:
-	  s3:
-	    accesskey: $REGISTRY_S3_ACCESSKEY
-	    secretkey: $REGISTRY_S3_SECRET
-	    region: $REGISTRY_S3_REGION
-	    regionendpoint: $REGISTRY_S3_ENDPOINT
-	    bucket: $REGISTRY_S3_BUCKET
-	    secure: true
-	    v4auth: true
-	    rootdirectory: /
-	    # fix compattibility issue with linode object storage
-	    # see: https://www.linode.com/community/questions/24117
-	    multipartcopythresholdsize: 5368709120
-	  delete:
-	    enabled: true
-	  maintenance:
-	    readonly:
-	      enabled: false
-	redis:
-	  addr: redis:6379
-	  db: 1
-	http:
-	  addr: 0.0.0.0:5000
-	  secret: notused
-	auth:
-	  token:
-	    realm: $REGISTRY_TOKEN_REALM
-	    service: container_registry
-	    issuer: gitlab-issuer
-	    rootcertbundle: /etc/docker/certs/gitlab.crt
-	    autoredirect: false
-	EOF
-
-	: "${REGISTRY_DB_ENABLED:=true}"
-	if [ -n "$REGISTRY_DB" ]; then
-	cat <<-EOF >>/etc/gitlab/registry/config.yml
-	database:
-	  enabled: $REGISTRY_DB_ENABLED
-	  host: $REGISTRY_DB_HOST
-	  user: $REGISTRY_DB_USER
-	  password: $REGISTRY_DB_PASSWORD
-	  dbname: $REGISTRY_DB
-	  sslmode: disable
-	EOF
-	fi
-}
-
 registry_certs() {
 	if [ -f /home/git/certs/registry/private/gitlab.key ]; then
 		return
@@ -246,7 +195,6 @@ setup() {
 	postgres_conf
 	install_conf
 	workhorse_conf
-	registry_conf
 	registry_certs
 	prepare_dirs
 	prepare_conf
