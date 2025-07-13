@@ -158,10 +158,11 @@ registry_conf() {
 	    autoredirect: false
 	EOF
 
+	: "${REGISTRY_DB_ENABLED:=true}"
 	if [ -n "$REGISTRY_DB" ]; then
 	cat <<-EOF >>/etc/gitlab/registry/config.yml
 	database:
-	  enabled: true
+	  enabled: $REGISTRY_DB_ENABLED
 	  host: $REGISTRY_DB_HOST
 	  user: $REGISTRY_DB_USER
 	  password: $REGISTRY_DB_PASSWORD
