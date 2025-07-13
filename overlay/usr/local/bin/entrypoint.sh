@@ -250,7 +250,6 @@ cleanup() {
 
 config() {
 	install_conf
-	registry_conf
 	registry_certs
 	prepare_dirs
 	prepare_conf
