@@ -153,6 +153,9 @@ build:gitlab:
 publish:gitlab:
   extends: [.build-image, .rules:publish, .component:gitlab]
   stage: publish
+  needs:
+    - job: publish:gitlab-shell
+    - job: publish:gitaly
   variables:
     EXEC_COMMAND: publish
 
@@ -162,6 +165,9 @@ publish:gitlab-next:
   variables:
     EXEC_COMMAND: publish
     DOCKER_TAG: next
+  needs:
+    - job: publish:gitlab-shell-next
+    - job: publish:gitaly-next
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
 
