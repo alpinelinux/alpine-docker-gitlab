@@ -40,7 +40,8 @@ build:gitlab-shell:
   variables:
     EXEC_COMMAND: build
   rules:
-    - changes:
+    - if: $CI_COMMIT_REF_PROTECTED == "false" || $CI_MERGE_REQUEST_IID
+      changes:
         paths:
           - .gitlab-ci.yml
           - overlay/**/*
@@ -86,7 +87,8 @@ build:gitaly:
   variables:
     EXEC_COMMAND: build
   rules:
-    - changes:
+    - if: $CI_COMMIT_REF_PROTECTED == "false" || $CI_MERGE_REQUEST_IID
+      changes:
         paths:
           - .gitlab-ci.yml
           - overlay/**/*
@@ -138,7 +140,8 @@ build:gitlab:
     - job: build:gitlab-shell
     - job: build:gitaly
   rules:
-    - changes:
+    - if: $CI_COMMIT_REF_PROTECTED == "false" || $CI_MERGE_REQUEST_IID
+      changes:
         paths:
           - .gitlab-ci.yml
           - Dockerfile
@@ -169,7 +172,8 @@ build:go-away:
     EXEC_COMMAND: build
     COMPONENT: go-away
   rules:
-    - changes:
+    - if: $CI_COMMIT_REF_PROTECTED == "false" || $CI_MERGE_REQUEST_IID
+      changes:
         paths:
           - .gitlab-ci.yml
           - go-away/**/*
