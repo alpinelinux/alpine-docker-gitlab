@@ -162,24 +162,28 @@ publish:gitlab-next:
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
 
-build-go-away:
+build:go-away:
+  extends: [.build-image]
   stage: build
-  image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
-  script: [pwd]
   variables:
     EXEC_COMMAND: build
     COMPONENT: go-away
   rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "false"
-  tags: [ci-docker-image, x86_64]
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - go-away/**/*
 
-publish-go-away:
-  stage: build
+publish:go-away:
+  extends: [.build-image]
+  stage: publish
   image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
   script: [pwd]
   variables:
     EXEC_COMMAND: publish
     COMPONENT: go-away
   rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
-  tags: [ci-docker-image, x86_64]
+    - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
+      changes:
+        paths:
+          - go-away/**/*
