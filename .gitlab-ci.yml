@@ -2,74 +2,188 @@ stages:
   - build
   - publish
 
-build-gitlab:
-  stage: build
-  image: alpinelinux/docker-cli
-  script:
-    - apk add -u go-task-task curl
-    - task update-env
-    - task build-gitlab-shell -- --no-cache
-    - task build-gitaly -- --no-cache
-    - task build-gitlab -- --no-cache
-  artifacts:
-    paths: [build-args.env]
-  tags: [ci-docker-image, x86_64]
+include:
+  - project: 'alpine/infra/gitlab-ci-templates'
+    ref: master
+    file: '/exec/docker-image-base.yml'
 
-upload-gitlab:
-  stage: publish
-  image: alpinelinux/docker-cli
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.rules:publish:
   rules:
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
-  script:
-    - |
-      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
-      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
-    - |
-      . ./build-args.env
-      docker push alpinelinux/gitlab:$GITLAB_VERSION
-      docker-push-image alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:$GITLAB_MAJOR_VERSION
-      docker push alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
-      docker push alpinelinux/gitaly:$GITALY_SERVER_VERSION
-  tags: [ci-docker-image, x86_64]
 
-upload-gitlab-next:
+.component:gitlab-shell:
+  variables:
+    COMPONENT: gitlab-shell
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_GITLAB_SHELL_VERSION=$GITLAB_SHELL_VERSION
+    - export DOCKER_TAG=$GITLAB_SHELL_VERSION
+    - install -Dm0644 lib/* -t gitlab-shell/build/lib/
+    - entrypoint
+
+build:gitlab-shell:
+  extends: [.build-image, .component:gitlab-shell]
+  stage: build
+  variables:
+    EXEC_COMMAND: build
+  rules:
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - overlay/**/*
+          - gitlab-shell/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
+
+publish:gitlab-shell:
+  extends: [.build-image, .rules:publish, .component:gitlab-shell]
   stage: publish
-  image: alpinelinux/docker-cli
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitlab-shell-next:
+  extends: [.build-image, .component:gitlab-shell]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
-  script:
-    - |
-      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
-      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
-    - |
-      . ./build-args.env
-      docker tag alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:next
-      docker push alpinelinux/gitlab:next
-      docker tag alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION alpinelinux/gitlab-shell:next
-      docker push alpinelinux/gitlab-shell:next
-      docker tag  alpinelinux/gitaly:$GITALY_SERVER_VERSION alpinelinux/gitaly:next
-      docker push alpinelinux/gitaly:next
-  tags: [ci-docker-image, x86_64]
 
-build-go-away:
+.component:gitaly:
+  variables:
+    COMPONENT: gitaly
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_RUBY_VERSION=$RUBY_VERSION
+    - export ARG_GITALY_SERVER_VERSION=$GITALY_SERVER_VERSION
+    - export DOCKER_TAG=$GITALY_SERVER_VERSION
+    - install -Dm0644 lib/* -t gitaly/build/lib/
+    - entrypoint
+
+build:gitaly:
+  extends: [.build-image, .component:gitaly]
   stage: build
-  image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
-  script: [pwd]
+  variables:
+    EXEC_COMMAND: build
+  rules:
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - overlay/**/*
+          - gitaly/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
+
+publish:gitaly:
+  extends: [.build-image, .rules:publish, .component:gitaly]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitaly-next:
+  extends: [.build-image, .component:gitaly]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "next"
+
+.component:gitlab:
+  variables:
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+    ARG_REGISTRY_IMAGE_BASE: $CI_REGISTRY_IMAGE
+    ARG_CI_TAG: ci-$CI_COMMIT_REF_SLUG
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_RUBY_VERSION=$RUBY_VERSION
+    - export ARG_GITLAB_VERSION=$GITLAB_VERSION
+    - export ARG_GITALY_SERVER_VERSION=$GITALY_SERVER_VERSION
+    - export ARG_GITLAB_SHELL_VERSION=$GITLAB_SHELL_VERSION
+    - export DOCKER_TAG=$GITLAB_VERSION
+    - install -Dm0644 lib/* -t overlay/usr/local/lib/
+    - entrypoint
+
+build:gitlab:
+  extends: [.build-image, .component:gitlab]
+  stage: build
+  variables:
+    EXEC_COMMAND: build
+  needs:
+    - job: build:gitlab-shell
+    - job: build:gitaly
+  rules:
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - Dockerfile
+          - overlay/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
+
+publish:gitlab:
+  extends: [.build-image, .rules:publish, .component:gitlab]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitlab-next:
+  extends: [.build-image, .component:gitlab]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "next"
+
+build:go-away:
+  extends: [.build-image]
+  stage: build
   variables:
     EXEC_COMMAND: build
     COMPONENT: go-away
   rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "false"
-  tags: [ci-docker-image, x86_64]
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - go-away/**/*
 
-publish-go-away:
-  stage: build
+publish:go-away:
+  extends: [.build-image]
+  stage: publish
   image: registry.alpinelinux.org/alpine/infra/docker/exec/docker-image
   script: [pwd]
   variables:
     EXEC_COMMAND: publish
     COMPONENT: go-away
   rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"
-  tags: [ci-docker-image, x86_64]
+    - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
+      changes:
+        paths:
+          - go-away/**/*
