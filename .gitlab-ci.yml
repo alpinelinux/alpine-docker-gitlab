@@ -110,55 +110,57 @@ publish:gitaly-next:
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
 
-build-gitlab:
+.component:gitlab:
+  variables:
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+    ARG_REGISTRY_IMAGE_BASE: $CI_REGISTRY_IMAGE
+    ARG_CI_TAG: ci-$CI_COMMIT_REF_SLUG
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_RUBY_VERSION=$RUBY_VERSION
+    - export ARG_GITLAB_VERSION=$GITLAB_VERSION
+    - export ARG_GITALY_SERVER_VERSION=$GITALY_SERVER_VERSION
+    - export ARG_GITLAB_SHELL_VERSION=$GITLAB_SHELL_VERSION
+    - export DOCKER_TAG=$GITLAB_VERSION
+    - install -Dm0644 lib/* -t overlay/usr/local/lib/
+    - entrypoint
+
+build:gitlab:
+  extends: [.build-image, .component:gitlab]
   stage: build
-  image: alpinelinux/docker-cli
-  script:
-    - apk add -u go-task-task curl
-    - task update-env
-    - task build-gitlab-shell -- --no-cache
-    - task build-gitaly -- --no-cache
-    - task build-gitlab -- --no-cache
-  artifacts:
-    paths: [build-args.env]
-  tags: [ci-docker-image, x86_64]
-
-upload-gitlab:
-  stage: publish
-  image: alpinelinux/docker-cli
+  variables:
+    EXEC_COMMAND: build
+  needs:
+    - job: build:gitlab-shell
+    - job: build:gitaly
   rules:
-    - if: $CI_COMMIT_REF_NAME == "master"
-    - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
-  script:
-    - |
-      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
-      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
-    - |
-      . ./build-args.env
-      docker push alpinelinux/gitlab:$GITLAB_VERSION
-      docker-push-image alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:$GITLAB_MAJOR_VERSION
-      docker push alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION
-      docker push alpinelinux/gitaly:$GITALY_SERVER_VERSION
-  tags: [ci-docker-image, x86_64]
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - Dockerfile
+          - overlay/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
 
-upload-gitlab-next:
+publish:gitlab:
+  extends: [.build-image, .rules:publish, .component:gitlab]
   stage: publish
-  image: alpinelinux/docker-cli
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitlab-next:
+  extends: [.build-image, .component:gitlab]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
-  script:
-    - |
-      [ -z "$DOCKER_PASSWORD" ] && { echo "Please specify \$DOCKER_PASSWORD"; exit 120; }
-      printf "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
-    - |
-      . ./build-args.env
-      docker tag alpinelinux/gitlab:$GITLAB_VERSION alpinelinux/gitlab:next
-      docker push alpinelinux/gitlab:next
-      docker tag alpinelinux/gitlab-shell:$GITLAB_SHELL_VERSION alpinelinux/gitlab-shell:next
-      docker push alpinelinux/gitlab-shell:next
-      docker tag  alpinelinux/gitaly:$GITALY_SERVER_VERSION alpinelinux/gitaly:next
-      docker push alpinelinux/gitaly:next
-  tags: [ci-docker-image, x86_64]
 
 build-go-away:
   stage: build
