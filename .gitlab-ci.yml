@@ -118,7 +118,6 @@ publish:gitaly-next:
     MIRROR_DOCKER_HUB: YesPlease
     EXEC_SH: YesPlease
     ARG_REGISTRY_IMAGE_BASE: $CI_REGISTRY_IMAGE
-    ARG_CI_TAG: ci-$CI_COMMIT_REF_SLUG
   script:
     - source ./VERSIONS
     - source ./build-args.env
@@ -135,6 +134,7 @@ build:gitlab:
   extends: [.build-image, .component:gitlab]
   stage: build
   variables:
+    ARG_CI_TAG: ci-$CI_COMMIT_REF_SLUG
     EXEC_COMMAND: build
   needs:
     - job: build:gitlab-shell
