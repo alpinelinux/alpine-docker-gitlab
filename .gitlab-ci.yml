@@ -2,6 +2,68 @@ stages:
   - build
   - publish
 
+include:
+  - project: 'alpine/infra/gitlab-ci-templates'
+    ref: master
+    file: '/exec/docker-image-base.yml'
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.rules:publish:
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+    - if: $CI_COMMIT_REF_NAME =~ /.*-stable$/
+
+.component:gitlab-shell:
+  variables:
+    COMPONENT: gitlab-shell
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_GITLAB_SHELL_VERSION=$GITLAB_SHELL_VERSION
+    - export DOCKER_TAG=$GITLAB_SHELL_VERSION
+    - install -Dm0644 lib/* -t gitlab-shell/build/lib/
+    - entrypoint
+
+build:gitlab-shell:
+  extends: [.build-image, .component:gitlab-shell]
+  stage: build
+  variables:
+    EXEC_COMMAND: build
+  rules:
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - overlay/**/*
+          - gitlab-shell/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
+
+publish:gitlab-shell:
+  extends: [.build-image, .rules:publish, .component:gitlab-shell]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitlab-shell-next:
+  extends: [.build-image, .component:gitlab-shell]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "next"
+
 build-gitlab:
   stage: build
   image: alpinelinux/docker-cli
