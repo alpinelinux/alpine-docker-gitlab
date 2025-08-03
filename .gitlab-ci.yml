@@ -64,6 +64,52 @@ publish:gitlab-shell-next:
   rules:
     - if: $CI_COMMIT_REF_NAME == "next"
 
+.component:gitaly:
+  variables:
+    COMPONENT: gitaly
+    PUBLISH_CI_IMAGE: YesPlease
+    MIRROR_DOCKER_HUB: YesPlease
+    EXEC_SH: YesPlease
+  script:
+    - source ./VERSIONS
+    - source ./build-args.env
+    - export ARG_ALPINE_VERSION=$ALPINE_VERSION
+    - export ARG_RUBY_VERSION=$RUBY_VERSION
+    - export ARG_GITALY_SERVER_VERSION=$GITALY_SERVER_VERSION
+    - export DOCKER_TAG=$GITALY_SERVER_VERSION
+    - install -Dm0644 lib/* -t gitaly/build/lib/
+    - entrypoint
+
+build:gitaly:
+  extends: [.build-image, .component:gitaly]
+  stage: build
+  variables:
+    EXEC_COMMAND: build
+  rules:
+    - changes:
+        paths:
+          - .gitlab-ci.yml
+          - overlay/**/*
+          - gitaly/**/*
+          - lib/**/*
+          - build-args.env
+          - VERSIONS
+
+publish:gitaly:
+  extends: [.build-image, .rules:publish, .component:gitaly]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+
+publish:gitaly-next:
+  extends: [.build-image, .component:gitaly]
+  stage: publish
+  variables:
+    EXEC_COMMAND: publish
+    DOCKER_TAG: next
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "next"
+
 build-gitlab:
   stage: build
   image: alpinelinux/docker-cli
