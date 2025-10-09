@@ -1,9 +1,15 @@
---- ./lib/support/logrotate/gitlab
-+++ ./lib/support/logrotate/gitlab
-@@ -8,14 +8,5 @@
-     compress
-     notifempty
-     copytruncate
+diff --git a/lib/support/logrotate/gitlab b/lib/support/logrotate/gitlab
+index 43fa8eb963c7..113e81ab472a 100644
+--- a/lib/support/logrotate/gitlab
++++ b/lib/support/logrotate/gitlab
+@@ -4,18 +4,9 @@
+     su git git
+     daily
+     missingok
+-    rotate 90
+-    compress
+-    notifempty
+-    copytruncate
 -}
 -
 -/home/git/gitlab-shell/gitlab-shell.log {
@@ -11,8 +17,9 @@
 -    daily
 -    missingok
 -    rotate 90
--    compress
--    notifempty
--    copytruncate
++    rotate 14
+     compress
+     notifempty
+     copytruncate
 +    maxsize 100M
  }
