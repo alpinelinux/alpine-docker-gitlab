@@ -39,6 +39,7 @@ tasks:
     desc: Run all containers
     cmds:
       - "{{.COMPOSE}} up -d"
+      - task: registry:migrate
     deps: [ update-env ]
 
   backup:
@@ -180,6 +181,13 @@ tasks:
     cmds:
       - task: .save-image
         vars: {image: "{{.GITLAB_SHELL_IMAGE}}"}
+
+
+  ### REGISTRY ###
+  registry:migrate:
+    descr: Run registry database migrations
+    cmds:
+      - docker compose run --rm registry registry database migrate up /etc/docker/registry/config.yml
 
   save-images:
     deps:
