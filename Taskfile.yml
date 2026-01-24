@@ -51,6 +51,9 @@ tasks:
         -U postgres
         -d gitlabhq_production
         >/root/dbbackup/gitlab-$(date "+%Y%m%d").sql
+  cleanup:artifacts:
+    desc: Clean up artifacts for the top-20 projects in size
+    cmd: docker compose exec -u git -w /home/git/gitlab gitlab rails runner -e production /etc/gitlab/gitlab/rails_scripts/cleanup_artifacts.rb
 
   .build-args:
     cmds:
