@@ -20,6 +20,7 @@ gitaly() {
         ruby-bundler
 
     apk add -t .git-deps \
+        meson \
         curl-dev \
         pcre2-dev \
         zlib-dev
