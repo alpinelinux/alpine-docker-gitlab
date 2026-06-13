@@ -174,6 +174,8 @@ bundle exec rake gettext:compile RAILS_ENV=production
 # compile assets (this is terrible slow)
 echo "### Compiling GitLab assets.. ###"
 cd "$gitlab_location"
+# https://gitlab.com/gitlab-org/gitlab/-/work_items/597036
+node scripts/frontend/infection_scanner/infection_scanner.mjs
 bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
 
 echo "Build finish, cleaning up..."
