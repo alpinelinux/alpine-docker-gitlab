@@ -1,7 +1,7 @@
 version: 0.1
 storage:
 {%- if getenv "GL_REGISTRY_S3_BUCKET" "" %}
-  s3:
+  s3_v2:
     accesskey: {% .Env.GL_REGISTRY_S3_ACCESSKEY %}
     secretkey: {% .Env.GL_REGISTRY_S3_SECRET %}
     region: {% .Env.GL_REGISTRY_S3_REGION %}
