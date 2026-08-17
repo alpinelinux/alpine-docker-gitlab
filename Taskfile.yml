@@ -54,6 +54,9 @@ tasks:
   cleanup:artifacts:
     desc: Clean up artifacts for the top-20 projects in size
     cmd: docker compose exec -u git -w /home/git/gitlab gitlab rails runner -e production /etc/gitlab/gitlab/rails_scripts/cleanup_artifacts.rb
+  cleanup:logs:
+    desc: Clean up logs for aports and forks older than 7 days
+    cmd: docker compose exec -u git -w /home/git/gitlab gitlab rails runner -e production /etc/gitlab/gitlab/rails_scripts/cleanup_logs.rb
 
   .build-args:
     cmds:
