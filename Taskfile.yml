@@ -191,7 +191,7 @@ tasks:
 
   ### REGISTRY ###
   registry:migrate:
-    descr: Run registry database migrations
+    desc: Run registry database migrations
     cmds:
       - docker compose run --rm registry registry database migrate up /etc/docker/registry/config.yml
 
