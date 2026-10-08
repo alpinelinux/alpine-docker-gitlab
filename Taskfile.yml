@@ -4,15 +4,11 @@ version: '3'
 
 dotenv: [build-args.env]
 
-env:
-  DOCKER_BUILDKIT: 1
-
 vars:
   GITLAB_IMAGE: "alpinelinux/gitlab:{{.GITLAB_VERSION}}"
   GITALY_IMAGE: "alpinelinux/gitaly:{{.GITALY_SERVER_VERSION}}"
   GITLAB_SHELL_IMAGE: "alpinelinux/gitlab-shell:{{.GITLAB_SHELL_VERSION}}"
-  COMPOSE:
-    sh: docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose"
+  COMPOSE: docker compose
 
 tasks:
   build:
