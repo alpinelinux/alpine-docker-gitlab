@@ -55,6 +55,7 @@ tasks:
     cmd: docker compose exec -u git -w /home/git/gitlab gitlab rails runner -e production /etc/gitlab/gitlab/rails_scripts/cleanup_logs.rb
 
   .build-args:
+    internal: true
     cmds:
       - build/versions.sh >build-args.env
       - echo "Generated build-args.env"
@@ -67,6 +68,7 @@ tasks:
     run: once
 
   .deploy-libs:
+    internal: true
     label: "deploy-libs-{{.project}}"
     cmds:
       - |-
@@ -81,6 +83,7 @@ tasks:
     run: when_changed
 
   .generate-env:
+    internal: true
     cmds:
       - |
         if [ -f .env ] && ! grep -q '^# GENERATED' .env; then
@@ -97,6 +100,7 @@ tasks:
 
   ### GITLAB ###
   deploy-libs-gitlab:
+    internal: true
     cmds:
       - |-
         install -Dm0644 lib/* -t overlay/usr/local/lib/
@@ -126,6 +130,7 @@ tasks:
 
   ### GITALY ###
   deploy-libs-gitaly:
+    internal: true
     cmds:
       - task: .deploy-libs
         vars: {project: gitaly}
@@ -146,6 +151,7 @@ tasks:
 
   ### GITLAB-SHELL ###
   deploy-libs-gitlab-shell:
+    internal: true
     cmds:
       - task: .deploy-libs
         vars: {project: gitlab-shell}
