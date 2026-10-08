@@ -19,26 +19,28 @@ tasks:
       - build:gitaly
       - build:gitlab
 
-  update:
+  docker:image:update:
     desc: "Update environment to current version and pull images"
+    aliases: [di:update]
     deps:
       - update-env
     cmds:
       - "{{.COMPOSE}} pull"
 
-  update-env:
+  env:update:
     desc: make sure all environment files are up-to-date
     deps:
       - .build-args
       - .generate-env
-  up:
+  docker:up:
     desc: Run all containers
+    aliases: [d:up]
     cmds:
       - "{{.COMPOSE}} up -d"
       - task: registry:migrate
     deps: [ update-env ]
 
-  backup:
+  db:backup:
     desc: Create a database dump
     cmds:
       - >
