@@ -11,13 +11,13 @@ vars:
   COMPOSE: docker compose
 
 tasks:
-  build:
+  build:all:
     desc: "build all images"
     deps:
       - .generate-env
-      - build-gitlab-shell
-      - build-gitaly
-      - build-gitlab
+      - build:gitlab-shell
+      - build:gitaly
+      - build:gitlab
 
   update:
     desc: "Update environment to current version and pull images"
@@ -107,7 +107,8 @@ tasks:
     generates:
       - "overlay/usr/local/lib/libsetup"
     run: when_changed
-  build-gitlab:
+  build:gitlab:
+    desc: Build image for gitlab
     cmds:
       - "{{.COMPOSE}} build {{.CLI_ARGS}} gitlab"
     deps:
@@ -128,7 +129,8 @@ tasks:
     cmds:
       - task: .deploy-libs
         vars: {project: gitaly}
-  build-gitaly:
+  build:gitaly:
+    desc: Build image for gitaly
     cmds:
       - "{{.COMPOSE}} build {{.CLI_ARGS}} gitaly"
     deps:
@@ -147,7 +149,8 @@ tasks:
     cmds:
       - task: .deploy-libs
         vars: {project: gitlab-shell}
-  build-gitlab-shell:
+  build:gitlab-shell:
+    desc: Build image for gitlab-shell
     cmds:
       - "{{.COMPOSE}} build {{.CLI_ARGS}} gitlab-shell"
     deps:
