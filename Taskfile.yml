@@ -119,7 +119,7 @@ tasks:
       - "{{.COMPOSE}} build {{.CLI_ARGS}} gitlab"
     deps:
       - .build-args
-      - build-gitlab-shell
+      - build:gitlab-shell
       - deploy-libs-gitlab
     sources:
       - build-args.env
@@ -143,7 +143,7 @@ tasks:
     deps:
       - .build-args
       - deploy-libs-gitaly
-      - build-gitlab-shell
+      - build:gitlab-shell
     sources:
       - build-args.env
       - gitaly/*
